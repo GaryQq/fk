@@ -1,0 +1,52 @@
+10
+
+dir
+167392
+http://svn.yuecai365.com/svn/cp/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/service
+http://svn.yuecai365.com/svn/cp
+
+
+
+2019-03-08T05:44:07.890747Z
+160157
+niehongtao
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+a014eba1-2fae-834b-8157-1c48fd466da1
+
+dailydata
+dir
+
+detail
+dir
+
+fengliaoAgency
+dir
+
+lottery
+dir
+
+lotterytie
+dir
+
+management
+dir
+
+permissions
+dir
+
+tool
+dir
+

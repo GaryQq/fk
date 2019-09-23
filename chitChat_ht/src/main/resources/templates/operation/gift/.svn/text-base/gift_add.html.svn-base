@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body class="easyui-layout">
+<div data-options="region:'center'" border="false">
+    <div id="dlg" style="padding: 10px 20px">
+        <div class="myftitle">基本信息</div>
+        <form id="myfm" method="post" novalidate>
+
+            <table cellpadding="7">
+                <tr>
+                    <td>礼物分类:</td>
+                    <td><select class="easyui-combobox" name="type"
+                                id="type" style="width: 148px;">
+                        <option value="1">普通</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td>礼物入口:</td>
+                    <td><select class="easyui-combobox" name="source"
+                                id="source" style="width: 148px;">
+                        <option value="4">语伴1v1</option>
+                    </select></td>
+                </tr>
+
+                <tr>
+                    <td>礼物名称:</td>
+                    <td><input class="easyui-validatebox" type="text"
+                               name="giftName" id="giftName"
+                               data-options="required:true,validType:'length[1,100]'"/></td>
+                </tr>
+
+                <tr>
+                    <td>礼物金币价格:</td>
+                    <td><input class="easyui-validatebox" type="text"
+                               name="giftPrice" id="giftPrice"
+                               data-options="required:true,validType:'length[1,100]'"/></td>
+                </tr>
+
+                <tr>
+                    <td>礼物水晶价格:</td>
+                    <td>
+                        <input class="easyui-validatebox" type="text"
+                               name="giftCrystal" id="giftCrystal"
+                               data-options="required:true,validType:'length[1,100]'"/>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>礼物小图:</td>
+                    <td>
+                        <input class="easyui-validatebox" type="text"
+                               name="giftLogoLocation1" id="giftLogoLocation1"
+                               data-options="required:true,validType:'length[1,500]'"/>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>礼物动效:</td>
+                    <td>
+                        <input class="easyui-validatebox" type="text"
+                               name="giftGifLocation1" id="giftGifLocation1"
+                               data-options="required:true,validType:'length[1,500]'"/>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <input type="radio" name="Fruit" value="2">自定义
+                        <br>
+                        <input type="radio" name="Fruit" value="1">客户端动效
+                    </td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td>直播:</td>
+                    <td>
+                        <input class="easyui-validatebox" type="text"
+                                  name="live" id="live"
+                                  data-options="required:true,validType:'length[1,100]'"/>%
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>S:</td>
+                    <td>
+                        <input class="easyui-validatebox" type="text"
+                                 name="levels" id="levels"
+                                 data-options="required:true,validType:'length[1,100]'"/>%
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <td>A:</td>
+                    <td>
+                        <input class="easyui-validatebox" type="text"
+                                 name="levela" id="levela"
+                                 data-options="required:true,validType:'length[1,100]'"/>%
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>B:</td>
+                    <td>
+                        <input class="easyui-validatebox" type="text"
+                                 name="levelb" id="levelb"
+                                 data-options="required:true,validType:'length[1,100]'"/>%
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <td>C:</td>
+                    <td>
+                        <input class="easyui-validatebox" type="text"
+                                 name="levelc" id="levelc"
+                                 data-options="required:true,validType:'length[1,100]'"/>%
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>普通用户:</td>
+                    <td>
+                        <input class="easyui-validatebox" type="text"
+                                    name="common" id="common"
+                                    data-options="required:true,validType:'length[1,100]'"/>%
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+<div data-options="region:'south'" style="height: 40px;" border="false">
+    <hr>
+    <div style="text-align: center;">
+        <a href="javascript:void(0)" class="easyui-linkbutton"
+           onclick="submitForm()">保存</a> <a href="javascript:void(0)"
+                                            class="easyui-linkbutton"
+                                            th:onclick="|top.framework.closeTab('${menu.menuName}')|">关闭</a>
+    </div>
+</div>
+<script th:inline="javascript">
+
+    var parentMenuName = [[${menu.parentMenuName}]]
+    var menuName = [[${menu.menuName}]]
+
+    function submitForm() {
+        var type = $("#type").val();
+        var source = $('#source').val();
+        var giftName = $('#giftName').val();
+        var giftPrice = $('#giftPrice').val();
+        var giftCrystal = $('#giftCrystal').val();
+        var giftGifLocation = $('#giftGifLocation1').val();
+        var giftLogoLocation = $('#giftLogoLocation1').val();
+        var gif = $('input[name="Fruit"]:checked').val();
+        var live = $('#live').val();
+        var levels = $('#levels').val();
+        var levela = $('#levela').val();
+        var levelb = $('#levelb').val();
+        var levelc = $('#levelc').val();
+        var common = $('#common').val();
+
+        if (type == "") {
+            alert("请选择礼物分类");
+            return;
+        } else if (source == "") {
+            alert("请选择礼物入口");
+            return;
+        } else if (giftName == "") {
+            alert("请添加礼物名称");
+            return;
+        } else if (giftPrice == null) {
+            alert("请添加礼物价格");
+            return;
+        } else if (gif == 2 && giftGifLocation == "") {
+            alert("请添加自定义图片");
+            return;
+        } else if (live == "") {
+            alert("请添加直播分成");
+            return;
+        } else if (levels == "") {
+            alert("请添加s级分成");
+            return;
+        } else if (levela == "") {
+            alert("请添加a级分成");
+            return;
+        } else if (levelb == "") {
+            alert("请添加b级分成");
+            return;
+        } else if (levelc == "") {
+            alert("请添加c级分成");
+            return;
+        } else if (common == "") {
+            alert("请添加普通用户分成");
+            return;
+        } else {
+            if (gif == 1) {
+                giftGifLocation = '1';
+            }
+        }
+
+        $.ajax({
+            url : "/gift/add.do",
+            type : "POST",
+            data : {
+                "type" : type,
+                "source" : source,
+                "giftName" : giftName,
+                "giftPrice" : giftPrice,
+                "giftCrystal" : giftCrystal,
+                "giftGifLocation" : giftGifLocation,
+                "giftLogoLocation" : giftLogoLocation,
+                "gif" : gif,
+                "live" : live,
+                "levels" : levels,
+                "levela" : levela,
+                "levelb" : levelb,
+                "levelc" : levelc,
+                "common" : common
+            },
+            dataType : "text",
+            success : function(data) {
+                console.info(data);
+                if ("success" == data){
+                    Common.showMsg('提示',"添加成功");
+                    top.framework.closeAndReloadTab(menuName, parentMenuName);
+                } else {
+                    Common.showMsg('提示',"添加失败");
+                }
+            }
+        });
+
+    }
+
+    function myformatter(date) {
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        var d = date.getDate();
+        return y + '-' + (m < 10 ? ('0' + m) : m) + '-'
+                + (d < 10 ? ('0' + d) : d);
+    }
+    function myparser(s) {
+        if (!s)
+            return new Date();
+        var ss = (s.split('-'));
+        var y = parseInt(ss[0], 10);
+        var m = parseInt(ss[1], 10);
+        var d = parseInt(ss[2], 10);
+        if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
+            return new Date(y, m - 1, d);
+        } else {
+            return new Date();
+        }
+    }
+</script>
+</body>

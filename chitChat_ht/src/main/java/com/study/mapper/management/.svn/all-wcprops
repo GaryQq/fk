@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/cp/!svn/ver/153654/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/management
+END
+AuditManagementMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/svn/cp/!svn/ver/149062/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/management/AuditManagementMapper.java
+END
+GainRatioMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/cp/!svn/ver/148034/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/management/GainRatioMapper.java
+END
+BannerMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/cp/!svn/ver/153654/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/management/BannerMapper.java
+END
+FinancialMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/cp/!svn/ver/149739/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/management/FinancialMapper.java
+END
+UsersMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/cp/!svn/ver/149381/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/management/UsersMapper.java
+END
+OpinionFeedbackMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/svn/cp/!svn/ver/149643/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/management/OpinionFeedbackMapper.java
+END
+PushJMSMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/cp/!svn/ver/148168/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/management/PushJMSMapper.java
+END
+AgencyMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/cp/!svn/ver/150301/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/management/AgencyMapper.java
+END
+WhiteUserMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/cp/!svn/ver/148302/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/management/WhiteUserMapper.java
+END
+LotterytieUserMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/cp/!svn/ver/148295/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/management/LotterytieUserMapper.java
+END
+TeacherChangeRecordsMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/cp/!svn/ver/148539/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/management/TeacherChangeRecordsMapper.java
+END
+GiftMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/cp/!svn/ver/147915/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/management/GiftMapper.java
+END

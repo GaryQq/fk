@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.fengkuang.author.AuthorApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 12.915 s - in com.fengkuang.author.AuthorApplicationTests

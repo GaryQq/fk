@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+	<properties resource="application.properties" />
+
+	<context id="Oracle" targetRuntime="MyBatis3Simple"
+		defaultModelType="flat">
+		<property name="beginningDelimiter" value="`" />
+		<property name="endingDelimiter" value="`" />
+
+		<plugin type="tk.mybatis.mapper.generator.MapperPlugin">
+			<property name="mappers" value="com.study.util.MyMapper" />
+		</plugin>
+
+		<!-- <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://localhost:3306/shiro_t" 
+			userId="root" password="kyh16000771"> </jdbcConnection> -->
+
+		<jdbcConnection driverClass="oracle.jdbc.driver.OracleDriver"
+			connectionURL="jdbc:oracle:thin:@//172.20.16.194:1521/smsdb" userId="lotterytie"
+			password="lotterytie">
+		</jdbcConnection>
+
+		<javaModelGenerator targetPackage="com.study.model"
+			targetProject="src/main/java" />
+
+		<sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources" />
+
+		<javaClientGenerator targetPackage="com.study.mapper"
+			targetProject="src/main/java" type="XMLMAPPER" />
+
+		<table tableName="dictionarydata">
+			<!--mysql 配置 -->
+			<!-- <generatedKey column="id" sqlStatement="Mysql" identity="true" /> -->
+			<!--oracle 配置 -->
+			<generatedKey column="id"
+				sqlStatement="select SEQ_{1}.nextval from 
+				dual" identity="true" />
+		</table>
+	</context>
+</generatorConfiguration>

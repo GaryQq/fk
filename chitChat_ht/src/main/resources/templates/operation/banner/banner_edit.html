@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<div data-options="region:'center'" border="false">
+		<div id="dlg" style="padding: 10px 20px">
+			<div class="myftitle">基本信息</div>
+			<form id="myfm" method="post" novalidate>
+				<table cellpadding="7">
+					<input class="easyui-validatebox" type="hidden" id="banner_id">
+					<tr>
+						<td>所属频道:</td>
+						<td>语伴APP:<input type="checkbox" name="channel" value="101">语伴首页
+							<input type="checkbox" name="channel" value="102">语伴充值列表
+						</td>
+					</tr>
+					<tr>
+						<td>客户端:</td>
+						<td><select class="easyui-combobox" name="typeSelect"
+							id="typeSelect" style="width: 148px;">
+								<option value="0">双端</option>
+								<option value="1">IOS</option>
+								<option value="2">安卓</option>
+						</select></td>
+					</tr>
+					<tr>
+						<td>banner名称:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="title" id="title"
+							data-options="required:true,validType:'length[3,32]'"></input></td>
+					</tr>
+
+					<tr>
+						<td>banner图片:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="bannerImg" id="bannerImg" data-options="required:true"></input></td>
+					</tr>
+					<tr>
+						<td>上传图片:</td>
+						<td>
+							<div class="listsc clearfix">
+								<div class="z_photo upimg-div clear">
+									<section class="z_file fl">
+										<form id="fdata" method="post" enctype="multipart/form-data">
+											<input type="file" name="file" id="file" class="file"
+												value="" accept="image/*">
+										</form>
+									</section>
+									<div id="divImg">
+										<img id="img1" alt="" src="">
+									</div>
+								</div>
+							</div>
+
+						</td>
+					</tr>
+					<tr>
+						<td>显示渠道:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="open_sid" id="open_sid" data-options="required:true"></input></td>
+					</tr>
+					<tr>
+						<td>隐藏渠道:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="close_sid" id="close_sid" data-options="required:true"></input></td>
+					</tr>
+					<tr>
+						<td>banner权重:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="weight" id="weight" data-options="required:true"></input></td>
+					</tr>
+					<tr>
+						<td>跳转链接</td>
+						<td><input type="radio" name="adminFlag"
+							onclick="redioClick('3')" value="3">&nbsp&nbsp活动连接:<input
+							type="radio" name="adminFlag" onclick="redioClick('4')" value="4">&nbsp&nbsp个人主页(主播昵称):
+							<div id="h5Url">
+								<input id="H5Url" class="easyui-validatebox" checked="checked">
+							</div> </br>
+							<div id="homepage">
+								<input id="homepages" class="easyui-validatebox"></span>
+							</div> </br></td>
+					</tr>
+
+					<tr>
+						<td>分享描述:</td>
+						<td><input class="easyui-validatebox textbox" id="shareContent"
+							data-options="multiline:true" value=""
+							style="width: 200px; height: 60px"></input></td>
+					</tr>
+					<tr>
+						<td>分享ICON:</td>
+						<td><input id="shareImg" class="easyui-validatebox textbox"></input></td>
+					</tr>
+					<tr>
+						<td>上线时间</td>
+						<td><input type="radio" onclick="redioClick('0')" name="date"
+							value="0">&nbsp&nbsp全天 <input type="radio"
+							onclick="redioClick('1')" name="date" value="1">&nbsp&nbsp时段<input
+							type="radio" onclick="redioClick('2')" name="date" value="2">&nbsp&nbsp星期
+							<div id="date0">
+								从<input class="easyui-datebox" id="startTime"
+									data-options="formatter:myformatter,parser:myparser">到
+								<input class="easyui-datebox" id="endTime"
+									data-options="formatter:myformatter,parser:myparser">
+							</div> </br> </br>
+							<div id="date1">
+								从<input class="easyui-datebox" id="startDate"
+									data-options="formatter:myformatter,parser:myparser">到
+								<input class="easyui-datebox" id="endDate"
+									data-options="formatter:myformatter,parser:myparser">
+							</div> </br>
+							<div id="date2">
+								从<input class="easyui-timespinner" id="startDayTime"
+									style="width: 80px;"> 到<input
+									class="easyui-timespinner" id="endDayTime" style="width: 80px;">
+							</div> </br> </br>
+							<div id="dateWeek1">
+								<input type="checkbox" name="week" value="6">周六&nbsp&nbsp&nbsp
+								<input type="checkbox" name="week" value="7">周天&nbsp&nbsp&nbsp
+								<input type="checkbox" name="week" value="1">周一&nbsp&nbsp&nbsp
+								<input type="checkbox" name="week" value="2">周二&nbsp&nbsp&nbsp
+								<input type="checkbox" name="week" value="3">周三&nbsp&nbsp&nbsp
+								<input type="checkbox" name="week" value="4">周四&nbsp&nbsp&nbsp
+								<input type="checkbox" name="week" value="5">周五&nbsp&nbsp&nbsp
+
+							</div></td>
+					</tr>
+
+				</table>
+			</form>
+		</div>
+	</div>
+	<div data-options="region:'south'" style="height: 40px;" border="false">
+		<hr>
+		<div style="text-align: center;">
+			<a href="javascript:void(0)" class="easyui-linkbutton"
+				onclick="submitForm()">保存</a> <a href="javascript:void(0)"
+				class="easyui-linkbutton"
+				th:onclick="|top.framework.closeTab('${menu.menuName}')|">关闭</a>
+		</div>
+	</div>
+	<script th:inline="javascript">
+		$(function(){
+			var entity=[[${entity}]];
+			var banner_id = entity.ID;
+			$('#banner_id').val(banner_id);
+			
+			var type = entity.TYPE;
+			var arrType = type.split(";");
+			var channelBox = document.getElementsByName("channel");
+			for (var a = 0; a < arrType.length; a++) {
+				for (var i = 0; i < channelBox.length; i++) {
+					if (channelBox[i].value == arrType[a]) {
+						channelBox[i].checked = true;
+					}
+				}
+			}
+			
+			var typeSelect = entity.CLIENTTYPE;
+			$('#typeSelect').combobox('setValue', typeSelect);
+			
+			var title = entity.TITLE;
+			$('#title').val(title);
+			
+			var pic_url = entity.PIC_URL;
+			$('#bannerImg').val(pic_url);
+			
+			var homePage = entity.HOMEPAGE;
+			
+			var typeId = entity.TYPEID;
+			if (typeId == 0) {
+				document.getElementById("h5Url").style.display = "block";
+				document.getElementById("homepage").style.display = "none";
+				$("#chare").css('display', '');
+				$("#hint_nickname").html("");
+			} else if (typeId == 1) {
+				document.getElementById("h5Url").style.display = "none";
+				document.getElementById("homepage").style.display = "block";
+				$("#chare").css('display', 'none');
+				$("#hint_nickname").html("");
+				$("#hint_username").html("");
+				$('#homepages').textbox('setValue', homePage);
+			} else if (typeId == 2) {
+				document.getElementById("h5Url").style.display = "none";
+				document.getElementById("homepage").style.display = "none";
+				$("#chare").css('display', 'none');
+				$('#studioInput').textbox('setValue', homePage);
+				$("#hint_username").html("");
+			} else if (typeId == 3) {
+				document.getElementById("h5Url").style.display = "none";
+				document.getElementById("homepage").style.display = "none";
+				$("#chare").css('display', 'none');
+				$("#hint_nickname").html("");
+				$("#hint_username").html("");
+			} 
+		 	$("input[name='adminFlag']").get(typeId).checked = true;
+			
+			var shareContent = entity.SHARECONTENT;//分享描述
+			$('#shareContent').val(shareContent);
+			var shareImg = entity.SHAREIMG;//分享描述地址
+			$('#shareImg').val(shareImg);
+		 
+			var h5Url = entity.H5_URL;//h5跳转地址
+			$('#H5Url').val(h5Url);
+			
+			var open_sid = entity.OPEN_SID;
+			$('#open_sid').val(open_sid);
+			
+			var close_sid = entity.CLOSE_SID;
+			$('#close_sid').val(close_sid);
+			
+			var weight = entity.WEIGHT;
+			$('#weight').val(weight);
+			//时间
+			var startTime = entity.START_DATE;
+			var stopTime = entity.STOP_DATE;
+			var everyDayTime = entity.EVERYDAYTIME;
+			var week = entity.WEEK;
+			if (startTime == "" && stopTime == "" && everyDayTime == "") {
+				$("input[name='date']").get(2).checked = true;
+				document.getElementById("date0").style.display = "none";
+				document.getElementById("date1").style.display = "none";
+				document.getElementById("date2").style.display = "none";
+				document.getElementById("dateWeek1").style.display = "block";
+				var strs = week.split(";");
+				var arr = new Array();
+				var cbox = document.getElementsByName("week");
+				for (var a = 0; a < strs.length; a++) {
+					if (strs[a] == "星期一") {
+						arr[a] = 1;
+					} else if (strs[a] == "星期二") {
+						arr[a] = 2;
+					} else if (strs[a] == "星期三") {
+						arr[a] = 3;
+					} else if (strs[a] == "星期四") {
+						arr[a] = 4;
+					} else if (strs[a] == "星期五") {
+						arr[a] = 5;
+					} else if (strs[a] == "星期六") {
+						arr[a] = 6;
+					} else if (strs[a] == "星期日") {
+						arr[a] = 7;
+					}
+				}
+				for (var a = 0; a < arr.length; a++) {
+					for (var i = 0; i < cbox.length; i++) {
+						if (cbox[i].value == arr[a]) {
+							cbox[i].checked = true;
+						}
+					}
+				}
+			} else if (week == "" && everyDayTime != "00:00:00-23:59:59") {
+				$("input[name='date']").get(1).checked = true;
+				document.getElementById("date0").style.display = "none";
+				document.getElementById("date1").style.display = "block";
+				document.getElementById("date2").style.display = "block";
+				document.getElementById("dateWeek1").style.display = "none";
+				$('#startDate').datebox('setValue', startTime);
+				$('#endDate').datebox('setValue', stopTime);
+				var everyDayArr = everyDayTime.split("-");
+				$('#startDayTime').timespinner('setValue', everyDayArr[0]);
+				$('#endDayTime').timespinner('setValue', everyDayArr[1]);
+			} else if (everyDayTime == "00:00:00-23:59:59") {
+				$("input[name='date']").get(0).checked = true;
+				document.getElementById("date1").style.display = "none";
+				document.getElementById("date2").style.display = "none";
+				document.getElementById("dateWeek1").style.display = "none";
+				$('#startTime').datebox('setValue', startTime);
+				$('#endTime').datebox('setValue', stopTime);
+			}
+ 		})
+ 	
+ 	 
+	
+	function redioClick(type) {
+		if (type == 0) {
+			document.getElementById("date0").style.display = "block";
+			document.getElementById("date1").style.display = "none";
+			document.getElementById("date2").style.display = "none";
+			document.getElementById("dateWeek1").style.display = "none";
+			$("[name='week']").attr("checked", false);
+		} else if (type == 1) {
+			document.getElementById("date0").style.display = "none";
+			document.getElementById("date1").style.display = "block";
+			document.getElementById("date2").style.display = "block";
+			document.getElementById("dateWeek1").style.display = "none";
+			$("[name='week']").attr("checked", false);
+		} else if (type == 2) {
+			document.getElementById("date0").style.display = "none";
+			document.getElementById("date1").style.display = "none";
+			document.getElementById("date2").style.display = "none";
+			document.getElementById("dateWeek1").style.display = "block";
+		} else if (type == 3) {
+			document.getElementById("h5Url").style.display = "block";
+			document.getElementById("homepage").style.display = "none";
+			$("#chare").css('display', '');
+			$('#homepages').val('');
+			$("#hint_nickname").html("");
+		} else if (type == 4) {
+			document.getElementById("h5Url").style.display = "none";
+			document.getElementById("homepage").style.display = "block";
+			$("#chare").css('display', 'none');
+			$('#H5Url').val('');
+			$("#hint_nickname").html("");
+			$("#hint_username").html("");
+		} else if (type == 5) {
+			document.getElementById("h5Url").style.display = "none";
+			document.getElementById("homepage").style.display = "none";
+			$("#chare").css('display', 'none');
+			$('#homepages').val('');
+			$('#H5Url').val('');
+			$("#hint_username").html("");
+		} else if (type == 6) {
+			document.getElementById("h5Url").style.display = "none";
+			document.getElementById("homepage").style.display = "none";
+			$("#chare").css('display', 'none');
+			$('#homepages').val('');
+			$('#H5Url').val('');
+			$("#hint_nickname").html("");
+			$("#hint_username").html("");
+		}
+	}
+	
+	var parentMenuName=[[${menu.parentMenuName}]]
+	var menuName=[[${menu.menuName}]]
+	function submitForm(){
+		var banner_id = $('#banner_id').val();
+		var type="";//轮播图显示位置  
+		$('input[name="channel"]:checked').each(function() {
+			var t = $(this).val();
+			type += t + ";";
+		});
+		
+		if (type == "") {
+			alert('请选择所属频道!');
+			return false;
+		}
+		var myselect = document.getElementById('typeSelect').value;//客户端类型
+		
+		var title = $("#title").val();//banner标题
+		
+		var picUrl = $("#bannerImg").val();//banner图片地址
+		 
+		var adminFlag = $('input[name="adminFlag"]:checked ').val();//获取跳转连接选中
+		
+		var H5Url = "";//活动连接H5URL
+		var homepage = "";//个人主页
+		var typeId = "";
+		var startTime = "";
+		var endTime = "";
+		var eventDayTime = "";
+		var week = "";
+		if (adminFlag == 3) {
+			H5Url = document.getElementById('H5Url').value;
+			typeId = "0";
+		} else if (adminFlag == 4) {
+			homepage = $("#homepages").val();
+			typeId = "1";
+		} else if (adminFlag == 5) {
+			homepage = $("#studioInput").val();
+			typeId = "2";
+		} else if (adminFlag == 6) {
+			typeId = "3";
+		}
+		
+		var shareContent = document.getElementById('shareContent').value;//分享描述
+		var shareImg = $("#shareImg").val();//分享图片
+		
+		var dateValue = $('input[name="date"]:checked ').val();//获取日期选中
+		if (dateValue == 0) {
+			startTime = $('#startTime').datebox('getValue');
+			endTime = $('#endTime').datebox('getValue');
+			eventDayTime = "00:00:00-23:59:59";
+			if (startTime == "" || endTime == "") {
+				alert('请选择活动上线时间!');
+				return false;
+			}
+		} else if (dateValue == 1) {
+			startTime = $('#startDate').datebox('getValue');
+			endTime = $('#endDate').datebox('getValue');
+			var startDayTime = document.getElementById('startDayTime').value;
+			var endDayTime = document.getElementById('endDayTime').value;
+			if (startDate == "" || endDate == "" || startDayTime == ""
+					|| endDayTime == "") {
+				alert('请选择活动上线时间!');
+				return false;
+			}
+			eventDayTime = startDayTime + ":00-" + endDayTime + ":00";
+		} else if (dateValue == 2) {
+			$('#dateWeek1 input[name="week"]:checked').each(function() {
+				var t = $(this).val();
+				if (t == 1) {
+					week += "星期一;";
+				} else if (t == 2) {
+					week += "星期二;";
+				} else if (t == 3) {
+					week += "星期三;";
+				} else if (t == 4) {
+					week += "星期四;";
+				} else if (t == 5) {
+					week += "星期五;";
+				} else if (t == 6) {
+					week += "星期六;";
+				} else if (t == 7) {
+					week += "星期日;";
+				}
+			});
+			if (week.length == 0) {
+				alert('请选择活动上线时间!');
+				return false;
+			}
+			week = week.substring(0, week.length - 1);
+		}
+		
+		var open_sid = $("#open_sid").val();//展示渠道
+		
+		var close_sid = $("#close_sid").val();//屏蔽渠道
+		
+		var weight = $('#weight').val();
+		
+		$.ajax({
+			url : "/banner/edit.do",
+			type : "POST",
+			data : {
+				"id" : banner_id,
+				"type" : type,
+				"myselect" : myselect,
+				"title" : title,
+				"picUrl" : picUrl, 
+				"H5Url" : H5Url,
+				"homepage" : homepage,
+				"typeId" : typeId,
+				"shareContent" : shareContent,
+				"shareImg" : shareImg,
+				"startTime" : startTime,
+				"endTime" : endTime,
+				"eventDayTime" : eventDayTime,
+				"week" : week,
+				"open_sid" : open_sid,
+				"close_sid" : close_sid,
+				"weight" : weight
+			},
+			dataType : "text",
+			success : function(data) {
+				if ("success" == data){
+                	Common.showMsg('提示',"修改成功");
+                	top.framework.closeAndReloadTab(menuName, parentMenuName);
+                } else {
+                	Common.showMsg('提示',"添加失败");
+                }	
+			}
+		});
+	}
+</script>
+</body>

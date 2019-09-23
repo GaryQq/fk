@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<div data-options="region:'center'" border="false">
+		<div id="dlg" style="padding: 10px 20px">
+			<div class="myftitle">基本信息</div>
+			<form id="myfm" method="post" novalidate>
+
+				<table cellpadding="5">
+					<tr>
+						<td>角色名称:</td>
+						<td><input class="easyui-validatebox" type="text"
+							name="roledesc" id="roledesc"
+							data-options="required:true,validType:'length[3,32]'"></input></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+	<div data-options="region:'south'" style="height: 40px;" border="false">
+		<hr>
+		<div style="text-align: center;">
+			<a href="javascript:void(0)" class="easyui-linkbutton"
+				onclick="submitForm()">保存</a> <a href="javascript:void(0)"
+				class="easyui-linkbutton"
+				th:onclick="|top.framework.closeTab('${menu.menuName}')|">关闭</a>
+		</div>
+	</div>
+	<script th:inline="javascript">
+	var parentMenuName=[[${menu.parentMenuName}]]
+	var menuName=[[${menu.menuName}]]
+	function submitForm(){
+		var roledesc = $('#roledesc').val();
+		$.ajax({
+			url : "/roles/add.do",
+			type : "POST",
+			data : {
+				"roledesc" : roledesc
+			},
+			dataType : "text",
+			success : function(data) {
+				if ("success" == data){
+                	Common.showMsg('提示',"添加成功");
+                	top.framework.closeAndReloadTab(menuName, parentMenuName);
+                } else {
+                	Common.showMsg('提示',"添加失败");
+                }	
+			}
+		});
+	}
+	</script>
+</body>

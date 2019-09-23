@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.mapper.management.GiftMapper">
+
+    <select id="findGiftList" parameterType="java.util.Map"
+            resultType="java.util.Map">
+        select * from
+        (select ROWNUM AS rowno, t.*
+        from(
+        select g.id,
+        g.gift_name,
+        g.gift_price,
+        g.gift_logo_location,
+        g.gift_gif_location,
+        g.type,
+        g.source,
+        g.sort,
+        g.operator,
+        to_char(g.update_time,'yyyy-mm-dd hh24:mi:ss')update_time ,
+        g.status,
+        r.id ratioId,
+        g.gift_crystal
+        from yt_livegiftdetail g
+        left join (
+        select * from yt_live_gain_ratio where type_one=1
+        ) r on r.gain_id=g.id
+        where 1=1
+        <if test="type != null and type!='' ">
+            and g.type= #{type}
+        </if>
+        <if test="source != null and source!='' ">
+            and g.source= #{source}
+        </if>
+        <if test="status != null and status!='' ">
+            and g.status= #{status}
+        </if>
+        <if test="name != null and name!='' ">
+            and g.gift_name= #{name}
+        </if>
+        <if test="gifLocation==2">
+            and g.gift_gif_location is null
+        </if>
+        <if test="gifLocation==1">
+            and g.gift_gif_location is not null
+        </if>
+        <if test="operator != null and operator!='' ">
+            and g.operator= #{operator}
+        </if>
+        order by g.sort
+        )t
+        where ROWNUM <![CDATA[ <= ]]>
+        #{page_num} *
+        #{page_size}
+        ) table_alias
+        where table_alias.rowno <![CDATA[> ]]>
+        (#{page_num} -
+        1) * #{page_size}
+    </select>
+
+    <select id="findGiftList1" parameterType="java.util.Map"
+            resultType="java.util.Map">
+
+        select g.id,
+        g.gift_name,
+        g.gift_price,
+        g.gift_logo_location,
+        g.gift_gif_location,
+        g.type,
+        g.source,
+        g.sort,
+        g.operator,
+        to_char(g.update_time,'yyyy-mm-dd hh24:mi:ss')update_time ,
+        g.status,
+        g.status status1,
+        r.id ratioId,
+        g.gift_crystal
+        from yt_livegiftdetail g
+        left join (
+        select * from yt_live_gain_ratio where type_one=1
+        ) r on r.gain_id=g.id
+        where 1=1
+        <if test="type != null and type!='' ">
+            and g.type= #{type}
+        </if>
+        <if test="source != null and source!='' ">
+            and g.source= #{source}
+        </if>
+        <if test="status != null and status!='' ">
+            and g.status= #{status}
+        </if>
+        <if test="name != null and name!='' ">
+            and g.gift_name= #{name}
+        </if>
+        <if test="gifLocation==2">
+            and g.gift_gif_location is null
+        </if>
+        <if test="gifLocation==1">
+            and g.gift_gif_location is not null
+        </if>
+        <if test="operator != null and operator!='' ">
+            and g.operator= #{operator}
+        </if>
+            and g.source=4
+        order by g.sort
+    </select>
+
+    <select id="findGiftEntity" parameterType="int" resultType="java.util.Map">
+        select g.id,
+        g.gift_name,
+        g.gift_price,
+        g.gift_logo_location,
+        g.gift_gif_location,
+        g.type,
+        g.source,
+        g.sort,
+        g.operator,
+        to_char(g.update_time,'yyyy-mm-dd hh24:mi:ss')update_time ,
+        g.status,
+        r.id ratioId,
+        g.gift_crystal
+        from yt_livegiftdetail g
+        left join (
+        select * from yt_live_gain_ratio where type_one=1
+        ) r on r.gain_id=g.id
+        where g.id=#{id}
+
+	</select>
+
+    <select id="getGiftId" resultType="java.lang.Integer">
+		select seq_yt_livegiftdetail.nextval id from dual
+	</select>
+
+    <insert id="insertGift" parameterType="java.util.Map">
+        insert into yt_livegiftdetail d
+          (d.id,
+           d.gift_name,
+           d.gift_price,
+           d.gift_logo_location,
+           d.gift_gif_location,
+           d.type,
+           d.source,
+           d.status,
+           d.operator,
+           d.sort,
+           d.create_time,
+           d.update_time,
+           d.gift_crystal)
+        values
+          (#{id},
+           #{giftName},
+           #{giftPrice},
+           #{logoLocation},
+           #{gifLocation},
+           #{type},
+           #{source},
+           -1,
+           #{operator},
+           1,
+           sysdate,
+           sysdate,
+           #{giftCrystal})
+    </insert>
+
+    <insert id="insertGainRatio" parameterType="java.util.Map">
+        insert into yt_live_gain_ratio r
+          (r.id,
+           r.type_one,
+           r.gain_id,
+           r.name,
+           r.live,
+           r.levels,
+           r.levela,
+           r.levelb,
+           r.levelc,
+           r.common,
+           r.create_time,
+           r.modify_time)
+        values
+          (seq_yt_live_gain_ratio.nextval,
+           #{typeOne},
+           #{id},
+           #{giftName},
+           #{live},
+           #{levels},
+           #{levela},
+           #{levelb},
+           #{levelc},
+           #{common},
+           sysdate,
+           sysdate)
+    </insert>
+
+    <update id="updateGift" parameterType="java.util.Map">
+        update yt_livegiftdetail r
+            set
+        <if test="type!=null and type!=''">
+            r.type               = #{type},
+        </if>
+
+        <if test="source!=null and source!=''">
+            r.source             = #{source},
+        </if>
+
+        <if test="giftCrystal!=null and giftCrystal!=''">
+            r.gift_crystal       = #{giftCrystal},
+        </if>
+
+        <if test="gifLocation!=null and gifLocation!=''">
+            r.gift_gif_location  = #{gifLocation},
+        </if>
+
+        <if test="logoLocation!=null and logoLocation!=''">
+            r.gift_logo_location = #{logoLocation},
+        </if>
+
+        <if test="giftPrice!=null and giftPrice!=''">
+            r.gift_price         = #{giftPrice},
+        </if>
+
+        <if test="giftName!=null and giftName!=''">
+            r.gift_name          = #{giftName},
+        </if>
+
+        <if test="status!=null and status!=''">
+            r.status             = #{status},
+        </if>
+
+        <if test="sort!=null and sort!=''">
+            r.sort               = #{sort},
+        </if>
+
+        <if test="operator!=null and operator!=''">
+            r.operator           = #{operator},
+        </if>
+            r.update_time        = sysdate
+        where r.id = #{gift_id}
+    </update>
+
+</mapper>

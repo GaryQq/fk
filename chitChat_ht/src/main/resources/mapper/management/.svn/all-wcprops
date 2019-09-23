@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/cp/!svn/ver/153655/LotteryDev4/Server/chitChat_ht/src/main/resources/mapper/management
+END
+PushJMSMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/cp/!svn/ver/148166/LotteryDev4/Server/chitChat_ht/src/main/resources/mapper/management/PushJMSMapper.xml
+END
+OpinionFeedbackMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/cp/!svn/ver/149642/LotteryDev4/Server/chitChat_ht/src/main/resources/mapper/management/OpinionFeedbackMapper.xml
+END
+UsersMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/cp/!svn/ver/152518/LotteryDev4/Server/chitChat_ht/src/main/resources/mapper/management/UsersMapper.xml
+END
+FinancialMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/cp/!svn/ver/149741/LotteryDev4/Server/chitChat_ht/src/main/resources/mapper/management/FinancialMapper.xml
+END
+GainRatioMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/cp/!svn/ver/148036/LotteryDev4/Server/chitChat_ht/src/main/resources/mapper/management/GainRatioMapper.xml
+END
+BannerMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/cp/!svn/ver/153655/LotteryDev4/Server/chitChat_ht/src/main/resources/mapper/management/BannerMapper.xml
+END
+AuditManagementMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/cp/!svn/ver/149189/LotteryDev4/Server/chitChat_ht/src/main/resources/mapper/management/AuditManagementMapper.xml
+END
+TeacherChangeRecords.xml
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/cp/!svn/ver/149381/LotteryDev4/Server/chitChat_ht/src/main/resources/mapper/management/TeacherChangeRecords.xml
+END
+GiftMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/cp/!svn/ver/147915/LotteryDev4/Server/chitChat_ht/src/main/resources/mapper/management/GiftMapper.xml
+END
+LotterytieUserMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/cp/!svn/ver/148393/LotteryDev4/Server/chitChat_ht/src/main/resources/mapper/management/LotterytieUserMapper.xml
+END
+WhiteUserMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/cp/!svn/ver/148304/LotteryDev4/Server/chitChat_ht/src/main/resources/mapper/management/WhiteUserMapper.xml
+END
+AgencyMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/cp/!svn/ver/150301/LotteryDev4/Server/chitChat_ht/src/main/resources/mapper/management/AgencyMapper.xml
+END

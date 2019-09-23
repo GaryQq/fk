@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<table id="tb1" class="easyui-datagrid" title="" width="100%"
+		height="100%" fit="true" border="0"
+		data-options="rownumbers:true,pagination:true,url:'/dept/getData.do',singleSelect:false,method:'get',toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc'">
+		<thead>
+			<tr>
+				<th data-options="field:'ck',checkbox:true"></th>
+				<th
+					data-options="field:'id',width:100,align:'center',sortable:'true'">id</th>
+				<th
+					data-options="field:'code',width:200,align:'center',sortable:'true'">部门编码</th>
+				<th
+					data-options="field:'name',width:200,align:'center',sortable:'true'">部门名称</th>
+				<th
+					data-options="field:'parentName',width:200,align:'center',sortable:'true'">上级部门</th>
+
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar1" class="easyui-layout"
+		style="height: 65px; margin: 3px;">
+		<div data-options="region:'center',border:false">
+			<a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+				th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+				th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+		</div>
+		<div data-options="region:'north',border:true" style="height: 40px;">
+			<form id="fm" method="post" novalidate>
+				<table cellpadding="5">
+					<tr>
+						<td>菜单名称:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="roledesc" id="roledesc"></input></td>
+						<td><a href="javascript:search()" class="easyui-linkbutton"
+							iconCls="icon-search">查找</a></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+
+	</div>
+	<script th:inline="javascript">
+    var menuName=[[${menuName}]]
+    function add(){
+		top.framework.openTab('新增部门', '/dept/add?menuName=新增部门&parentMenuName='+menuName);
+	}
+    function edit(){
+		var selecteds = $('#tb1').datagrid('getSelections');
+        if (selecteds == null || selecteds.length == 0) { 
+        	Common.showMsg('修改部门','请选择操作项！');
+        	return;
+        }
+        if (selecteds.length>1) {
+        	Common.showMsg('修改部门','不支持多个操作！');
+        	return; 
+        }
+		top.framework.openTab('修改部门', '/dept/add.do?menuName=修改部门&id='+selecteds[0].id+'&parentMenuName='+menuName);
+	}
+    
+    function remove(){
+		var selecteds = $('#tb1').datagrid('getSelections');
+        if (selecteds == null || selecteds.length == 0) { 
+        	Common.showMsg('提示','请选择操作项！');
+        	return;
+        }
+        $.messager.confirm('提示','确定删除吗?', 
+        function(r){
+            if (r){
+            	var ids = '';
+                $(selecteds).each(function (index) {
+                    ids = ids + selecteds[index].id + ",";
+                });
+                ids = ids.substring(0, ids.length - 1);
+        		$.ajax( {
+    				url : '/dept/delete.do?ids='+ids,
+    				dataType:'text',
+    				type: 'delete',
+    				success : function(result) {
+    					if ("success"==result){
+    						Common.showMsg('提示',"删除成功");
+        				    search();
+    					}else{
+    						Common.showMsg('提示',"删除失败");
+    					}
+    					
+    				}
+    			});
+            }
+        });
+        
+	}
+    function search(){
+    	var names = $("#roledesc").val();
+		$('#tb1').datagrid({
+            url:"/dept/getData.do",
+            queryParams:{
+            	name:names
+            }
+        });
+	}
+    </script>
+</body>

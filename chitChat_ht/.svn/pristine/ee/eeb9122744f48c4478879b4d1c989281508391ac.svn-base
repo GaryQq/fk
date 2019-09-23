@@ -1,0 +1,93 @@
+package com.study.controller.tool;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.github.pagehelper.PageInfo;
+import com.study.model.permissions.User;
+import com.study.service.lotterytie.LotterytieService;
+import com.study.service.tool.ToolService;
+import com.study.util.EsUserUtil;
+import com.study.util.bean.DataGridResultInfo;
+import com.study.util.bean.PageBean;
+import com.study.util.permissions.ResultUtil;
+import com.study.util.tool.StringUtil;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+
+@Api(value = "source公共方法", description = "公共方法管理API")
+@RestController
+@RequestMapping("/sourceToolController")
+public class SourceToolController {
+	private static Logger logger = LoggerFactory.getLogger(SourceToolController.class);
+
+	@Autowired
+	private ToolService toolService;
+
+	@ApiOperation(value = "渠道绑定列表", notes = "渠道管理API")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "nick_name", value = "昵称", required = false, dataType = "string", paramType = "query"),
+			@ApiImplicitParam(name = "source", value = "渠道ID", required = false, dataType = "string", paramType = "query"),
+			@ApiImplicitParam(name = "source_status", value = "渠道来源:1语伴,2疯聊", required = false, dataType = "string", paramType = "query"),
+			@ApiImplicitParam(name = "source_type", value = "渠道使用类型:1安卓,2IOS,3疯聊代理绑定source", required = false, dataType = "string", paramType = "query") })
+	@RequestMapping(value = "/getSourceInfoList", method = { RequestMethod.GET })
+	public DataGridResultInfo getSourceInfoList(HttpServletRequest request,
+			@RequestParam(value = "source", required = false) String source,
+			@RequestParam(value = "source_type", required = false) String source_type,
+			@RequestParam(value = "nick_name", required = false) String nick_name, @ModelAttribute PageBean bean) {
+
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("nick_name", nick_name);
+		param.put("source_type", source_type);
+		param.put("source", source);
+		List<Map<String, Object>> findViewList = toolService.getSourceInfoList(param, bean);
+		PageInfo<Map<String, Object>> pageInfo = new PageInfo<Map<String, Object>>(findViewList, 1);
+		return ResultUtil.createDataGridResult(pageInfo.getTotal(), pageInfo.getList());
+	}
+
+	@ApiOperation(value = "保存添加渠道绑定", notes = "保存添加渠道绑定API")
+	@RequestMapping(value = "/add", method = { RequestMethod.POST })
+	public String add(HttpServletRequest request) {
+		try {
+			String source = request.getParameter("source");
+			String nick_name = request.getParameter("nick_name");
+			String source_type = request.getParameter("source_type");
+			String source_status = request.getParameter("source_status");
+			String user_name = "";
+			if (!StringUtil.eqBlank(nick_name)) {
+				Map<String, Object> user_param = new HashMap<String, Object>();
+				user_param.put("nick_name", nick_name);
+				Map<String, Object> user_map = EsUserUtil.findUserEntity(user_param);
+				user_name = StringUtil.nullBlank(user_map.get("user_name"));
+			}
+			Map<String, Object> param = new HashMap<>();
+			param.put("source", source);
+			param.put("user_name", user_name);
+			param.put("source_type", source_type);
+			param.put("source_status", source_status);
+			toolService.insertSourceEntity(param);
+			return "success";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "fail";
+		}
+	}
+ 
+}

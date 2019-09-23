@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<div data-options="region:'center'" border="false">
+		<div id="dlg" style="padding: 10px 20px">
+			<div class="myftitle">基本信息</div>
+			<form id="myfm" method="post" novalidate>
+
+				<table cellpadding="5">
+					<tr>
+						<td>按钮名称:</td>
+						<td><input class="easyui-validatebox" type="text" name="name"
+							id="name" data-options="required:true,validType:'length[3,32]'"></input></td>
+					</tr>
+					<tr>
+						<td>资源链接:</td>
+						<td><input class="easyui-validatebox" type="text" id="resUrl"
+							name="resurl" data-options="required:false"></input></td>
+					</tr>
+					<tr>
+						<td>按钮图标:</td>
+						<td><input class="easyui-validatebox" type="text"
+							id="iconCls" name="iconCls" data-options="required:false"></input></td>
+					</tr>
+					<tr>
+						<td>按钮函数:</td>
+						<td><input class="easyui-validatebox" type="text" id="butFun"
+							name="butFun" data-options="required:false"></input></td>
+					</tr>
+					<tr>
+						<td>菜单名称:</td>
+						<td><select class="easyui-combobox" name="parentid"
+							id="parentid" disabled="disabled" style="width: 148px;">
+								<span th:each="res : ${resList}" th:remove="tag">
+									<option th:value="${res.id}" th:text="${res.name}"
+										th:selected=${#strings.contains(res.id,parentid)}></option>
+							</span>
+						</select></td>
+					</tr>
+					<tr>
+						<td>资源类型:</td>
+						<td><select class="easyui-combobox" name="type" id="type"
+							data-options="required:true,editable:false" disabled="disabled">
+								<option value="1">菜单</option>
+								<option value="2" selected="selected">按钮</option>
+						</select></td>
+					</tr>
+					<tr>
+						<td>序列号:</td>
+						<td><input class="easyui-numberspinner" name="sort" id="sort"
+							value="10" data-options="min:1,increment:1, editable:false"></input></td>
+					</tr>
+
+				</table>
+			</form>
+		</div>
+	</div>
+	<div data-options="region:'south'" style="height: 40px;" border="false">
+		<hr>
+		<div style="text-align: center;">
+			<a href="javascript:void(0)" class="easyui-linkbutton"
+				onclick="submitForm()">保存</a> <a href="javascript:void(0)"
+				class="easyui-linkbutton"
+				th:onclick="|top.framework.closeTab('${menu.menuName}')|">关闭</a>
+		</div>
+	</div>
+	<script th:inline="javascript">
+	var parentMenuName=[[${menu.parentMenuName}]]
+	var menuName=[[${menu.menuName}]]
+	function submitForm(){
+		var name = $("#name").val();
+		var resUrl = $("#resUrl").val();
+		var iconCls = $("#iconCls").val();
+		var butFun = $("#butFun").val(); 
+		var parentid = $('#parentid').combobox('getValue');
+		var type = $('#type').combobox('getValue');
+		var sort = $('#sort').numberspinner('getValue');
+		$.ajax({
+			url : "/resources/add.do",
+			type : "POST",
+			data : {
+				"name" : name,
+				"resUrl" : resUrl,
+				"parentid" : parentid,
+				"type" : type,
+				"sort" : sort,
+				"iconCls" : iconCls,
+				"butFun" : butFun
+			},
+			dataType : "text",
+			success : function(data) {
+				if ("success" == data){
+                	Common.showMsg('提示',"添加成功");
+                	top.framework.closeAndReloadTab(menuName, parentMenuName);
+                } else {
+                	Common.showMsg('提示',"添加失败");
+                }	
+			}
+		});
+		
+	}
+	</script>
+</body>

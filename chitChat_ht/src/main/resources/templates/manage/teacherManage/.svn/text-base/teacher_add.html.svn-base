@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body class="easyui-layout">
+<div data-options="region:'center'" border="false">
+    <div id="dlg" style="padding: 10px 20px">
+        <div class="myftitle">基本信息</div>
+        <form id="myfm" method="post" novalidate>
+
+            <table cellpadding="7">
+                <tr>
+                    <td>昵称:</td>
+                    <td><input class="easyui-validatebox" type="text"
+                               name="nickName" id="nickName"
+                               data-options="required:true,validType:'length[1,100]'"/>
+                        <input type="button" value="校验" onclick="checkNickName()"></td>
+
+                </tr>
+
+                <tr>
+                    <td>选择国家/地区:</td>
+                    <td><select class="easyui-combobox" name="region"
+                                id="region" style="width: 148px;">
+                        <option value="中国">中国</option>
+                        <option value="美国">美国</option>
+                        <option value="英国">英国</option>
+                        <option value="俄罗斯">俄罗斯</option>
+                        <option value="法国">法国</option>
+                        <option value="德国">德国</option>
+                        <option value="日本">日本</option>
+                        <option value="西班牙">西班牙</option>
+                        <option value="阿拉伯">阿拉伯</option>
+                        <option value="韩国">韩国</option>
+                        <option value="乌克兰">乌克兰</option>
+                    </select></td>
+                </tr>
+
+                <tr>
+                    <td>选择母语:</td>
+                    <td><select class="easyui-combobox" name="language"
+                                id="language" style="width: 148px;">
+                        <option value="汉语">汉语</option>
+                        <option value="英语">英语</option>
+                        <option value="俄语">俄语</option>
+                        <option value="法语">法语</option>
+                        <option value="德语">德语</option>
+                        <option value="日语">日语</option>
+                        <option value="西班牙语">西班牙语</option>
+                        <option value="阿拉伯语">阿拉伯语</option>
+                        <option value="韩语">韩语</option>
+                        <option value="乌克兰语">乌克兰语</option>
+                    </select></td>
+                </tr>
+
+                <tr>
+                    <td>选择精通语言(可多选):</td>
+                    <td>
+                        <input type="checkbox" name="masterlanguage" value="汉语"/>汉语
+                        <input type="checkbox" name="masterlanguage" value="英语"/>英语
+                        <input type="checkbox" name="masterlanguage" value="俄语"/>俄语
+                        <input type="checkbox" name="masterlanguage" value="法语"/>法语
+                        <input type="checkbox" name="masterlanguage" value="德语"/>德语
+                        <input type="checkbox" name="masterlanguage" value="日语"/>日语
+                        <input type="checkbox" name="masterlanguage" value="西班牙语"/>西班牙语
+                        <input type="checkbox" name="masterlanguage" value="阿拉伯语"/>阿拉伯语
+                        <input type="checkbox" name="masterlanguage" value="韩语"/>韩语
+                        <input type="checkbox" name="masterlanguage" value="乌克兰语"/>乌克兰语
+                        &nbsp;
+                        <input type="text" id="other" value=""/>其他
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>选择学历:</td>
+                    <td><select class="easyui-combobox" name="education"
+                                id="education" style="width: 148px;">
+                        <option value="博士">博士</option>
+                        <option value="硕士">硕士</option>
+                        <option value="本科">本科</option>
+                        <option value="专科">专科</option>
+                        <option value="高中">高中</option>
+                        <option value="初中">初中</option>
+                        <option value="小学">小学</option>
+                    </select></td>
+                </tr>
+
+                <tr>
+                    <td>学校:</td>
+                    <td><input class="easyui-validatebox" type="text"
+                               name="school" id="school"
+                               data-options="required:true,validType:'length[1,100]'"/></td>
+                </tr>
+
+
+            </table>
+        </form>
+    </div>
+</div>
+<div data-options="region:'south'" style="height: 40px;" border="false">
+    <hr>
+    <div style="text-align: center;">
+        <a href="javascript:void(0)" class="easyui-linkbutton"
+           onclick="submitForm()">保存</a> <a href="javascript:void(0)"
+                                            class="easyui-linkbutton"
+                                            th:onclick="|top.framework.closeTab('${menu.menuName}')|">关闭</a>
+    </div>
+</div>
+<script th:inline="javascript">
+
+    var parentMenuName = [[${menu.parentMenuName}]]
+    var menuName = [[${menu.menuName}]]
+
+    function checkNickName(){
+        var nickName = $("#nickName").val();
+        $.ajax({
+            url : "/userManage/getUserByNickName.do",
+            type : "POST",
+            data : {
+                "nickName" : nickName
+            },
+            dataType : "text",
+            success : function(data) {
+                console.info(data);
+                if (data > 0){
+                    alert("校验成功");
+                } else {
+                    alert("昵称不存在");
+                }
+            }
+        });
+    }
+
+    function submitForm() {
+        var nickName = $("#nickName").val();
+        var region = $('#region').combobox('getValue');
+        var language = $('#language').combobox('getValue');
+//        var masterlanguage = $('#masterlanguage').combobox('getValue');
+        var masterlanguage = "";
+        $('input[name="masterlanguage"]:checked').each(function(){
+            masterlanguage = masterlanguage + $(this).val() + ",";
+        });
+        var other = $("#other").val();
+        if(masterlanguage.length != 0){
+            masterlanguage = masterlanguage + other;
+        }else{
+            masterlanguage = other;
+        }
+        var education = $('#education').combobox('getValue');
+        var school = $("#school").val();
+
+
+        $.ajax({
+            url : "/userManage/getUserByNickName.do",
+            type : "POST",
+            data : {
+                "nickName" : nickName
+            },
+            dataType : "text",
+            success : function(data) {
+                console.info(data);
+                if (data > 0){
+//                    alert("校验成功");
+                } else {
+                    alert("昵称不存在");
+                    return;
+                }
+            }
+        });
+
+        if (nickName == "") {
+            alert("请填写昵称");
+            return;
+        } else if (region == "") {
+            alert("请选择国家");
+            return;
+        } else if (language == "") {
+            alert("请选择母语");
+            return;
+        } else if (masterlanguage == null) {
+            alert("请选择精通语言");
+            return;
+        }  else if (education == "") {
+            alert("请选择学历");
+            return;
+        } else if (school == "") {
+            alert("请填写学校");
+            return;
+        }
+
+        $.ajax({
+            url : "/userManage/addTeacher.do",
+            type : "POST",
+            data : {
+                "nickName" : nickName,
+                "region" : region,
+                "language" : language,
+                "masterlanguage" : masterlanguage,
+                "education" : education,
+                "school" : school
+            },
+            dataType : "text",
+            success : function(data) {
+                console.info(data);
+                if ("success" == data){
+                    Common.showMsg('提示',"添加成功");
+                    top.framework.closeAndReloadTab(menuName, parentMenuName);
+                } else {
+                    Common.showMsg('提示',"添加失败");
+                }
+            }
+        });
+
+    }
+
+    function myformatter(date) {
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        var d = date.getDate();
+        return y + '-' + (m < 10 ? ('0' + m) : m) + '-'
+                + (d < 10 ? ('0' + d) : d);
+    }
+    function myparser(s) {
+        if (!s)
+            return new Date();
+        var ss = (s.split('-'));
+        var y = parseInt(ss[0], 10);
+        var m = parseInt(ss[1], 10);
+        var d = parseInt(ss[2], 10);
+        if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
+            return new Date(y, m - 1, d);
+        } else {
+            return new Date();
+        }
+    }
+</script>
+</body>

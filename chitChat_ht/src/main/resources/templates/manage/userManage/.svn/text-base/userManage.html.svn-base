@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+<table id="tb1" class="easyui-datagrid" title="" width="100%"
+       height="100%" fit="true" border="0"
+       data-options="rownumbers:true,pagination:true,url:'/userManage/getUserList.do',singleSelect:true,method:'get',toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc'">
+    <thead>
+    <tr>
+        <th data-options="field:'ck',checkbox:true"></th>
+        <th data-options="field:'USERID',width:100,align:'center'">用户id</th>
+        <th data-options="field:'NICK_NAME',width:100,align:'center'">用户昵称</th>
+        <th data-options="field:'DATE_CREATED',width:150,align:'center'">注册时间</th>
+        <th data-options="field:'LAST_LOGIN_TIME',width:150,align:'center'">最后登录时间</th>
+        <th data-options="field:'AGE',width:50,align:'center'">年龄</th>
+        <th data-options="field:'REGISTER_SOURCE',width:100,align:'center'">渠道</th>
+        <th data-options="field:'APP_TYPE',width:100,align:'center'">最后登录app</th>
+        <th data-options="field:'USER_LEVEL',width:100,align:'center'">用户等级</th>
+        <th data-options="field:'ANCHOR_STATUS',width:100,align:'center',sortable:'true',
+            	     formatter:function(value,row){
+            							if (value == '0') return '未开通';
+            							if (value == '1') return '已显示';
+            							if (value == '2') return '已屏蔽';
+	                		  }
+            	">首页状态
+        </th>
+
+        <th data-options="field:'ACCOUNT_NEW',width:100,align:'center'">提现账号</th>
+        <th data-options="field:'ISAUTH',width:100,align:'center'">实名认证</th>
+        <th data-options="field:'ISWHITE',width:50,align:'center'">白名单</th>
+
+    </tr>
+    </thead>
+</table>
+<div id="toolbar1" class="easyui-layout"
+     style="height: 65px; margin: 3px;">
+    <div data-options="region:'center',border:false">
+        <a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+           th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+           th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+    </div>
+    <div data-options="region:'north',border:true" style="height: 40px;">
+        <form id="fm" method="post" novalidate>
+            <table cellpadding="5">
+                <tr>
+                    <td>注册时间:</td>
+                    <td><input class="easyui-datebox" id="startTime"
+                               data-options="formatter:myformatter,parser:myparser">到 <input
+                            class="easyui-datebox" id="endTime"
+                            data-options="formatter:myformatter,parser:myparser"></td>
+
+                    <td>用户id:</td>
+                    <td><input class="easyui-validatebox textbox" type="text"
+                               name="userId" id="userId"/></td>
+
+                    <td>用户昵称:</td>
+                    <td><input class="easyui-validatebox textbox" type="text"
+                               name="nickName" id="nickName"/></td>
+
+                    <td>渠道:</td>
+                    <td><input class="easyui-validatebox textbox" type="text"
+                               name="sid" id="sid"/></td>
+
+
+                    <td><a href="javascript:search()" class="easyui-linkbutton"
+                           iconCls="icon-search">查找</a></td>
+
+                </tr>
+            </table>
+        </form>
+    </div>
+
+</div>
+<script th:inline="javascript">
+    var menuName = [[${menuName}]]
+
+
+    function entitySearch(){
+        var selecteds = $('#tb1').datagrid('getSelections');
+        if (selecteds == null || selecteds.length == 0) {
+            Common.showMsg('查看详情按钮','请选择操作项！');
+            return;
+        }
+        if (selecteds.length>1) {
+            Common.showMsg('查看详情按钮','不支持多个操作！');
+            return;
+        }
+        top.framework.openTab('查看详情', '/userView/getUserDetail.do?menuName=查看userManage&parentMenuName='+menuName+'&userId='+selecteds[0].USERID);
+
+    }
+
+    function search() {
+        var startTime = $("#startTime").datebox('getValue');
+        var endTime = $("#endTime").datebox('getValue');
+        var userId = $("#userId").val();
+        var nickName = $("#nickName").val();
+        var sid = $("#sid").val();
+
+        $('#tb1').datagrid({
+            url: "/userManage/getUserList.do",
+            queryParams: {
+                startTime: startTime,
+                endTime: endTime,
+                userId: userId,
+                nickName: nickName,
+                sid: sid
+            }
+        });
+    }
+
+</script>
+</body>

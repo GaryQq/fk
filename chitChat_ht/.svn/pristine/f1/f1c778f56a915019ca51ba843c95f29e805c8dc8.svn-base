@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<table id="tb1" class="easyui-datagrid" title="" width="100%"
+		height="100%" fit="true" border="0"
+		data-options="rownumbers:true,pagination:true,url:'/sourceToolController/getSourceInfoList.do',singleSelect:false,method:'get',toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc'">
+		<thead>
+			<tr>
+				<th data-options="field:'ck',checkbox:true"></th>
+				<th data-options="field:'SOURCE',width:200,align:'center'">渠道</th>
+				<th
+					data-options="field:'SOURCE_TYPE',width:200,align:'center',
+            	     formatter:function(value,row){
+            	      			if(value == 1){
+            	     			 	return '安卓充值渠道';
+            	     			 }else if(value == 2){
+            	     			 	return 'IOS充值渠道';
+            	     			 }else if(value == 3){
+            	     			 	return '疯聊代理绑定source';
+            	     			 }
+               		 }">渠道使用类型</th>
+				<th
+					data-options="field:'SOURCE_STATUS',width:200,align:'center',
+            	     formatter:function(value,row){
+            	      			if(value == 1){
+            	     			 	return '语伴';
+            	     			 }else if(value == 2){
+            	     			 	return '疯聊';
+            	     			 }
+               		 }">渠道来源</th>
+				<th data-options="field:'NICK_NAME',width:200,align:'center'">渠道绑定账号昵称</th>
+
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar1" class="easyui-layout"
+		style="height: 65px; margin: 3px;">
+		<div data-options="region:'center',border:false">
+			<a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+				th:class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+				th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+		</div>
+		<div data-options="region:'north',border:true" style="height: 40px;">
+			<form id="fm" method="post" novalidate>
+				<table cellpadding="5">
+					<tr>
+						<td>渠道:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							id="source"></input></td>
+						<td>绑定账户:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							id="nick_name"></input></td>
+						<td>渠道使用类型:</td>
+						<td><select id="source_type" class="easyui-combobox"
+							style="width: 150px">
+								<option value="">全部</option>
+								<option value="1">安卓充值渠道</option>
+								<option value="2">IOS充值渠道</option>
+								<option value="3">疯聊代理绑定source</option>
+						</select></td>
+						<td>渠道来源:</td>
+						<td><select id="source_status" class="easyui-combobox"
+							style="width: 150px">
+								<option value="">全部</option>
+								<option value="1">语伴</option>
+								<option value="2">疯聊</option>
+						</select></td>
+						<td><a href="javascript:search()" class="easyui-linkbutton"
+							iconCls="icon-search">查找</a></td>
+
+					</tr>
+				</table>
+			</form>
+		</div>
+
+	</div>
+	<script th:inline="javascript">
+		var menuName=[[${menuName}]]
+		
+		function search() {
+			var source = $("#source").val(); 
+			var nick_name = $("#nick_name").val(); 
+			var source_type = $('#source_type').combobox('getValue');
+			var source_status = $('#source_status').combobox('getValue');
+			$('#tb1').datagrid({
+				url : "/sourceToolController/getSourceInfoList.do",
+				queryParams : {
+					source : source,
+					nick_name : nick_name,
+					source_type : source_type,
+					source_status : source_status
+				}
+			});
+		}
+		
+		function add(){
+			top.framework.openTab('新增渠道', '/sourceToolView/add.do?menuName=新增渠道&parentMenuName='+menuName);
+		}
+		
+	</script>
+</body>

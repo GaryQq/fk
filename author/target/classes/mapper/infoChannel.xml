@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fengkuang.author.dao.InfoChannelDao">
+    <resultMap id="author" type="com.fengkuang.author.bean.InfoPost">
+        <result column="info_post_id" property="postId" jdbcType="NUMERIC"/>
+        <result column="channel_id" property="channelId" jdbcType="NUMERIC"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.fengkuang.author.bean.InfoChannel">
+        insert into INFO_CHANNEL_RELEVANCE (info_post_id, channel_id)
+        values
+        (#{postId}, #{channelId})
+    </insert>
+
+    <update id="updateByPostId" parameterType="java.util.HashMap">
+        update INFO_CHANNEL_RELEVANCE
+        set CHANNEL_ID = #{channelId}
+        where INFO_POST_ID = (select id from info_post where post_id = #{postId})
+    </update>
+</mapper>

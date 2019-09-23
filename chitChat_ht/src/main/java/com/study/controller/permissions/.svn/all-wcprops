@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/cp/!svn/ver/162035/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/permissions
+END
+UserController.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/cp/!svn/ver/149841/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/permissions/UserController.java
+END
+RoleController.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/cp/!svn/ver/149811/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/permissions/RoleController.java
+END
+DeptController.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/cp/!svn/ver/162035/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/permissions/DeptController.java
+END
+ResourcesController.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/svn/cp/!svn/ver/149811/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/permissions/ResourcesController.java
+END

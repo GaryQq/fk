@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<div data-options="region:'center'" border="false">
+		<div id="dlg" style="padding: 10px 20px">
+			<div class="myftitle">基本信息</div>
+			<form id="myfm" method="post" novalidate>
+
+				<table cellpadding="7">
+					<tr>
+						<td>输入昵称:</td>
+						<td><input id="user_type_name"
+							class="easyui-validatebox textbox" readonly="true"
+							data-options="required:true,missingMessage:'请输入代理昵称'"
+							style="width: 200px; height: 20px">&nbsp&nbsp查询：<input
+							id="nick_name" class="easyui-validatebox textbox"
+							style="width: 100px; height: 20px"><a
+							href="javascript:search()" class="easyui-linkbutton"
+							iconCls="icon-search">查找</a></td>
+					</tr>
+					<tr>
+						<td>代理区域:</td>
+						<td><input class="easyui-validatebox textbox" name="region"
+							style="width: 200px; height: 20px" id="region"
+							data-options="required:true,missingMessage:'请输入代理区域'"></td>
+					</tr>
+					<tr>
+						<td>精通语言(可多选):</td>
+						<td><input type="checkbox" name="master" value="汉语">汉语
+							<input type="checkbox" name="master" value="英语">英语 <input
+							type="checkbox" name="master" value="俄语">俄语 <input
+							type="checkbox" name="master" value="法语">法语 <input
+							type="checkbox" name="master" value="德语">德语</br> <input
+							type="checkbox" name="master" value="日语">日语 <input
+							type="checkbox" name="master" value="西班牙语">西班牙语 <input
+							type="checkbox" name="master" value="阿拉伯语">阿拉伯语 <input
+							type="checkbox" name="master" value="韩语">韩语 <input
+							type="checkbox" name="master" value="乌克兰语">乌克兰语 </br> 其他：<input
+							class="easyui-validatebox textbox" name="language"
+							style="width: 200px; height: 20px" id="language" data-options=""></td>
+					</tr>
+					<tr>
+						<td>姓名:</td>
+						<td><input class="easyui-validatebox textbox"
+							name="user_nick_name" style="width: 200px; height: 20px"
+							id="user_nick_name" data-options=""></td>
+					</tr>
+					<tr>
+						<td>电话:</td>
+						<td><input class="easyui-validatebox textbox"
+							name="area_code" style="width: 40px; height: 20px" id="area_code"
+							data-options=""> &nbsp&nbsp&nbsp <input
+							class="easyui-validatebox textbox" name="mobile"
+							style="width: 150px; height: 20px" id="mobile" data-options=""></td>
+					</tr>
+					<tr>
+						<td>邮箱:</td>
+						<td><input class="easyui-validatebox textbox" name="eMail"
+							style="width: 200px; height: 20px" id="eMail" data-options=""></td>
+					</tr>
+					<tr>
+						<td>个人介绍:</td>
+						<td><input class="easyui-validatebox textbox" name="info"
+							style="width: 200px; height: 100px" id="info"
+							data-options="multiline:true"></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+	<div data-options="region:'south'" style="height: 40px;" border="false">
+		<hr>
+		<div style="text-align: center;">
+			<a href="javascript:void(0)" class="easyui-linkbutton"
+				onclick="submitForm()">保存</a> <a href="javascript:void(0)"
+				class="easyui-linkbutton"
+				th:onclick="|top.framework.closeTab('${menu.menuName}')|">关闭</a>
+		</div>
+	</div>
+	<script th:inline="javascript">
+		var parentMenuName=[[${menu.parentMenuName}]]
+		var menuName=[[${menu.menuName}]]
+		
+	 
+		function submitForm() {
+			var nick_name = $('#user_type_name').val();
+			var region = $('#region').val();
+			var master = "";
+			$('input[name="master"]:checked').each(function() {
+				var t = $(this).val();
+				master += t + ",";
+			});
+			var language = $('#language').val();
+			master = master + language;
+			
+			var user_nick_name = $('#user_nick_name').val();
+			var area_code = $('#area_code').val();
+			var mobile = $('#mobile').val();	
+			var eMail = $('#eMail').val();
+			var info = $('#info').val();	
+			
+			$.ajax({
+				url : "/auditManagement/addAduit.do",
+				type : "POST",
+				data : { 
+					"nick_name" : nick_name,
+					"region" : region,
+					"master" : master,
+					"user_nick_name" : user_nick_name,
+					"area_code" : area_code,
+					"mobile" : mobile,
+					"eMail" : eMail,
+					"info" : info
+				},
+				dataType : "text",
+				success : function(data) {
+					if ("success" == data){
+	                	Common.showMsg('提示',"添加成功");
+	                	top.framework.closeAndReloadTab(menuName, parentMenuName);
+	                } else {
+	                	Common.showMsg('提示',"添加失败");
+	                }	
+				}
+			});
+		}
+		
+		function search(){
+			var nick_name = $("#nick_name").val();
+			$.ajax({
+				url : "/pushJMS/searchNickName.do",
+				type : "POST",
+				data : {
+					"nick_name" : nick_name
+				},
+				dataType : "text",
+				success : function(data) {
+					if("success" == data){
+						$("#user_type_name").val(nick_name);
+						$("#nick_name").val('');
+						Common.showMsg('提示',"用户添加成功");
+					} else {
+						Common.showMsg('提示',"昵称不存在");
+					}
+				}
+			});
+		}
+		
+	</script>
+</body>

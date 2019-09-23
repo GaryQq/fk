@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body class="easyui-layout">
+<div data-options="region:'center'" border="false">
+    <div id="dlg" style="padding: 10px 20px">
+        <div class="myftitle">基本信息</div>
+        <form id="myfm" method="post" novalidate>
+            <table cellpadding="7">
+                <input class="easyui-validatebox" type="hidden" id="gift_id">
+                <tr>
+                    <td>礼物分类:</td>
+                    <td><select class="easyui-combobox" name="type"
+                                id="type" style="width: 148px;">
+                        <option value="1">普通</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td>礼物入口:</td>
+                    <td><select class="easyui-combobox" name="source"
+                                id="source" style="width: 148px;">
+                        <option value="4">语伴1v1</option>
+                    </select></td>
+                </tr>
+
+                <tr>
+                    <td>礼物名称:</td>
+                    <td><input class="easyui-validatebox" type="text"
+                               name="giftName" id="giftName"
+                               data-options="required:true,validType:'length[1,100]'"/></td>
+                </tr>
+
+                <tr>
+                    <td>礼物金币价格:</td>
+                    <td><input class="easyui-validatebox" type="text"
+                               name="giftPrice" id="giftPrice"
+                               data-options="required:true,validType:'length[1,100]'"/></td>
+                </tr>
+
+                <tr>
+                    <td>礼物水晶价格:</td>
+                    <td>
+                        <input class="easyui-validatebox" type="text"
+                               name="giftCrystal" id="giftCrystal"
+                               data-options="required:true,validType:'length[1,100]'"/>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>礼物小图:</td>
+                    <td>
+                        <input class="easyui-validatebox" type="text"
+                               name="giftLogoLocation1" id="giftLogoLocation1"
+                               data-options="required:true,validType:'length[1,500]'"/>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>礼物动效:</td>
+                    <td>
+                        <input class="easyui-validatebox" type="text"
+                               name="giftGifLocation1" id="giftGifLocation1"
+                               data-options="required:true,validType:'length[1,500]'"/>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <input type="radio" name="Fruit" value="2">自定义
+                        <br>
+                        <input type="radio" name="Fruit" value="1">客户端动效
+                    </td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td>排序:</td>
+                    <td>
+                        <input class="easyui-validatebox" type="text"
+                               name="sort" id="sort"
+                               data-options="required:true,validType:'length[1,500]'"/>
+                    </td>
+                </tr>
+
+            </table>
+        </form>
+    </div>
+</div>
+<div data-options="region:'south'" style="height: 40px;" border="false">
+    <hr>
+    <div style="text-align: center;">
+        <a href="javascript:void(0)" class="easyui-linkbutton"
+           onclick="submitForm()">保存</a> <a href="javascript:void(0)"
+                                            class="easyui-linkbutton"
+                                            th:onclick="|top.framework.closeTab('${menu.menuName}')|">关闭</a>
+    </div>
+</div>
+<script th:inline="javascript">
+    $(function () {
+        var entity = [[${entity}]];
+        var gift_id = entity.ID;
+        $('#gift_id').val(gift_id);
+//            var type = entity.TYPE;
+//            $('#type').val(type);
+//            var source = entity.SOURCE;
+//            $('#source').val(source);
+        var giftName = entity.GIFT_NAME;
+        $('#giftName').val(giftName);
+        var giftPrice = entity.GIFT_PRICE;
+        $('#giftPrice').val(giftPrice);
+        var giftCrystal = entity.GIFT_CRYSTAL;
+        $('#giftCrystal').val(giftCrystal);
+        var giftLogoLocation1 = entity.GIFT_LOGO_LOCATION;
+        $('#giftLogoLocation1').val(giftLogoLocation1);
+        var giftGifLocation1 = entity.GIFT_GIF_LOCATION;
+        $('#giftGifLocation1').val(giftGifLocation1);
+        var sort = entity.SORT;
+        $('#sort').val(sort);
+    })
+
+    function myformatter(date) {
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        var d = date.getDate();
+        return y + '-' + (m < 10 ? ('0' + m) : m) + '-'
+                + (d < 10 ? ('0' + d) : d);
+    }
+    function myparser(s) {
+        if (!s)
+            return new Date();
+        var ss = (s.split('-'));
+        var y = parseInt(ss[0], 10);
+        var m = parseInt(ss[1], 10);
+        var d = parseInt(ss[2], 10);
+        if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
+            return new Date(y, m - 1, d);
+        } else {
+            return new Date();
+        }
+    }
+
+    var parentMenuName = [[${menu.parentMenuName}]]
+    var menuName = [[${menu.menuName}]]
+    function submitForm() {
+        var type = $('#type').val();
+        var source = $('#source').val();
+        var gift_id = $('#gift_id').val();
+        var giftName = $("#giftName").val();
+        var giftPrice = $("#giftPrice").val();
+        var giftCrystal = $("#giftCrystal").val();
+        var giftLogoLocation = $("#giftLogoLocation1").val();
+        var giftGifLocation = $("#giftGifLocation1").val();
+        var sort = $("#sort").val();
+        var gif = $('input[name="Fruit"]:checked').val();
+
+        if (type == "") {
+            alert("请选择礼物分类");
+            return;
+        } else if (source == "") {
+            alert("请选择礼物入口");
+            return;
+        } else if (giftName == "") {
+            alert("请添加礼物名称");
+            return;
+        } else if (giftPrice == null) {
+            alert("请添加礼物价格");
+            return;
+        } else if (gif == 2 && giftGifLocation == "") {
+            alert("请添加自定义图片");
+            return;
+        } else {
+            if (gif == 1) {
+                giftGifLocation = '1';
+            }
+        }
+
+        $.ajax({
+            url: "/gift/edit.do",
+            type: "POST",
+            data: {
+                "type": type,
+                "source": source,
+                "gift_id": gift_id,
+                "giftName": giftName,
+                "giftPrice": giftPrice,
+                "giftCrystal": giftCrystal,
+                "giftLogoLocation": giftLogoLocation,
+                "giftGifLocation": giftGifLocation,
+                "sort": sort
+            },
+            dataType: "text",
+            success: function (data) {
+                if ("success" == data) {
+                    Common.showMsg('提示', "修改成功");
+                    top.framework.closeAndReloadTab(menuName, parentMenuName);
+                } else {
+                    Common.showMsg('提示', "添加失败");
+                }
+            }
+        });
+    }
+</script>
+</body>

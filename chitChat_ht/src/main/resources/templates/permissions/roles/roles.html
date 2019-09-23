@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<table id="tb1" class="easyui-datagrid" title="" width="100%"
+		height="100%" fit="true" border="0"
+		data-options="rownumbers:true,pagination:true,url:'/roles/getData.do',singleSelect:true,method:'get',toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc'">
+		<thead>
+			<tr>
+				<th data-options="field:'ck',checkbox:true"></th>
+				<th
+					data-options="field:'id',width:100,align:'center',sortable:'true'">id</th>
+				<th
+					data-options="field:'roledesc',width:200,align:'center',sortable:'true'">角色名称</th>
+				<th shiro:hasPermission="/permissions/roles/saveRoleResources"
+					data-options="field:'check',width:200,align:'center',sortable:'true',
+            	           formatter:function(value,row){
+            							if (!value) return '<img onclick=saveRoleResources(this) src=/easy_ui/js/jquery-easyui/themes/icons/pencil.png />'
+	                		  }">设置权限</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar1" class="easyui-layout"
+		style="height: 65px; margin: 3px;">
+		<div data-options="region:'center',border:false">
+			<a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+				th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+				th:href="|javascript:${but.butFun};|" th:text="${but.name}"
+				th:if="${not #strings.contains(but.id,13)}"></a>
+		</div>
+		<div data-options="region:'north',border:true" style="height: 40px;">
+			<form id="fm" method="post" novalidate>
+				<table cellpadding="5">
+					<tr>
+						<td>菜单名称:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="roledesc" id="roledesc"></input></td>
+						<td><a href="javascript:search()" class="easyui-linkbutton"
+							iconCls="icon-search">查找</a></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+
+	</div>
+	<script th:inline="javascript">
+    var menuName=[[${menuName}]]
+    function saveRoleResources(obj){
+    	var id=$(obj).parent().parent().prev().prev().text();
+    	showMessageDialog('/roles/resource_tree?rid='+id,'分配权限',290,410,null);
+    }
+    function add(){
+		top.framework.openTab('新增角色', '/roles/add?menuName=新增角色&parentMenuName='+menuName);
+	}
+    function edit(){
+		var selecteds = $('#tb1').datagrid('getSelections');
+        if (selecteds == null || selecteds.length == 0) { 
+        	Common.showMsg('修改角色','请选择操作项！');
+        	return;
+        }
+        if (selecteds.length>1) {
+        	Common.showMsg('修改角色','不支持多个操作！');
+        	return; 
+        }
+		top.framework.openTab('修改角色', '/roles/add.do?menuName=修改角色&id='+selecteds[0].id+'&parentMenuName='+menuName);
+	}
+    
+    function remove(){
+		var selecteds = $('#tb1').datagrid('getSelections');
+        if (selecteds == null || selecteds.length == 0) { 
+        	Common.showMsg('提示','请选择操作项！');
+        	return;
+        }
+        $.messager.confirm('提示','确定删除吗?', 
+        function(r){
+            if (r){
+            	var ids = '';
+                $(selecteds).each(function (index) {
+                    ids = ids + selecteds[index].id + ",";
+                });
+                ids = ids.substring(0, ids.length - 1);
+        		$.ajax( {
+    				url : '/roles/delete.do?ids='+ids,
+    				dataType:'text',
+    				type: 'delete',
+    				success : function(result) {
+    					if ("success"==result){
+    						Common.showMsg('提示',"删除成功");
+        				    search();
+    					}else{
+    						Common.showMsg('提示',"删除失败");
+    					}
+    					
+    				}
+    			});
+            }
+        });
+        
+	}
+    function search(){
+    	var names = $("#roledesc").val();
+		$('#tb1').datagrid({
+            url:"/roles/getData.do",
+            queryParams:{
+            	roledesc:names
+            }
+        });
+	}
+    
+    function showMessageDialog(url, title, width, height, shadow) {  
+        var content = '<iframe src="' + url + '" width="100%" height="99%" frameborder="0" scrolling="no"></iframe>';  
+        var boarddiv = '<div id="msgwindow" title="' + title + '"></div>'//style="overflow:hidden;"可以去掉滚动条  
+        $(document.body).append(boarddiv);  
+        var win = $('#msgwindow').dialog({  
+            content: content,  
+            width: width,  
+            height: height,  
+            modal: shadow,  
+            title: title,  
+            onClose: function () {  
+                $(this).dialog('destroy');//后面可以关闭后的事件  
+            }  
+        });  
+        win.dialog('open');  
+    }  
+      function closeWindow(){
+    	  $('#msgwindow').dialog("close");
+      }
+    </script>
+</body>

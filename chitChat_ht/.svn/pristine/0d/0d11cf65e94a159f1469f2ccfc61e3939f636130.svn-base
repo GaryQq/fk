@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<table id="tb1" class="easyui-datagrid" title="" width="100%"
+		height="100%" fit="true" border="0"
+		data-options="rownumbers:true,pagination:true,url:'/userManage/findAgencyDeleteDetailList.do',singleSelect:true,method:'get',toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc'">
+		<thead>
+			<tr>
+				<th data-options="field:'ck',checkbox:true"></th>
+				<th data-options="field:'ID',width:100,align:'center'">ID</th>
+				<th data-options="field:'NICK_NAME',width:100,align:'center'">昵称</th>
+				<th data-options="field:'MODIFY_TIME',width:100,align:'center'">上传时间</th>
+				<th data-options="field:'TYPE',width:100,align:'center',
+            	     formatter:function(value,row){
+                                    if(value == 3){
+                                    	return '头像';
+                                    }else if(value == 4){
+                                    	return '签名';
+                                    }else if(value == 5){
+                                    	return '相册';
+                                    }
+	                		  }">删除类型</th>
+				<th
+					data-options="field:'CONTEXT',width:100,align:'center',
+            	     formatter:function(value,row){
+	                                    return common(value,row);
+	                		  }">删除内容</th>
+				<th data-options="field:'NAME',width:100,align:'center'">操作人</th>
+				<th data-options="field:'CREATE_TIME',width:100,align:'center'">删除时间</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar1" class="easyui-layout"
+		style="height: 65px; margin: 3px;">
+		<div data-options="region:'center',border:false">
+			<a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+				th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+				th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+		</div>
+		<div data-options="region:'north',border:true" style="height: 40px;">
+			<form id="fm" method="post" novalidate>
+				<table cellpadding="5">
+					<tr>
+						<td>注册时间:</td>
+						<td><input class="easyui-datebox" id="startTime"
+							data-options="formatter:myformatter,parser:myparser">到 <input
+							class="easyui-datebox" id="endTime"
+							data-options="formatter:myformatter,parser:myparser"></td>
+
+						<td>用户昵称:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="nickName" id="nickName" /></td>
+
+						<td><a href="javascript:search()" class="easyui-linkbutton"
+							iconCls="icon-search">查找</a></td>
+
+					</tr>
+				</table>
+			</form>
+		</div>
+
+	</div>
+	<script th:inline="javascript">
+    var menuName = [[${menuName}]]
+
+    function search() {
+        var startTime = $("#startTime").datebox('getValue');
+        var endTime = $("#endTime").datebox('getValue');
+        var nickName = $("#nickName").val();
+
+        $('#tb1').datagrid({
+            url: "/userManage/findAgencyDeleteDetailList.do",
+            queryParams: {
+                startTime: startTime,
+                endTime: endTime,
+                nickName: nickName
+            }
+        });
+    }
+    
+    function common(value,row){
+    	var type = row.TYPE;
+    	if(type == 3){
+    		return '<img src="'+value+'" name="image" id="image" height="50" width="50"/>';
+    	} else if (type == 4){
+    		return value;
+    	} else if (type == 5){
+    		return '<img src="'+value+'" name="image" id="image" height="50" width="50"/>';
+    	}
+    }
+
+</script>
+</body>

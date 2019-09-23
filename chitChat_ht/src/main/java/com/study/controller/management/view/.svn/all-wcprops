@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/cp/!svn/ver/152296/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/view
+END
+AuditManagementViewController.java
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/svn/cp/!svn/ver/149784/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/view/AuditManagementViewController.java
+END
+BannerViewController.java
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/svn/cp/!svn/ver/149811/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/view/BannerViewController.java
+END
+GainRatioViewController.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svn/cp/!svn/ver/149811/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/view/GainRatioViewController.java
+END
+FinancialViewController.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svn/cp/!svn/ver/149643/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/view/FinancialViewController.java
+END
+PushJMSViewController.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/svn/cp/!svn/ver/149811/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/view/PushJMSViewController.java
+END
+WhiteUserViewController.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svn/cp/!svn/ver/149811/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/view/WhiteUserViewController.java
+END
+UserManageViewController.java
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/svn/cp/!svn/ver/152296/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/view/UserManageViewController.java
+END
+GiftViewController.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/cp/!svn/ver/149811/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/view/GiftViewController.java
+END

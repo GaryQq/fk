@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<div data-options="region:'center'" border="false">
+		<div id="dlg" style="padding: 10px 20px">
+			<div class="myftitle">基本信息</div>
+			<form id="myfm" method="post" novalidate>
+
+				<table cellpadding="7">
+					<tr>
+						<td>头像:</td>
+						<td><img id="userImg" src=""
+							style="height: 100px; weight: 100px"></td>
+					</tr>
+					<tr>
+						<td>昵称:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="nick_name" id="nick_name" readonly="true" data-options=""></td>
+						<td>ID:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="user_id" id="user_id" readonly="true" data-options=""></td>
+					</tr>
+					<tr>
+						<td>生日:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="birthday" id="birthday" readonly="true" data-options=""></td>
+						<td>性别:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="sex" id="sex" readonly="true" data-options=""></td>
+					</tr>
+					<tr>
+						<td>签名:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="autograph" id="autograph" readonly="true" data-options=""></td>
+					</tr>
+					<tr>
+						<td>学历:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="education" id="education" readonly="true" data-options=""></td>
+						<td>学校:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="school" id="school" readonly="true" data-options=""></td>
+					</tr>
+					<tr>
+						<td>地区:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="region" id="region" readonly="true" data-options=""></td>
+						<td>母语:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="language" id="language" readonly="true" data-options=""></td>
+					</tr>
+					<tr>
+						<td>精通语言:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="masterLanguage" id="masterLanguage" readonly="true"
+							data-options=""></td>
+					</tr>
+					<tr>
+						<td>代理:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="invitation_name" id="invitation_name" readonly="true"
+							data-options=""></td>
+						<td>手机号:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="mobile" id="mobile" readonly="true" data-options=""></td>
+					</tr>
+					<tr>
+						<td>微信绑定:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="wx_bound" id="wx_bound" readonly="true" data-options=""></td>
+						<td>qq绑定:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="qq_bound" id="qq_bound" readonly="true" data-options=""></td>
+					</tr>
+					<tr>
+						<td>真实姓名:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="true_name" id="true_name" readonly="true" data-options=""></td>
+						<td>提现账号:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="account_new" id="account_new" readonly="true"
+							data-options=""></td>
+					</tr>
+					<tr>
+						<td>视频价格:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="video_price" id="video_price" readonly="true"
+							data-options=""></td>
+						<td>音频价格:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="voice_price" id="voice_price" readonly="true"
+							data-options=""></td>
+					</tr>
+					<tr>
+						<td>接通率:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="revice_rate" id="revice_rate" readonly="true"
+							data-options=""></td>
+						<td>评分:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="average_score" id="average_score" readonly="true"
+							data-options=""></td>
+					</tr>
+					<tr>
+						<td>个人介绍:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="info" id="info" readonly="true" data-options=""></td>
+					</tr>
+					<tr>
+						<td>相册:</td>
+						<td><img id="imgs0" src="" style="height: 50px; weight: 50px" />
+							<img id="imgs1" src="" style="height: 50px; weight: 50px" /> <img
+							id="imgs2" src="" style="height: 50px; weight: 50px" /></br> <img
+							id="imgs3" src="" style="height: 50px; weight: 50px" /> <img
+							id="imgs4" src="" style="height: 50px; weight: 50px" /> <img
+							id="imgs5" src="" style="height: 50px; weight: 50px" /></br> <img
+							id="imgs6" src="" style="height: 50px; weight: 50px" /> <img
+							id="imgs7" src="" style="height: 50px; weight: 50px" /> <img
+							id="imgs8" src="" style="height: 50px; weight: 50px" /></br></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+	<div data-options="region:'south'" style="height: 40px;" border="false">
+		<hr>
+		<div style="text-align: center;">
+			<a href="javascript:void(0)" class="easyui-linkbutton"
+				th:onclick="|top.framework.closeTab('${menu.menuName}')|">关闭</a>
+		</div>
+	</div>
+	<script th:inline="javascript">
+
+	var parentMenuName=[[${menu.parentMenuName}]]
+	var menuName=[[${menu.menuName}]]
+	
+	$(function(){
+		var entity=[[${entity}]];
+		console.info(entity);
+		var user_name = entity.user_name;
+		var userImg = entity.userImg;//头像
+		$('#userImg').attr("src", userImg);
+		
+		var nick_name = entity.nick_name;//昵称
+		$('#nick_name').val(nick_name);
+		
+		var user_id = entity.user_id;
+		$('#user_id').val(user_id);
+		
+		var birthday = entity.birthday;//生日
+		$('#birthday').val(birthday);
+		
+		var sex = entity.sex;//性别
+		if(sex == 0){
+			$('#sex').val("保密");
+		}else if(sex == 1){
+			$('#sex').val("男");
+		}else if(sex == 2){
+			$('#sex').val("女");
+		}
+		
+		var autograph = entity.autograph;//签名
+		$('#autograph').val(autograph);
+
+		var education = entity.education;//学历
+		$('#education').val(education);
+		
+		var school = entity.school;//学校
+		$('#school').val(school);
+		
+		var region = entity.region;//地区
+		$('#region').val(region);	
+		
+		var language = entity.language;//母语
+		$('#language').val(language);	
+		
+		var masterLanguage = entity.masterLanguage;//精通语言
+		$('#masterLanguage').val(masterLanguage);	
+		
+		var invitation_name = entity.invitation_name;//代理
+		$('#invitation_name').val(invitation_name);
+		
+		var mobile = entity.mobile;//手机号
+		$('#mobile').val(mobile);
+		
+		var wx_bound = entity.wx_bound;//微信绑定
+		$('#wx_bound').val(wx_bound);
+		
+		var qq_bound = entity.qq_bound;//QQ绑定
+		$('#qq_bound').val(qq_bound);
+		
+		var true_name = entity.true_name;//真实姓名
+		$('#true_name').val(true_name);
+		
+		var account_new = entity.account_new;//提现账号
+		$('#account_new').val(account_new);
+		
+		var video_price = entity.video_price;//视频价格
+		$('#video_price').val(video_price);
+		
+		var voice_price = entity.voice_price;//音频价格
+		$('#voice_price').val(voice_price);
+		
+		var revice_rate = entity.revice_rate;//接通率
+		$('#revice_rate').val(revice_rate);
+		
+		var average_score = entity.average_score;//评分
+		$('#average_score').val(average_score);
+		
+		var info = entity.info;//个人介绍
+		$('#info').val(info);
+		
+		var img_arr = entity.img_list;
+		 if(img_arr.length > 0){
+			for(var i = 0; i < img_arr.length; i++){
+				var img = img_arr[i].image;
+				$("#imgs"+i).attr("src", img);
+			}
+		} 
+	});
+	
+	
+	  
+	</script>
+</body>

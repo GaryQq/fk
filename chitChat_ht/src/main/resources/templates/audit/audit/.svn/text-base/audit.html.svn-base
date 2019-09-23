@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<table id="tb1" class="easyui-datagrid" title="" width="100%"
+		height="100%" fit="true" border="0"
+		data-options="rownumbers:true,pagination:true,url:'/auditManagement/getAuditData.do?del_status=0',singleSelect:false,method:'get',toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc'">
+		<thead>
+			<tr>
+				<th data-options="field:'ck',checkbox:true"></th>
+				<th data-options="field:'audit_id',hidden:'true'">代理信息ID</th>
+				<th data-options="field:'user_name',hidden:'true'">user_name</th>
+				<th data-options="field:'nick_name',width:200,align:'center'">昵称</th>
+				<th data-options="field:'region',width:200,align:'center'">代理地区</th>
+				<th data-options="field:'language',width:200,align:'center'">母语</th>
+				<th data-options="field:'masterLanguage',width:200,align:'center'">精通语言</th>
+				<th data-options="field:'create_date',width:200,align:'center'">注册时间</th>
+				<th data-options="field:'last_date',width:200,align:'center'">最后登录时间</th>
+				<th data-options="field:'members',width:200,align:'center'">成员数</th>
+				<th data-options="field:'video_odds',width:200,align:'center'">视频接通率</th>
+				<th data-options="field:'voice_odds',width:200,align:'center'">语音接通率</th>
+				<th data-options="field:'average_score',width:200,align:'center'">评分</th>
+				<th data-options="field:'report',width:200,align:'center'">举报</th>
+				<th
+					data-options="field:'user_level',width:200,align:'center',
+					formatter:function(value,row){
+            	     	if(value == 1){
+            	     		return '金牌';
+            	     	}else if(value == 2){
+            	     		return '银牌';
+            	     	}else if(value == 3){
+            	     		return '铜牌';
+            	     	}
+            	     	return value;
+               		 }">评级</th>
+				<th
+					data-options="field:'del_status',width:200,align:'center',
+					formatter:function(value,row){
+            	     	if(value == 0){
+            	     		return '已启用';
+            	     	}else if(value == 1){
+            	     		return '已停用';
+            	     	}
+            	     	return value;
+               		 }">代理状态</th>
+				<th data-options="field:'audit_time',width:200,align:'center'">操作时间</th>
+				<th data-options="field:'audit_name',width:200,align:'center'">操作人</th>
+
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar1" class="easyui-layout"
+		style="height: 125px; margin: 3px;">
+		<div data-options="region:'center',border:false">
+			<a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+				th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+				th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+		</div>
+		<div data-options="region:'north',border:true" style="height: 100px;">
+			<form id="fm" method="post" novalidate>
+				<table cellpadding="5">
+					<tr>
+						<td>用户昵称:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="nick_name" id="nick_name"></input></td>
+						<td>代理状态:<select id="del_status" class="easyui-combobox"
+							style="width: 100px" name="del_status">
+								<option value="">全部</option>
+								<option value="0">已启用</option>
+								<option value="1">已停用</option>
+						</select></td>
+						<td>母语: <select id="language" class="easyui-combobox"
+							style="width: 100px" name="language">
+								<option value="">全部</option>
+								<option value="汉语">汉语</option>
+								<option value="英语">英语</option>
+								<option value="俄语">俄语</option>
+								<option value="法语">法语</option>
+								<option value="德语">德语</option>
+								<option value="日语">日语</option>
+								<option value="西班牙语">西班牙语</option>
+								<option value="阿拉伯语">阿拉伯语</option>
+								<option value="韩语">韩语</option>
+								<option value="乌克兰语">乌克兰语</option>
+								<option value="其他">其他</option>
+						</select></td>
+
+						<td>排序:</td>
+						<td><select id="sort_status" class="easyui-combobox"
+							name="sort_status">
+								<option value="">成员数倒叙</option>
+								<option value="1">视频接通率倒叙</option>
+								<option value="2">视频接通率正叙</option>
+								<option value="3">音频接通率倒叙</option>
+								<option value="4">音频接通率正叙</option>
+								<option value="5">平分倒叙</option>
+								<option value="6">平分正序</option>
+								<option value="7">注册时间倒叙</option>
+						</select></td>
+						<td>评级:</td>
+						<td><select id="level" class="easyui-combobox" name="level">
+								<option value="">全部</option>
+								<option value="1">金牌</option>
+								<option value="2">银牌</option>
+								<option value="3">铜牌</option>
+						</select></td>
+						<td>用户范围:</td>
+						<td><select id="user_status" class="easyui-combobox"
+							name="user_status">
+								<option value="">全部</option>
+								<option value="0">去除白名单用户</option>
+						</select></td>
+					</tr>
+					<tr>
+						<td>申请时间:</td>
+						<td><input class="easyui-datebox" id="start_time"
+							data-options="formatter:myformatter,parser:myparser"></td>
+						<td>到 <input class="easyui-datebox" id="end_time"
+							data-options="formatter:myformatter,parser:myparser"></td>
+						<td><a href="javascript:search()" class="easyui-linkbutton"
+							iconCls="icon-search">查找</a></td>
+
+					</tr>
+				</table>
+			</form>
+		</div>
+
+		<div id="win_phone" class="easyui-window" title="个人联系方式"
+			style="width: 300px; height: 200px"
+			data-options="iconCls:'icon-search',modal:true">
+			<table cellpadding="5">
+				<tr style="height: 30px"></tr>
+				<tr>
+					<td>手机号:</td>
+					<td><input class="easyui-validatebox" type="text"
+						readonly="true" name="user_phone" id="user_phone"></input></td>
+				</tr>
+				<tr>
+					<td>邮箱:</td>
+					<td><input class="easyui-validatebox" type="text"
+						readonly="true" name="email" id="email"></input></td>
+				</tr>
+
+				<tr style="height: 30px"></tr>
+				<tr>
+					<td></td>
+					<td>
+						<div style="margin: auto; text-align: center; top: 50px; left: 0">
+							<a href="javascript:void(0)" class="easyui-linkbutton"
+								onclick="$('#win_phone').window('close')">取消</a>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="win_userLevel" class="easyui-window" title="修改评级"
+			style="width: 300px; height: 200px"
+			data-options="iconCls:'icon-search',modal:true">
+			<table cellpadding="5">
+				<tr style="height: 10px"></tr>
+				<input class="easyui-validatebox" type="hidden" id="audit_id">
+				<input class="easyui-validatebox" type="hidden" id="user_name">
+				<tr>
+					<td>上次修改人:</td>
+					<td><input class="easyui-validatebox" type="text"
+						readonly="true" name="operator" id="operator"></input></td>
+				</tr>
+				<tr>
+					<td>上次修改时间:</td>
+					<td><input class="easyui-validatebox" type="text"
+						readonly="true" name="create_time" id="create_time"></input></td>
+				</tr>
+				<tr>
+					<td>修改评级:</td>
+					<td><select id="userLevel" class="easyui-combobox"
+						style="width: 150px;" name="userLevel">
+							<option value="">全部</option>
+							<option value="1">金牌</option>
+							<option value="2">银牌</option>
+							<option value="3">铜牌</option>
+					</select></td>
+				</tr>
+				<tr style="height: 10px"></tr>
+				<tr>
+					<td></td>
+					<td><a href="javascript:editUserLevel()"
+						class="easyui-linkbutton">保存</a><a href="javascript:void(0)"
+						class="easyui-linkbutton"
+						onclick="$('#win_userLevel').window('close')">取消</a></td>
+				</tr>
+			</table>
+		</div>
+
+	</div>
+	<script th:inline="javascript">
+		var menuName=[[${menuName}]]
+		
+		$(function() {
+			$('#win_phone').window('close');
+			$('#win_userLevel').window('close');
+		})	
+		
+		function add(){
+			top.framework.openTab('新增代理', '/auditView/addAudit.do?menuName=新增代理&parentMenuName='+menuName);
+		}
+		
+		function edit(){
+			var selecteds = $('#tb1').datagrid('getSelections');
+	        if (selecteds == null || selecteds.length == 0) { 
+	        	Common.showMsg('修改按钮','请选择操作项！');
+	        	return;
+	        }
+	        if (selecteds.length>1) {
+	        	Common.showMsg('修改按钮','不支持多个操作！');
+	        	return; 
+	        }
+			top.framework.openTab('修改代理信息', '/auditView/editAudit.do?menuName=修改代理信息&parentMenuName='+menuName+'&audit_id='+selecteds[0].audit_id);
+		}
+		
+		function editUserLevel(){
+			var audit_id = $('#audit_id').val();
+			var user_name = $('#user_name').val();
+			var userLevel = $('#userLevel').combobox('getValue');
+			$('#win_userLevel').window('close');
+			$.ajax({
+				url : "/auditManagement/editAudit.do",
+				type : "POST",
+				data : {
+					"user_level" : userLevel,
+					"audit_id" : audit_id,
+					"user_name" : user_name
+				},
+				dataType : "text",
+				success : function(data) {
+					if ("success" == data){
+						Common.showMsg('提示',"修改成功");
+    				    search();
+					} else {
+	                	Common.showMsg('提示',"添加失败");
+	                }	
+				}
+			});
+		}
+		
+		function search() {
+			var nick_name = $("#nick_name").val();
+			var start_time = $('#start_time').datebox('getValue');
+			var end_time = $('#end_time').datebox('getValue');
+			var language = $('#language').combobox('getValue');
+			var sort_status = $('#sort_status').combobox('getValue');
+			var level = $('#level').combobox('getValue');
+			var user_status = $('#user_status').combobox('getValue');
+			var del_status = $('#del_status').combobox('getValue');
+			$('#tb1').datagrid({
+				url : "/auditManagement/getAuditData.do",
+				queryParams : {
+					nick_name : nick_name,
+					start_time : start_time,
+					end_time : end_time,
+					status : status,
+					sort_status : sort_status,
+					language : language,
+					level : level,
+					user_status : user_status,
+					del_status : del_status
+				}
+			});
+		}
+		
+		function searchPhone(){
+			searchUser(1);
+		}
+		
+		function editLevel(){
+			searchUser(2);
+		}
+		
+		function searchEntity(){
+			searchUser(3);
+		}
+		 
+		function searchUser(type){
+			var selecteds = $('#tb1').datagrid('getSelections');
+	        if (selecteds == null || selecteds.length == 0) { 
+	        	Common.showMsg('查看按钮','请选择操作项！');
+	        	return;
+	        }
+	        if (selecteds.length>1) {
+	        	Common.showMsg('查看按钮','不支持多个操作！');
+	        	return; 
+	        }
+	        var user_name = "";
+	        var audit_id = "";
+	        $(selecteds).each(function (index) {
+    	 		user_name = selecteds[index].user_name;
+    	 		audit_id = selecteds[index].audit_id;
+            });
+	        $('#audit_id').val(audit_id);
+	        $('#user_name').val(user_name);
+	        if(type == 3){
+	        	top.framework.openTab('查询代理信息', '/auditView/searchAudit.do?menuName=查询代理信息&parentMenuName='+menuName+'&user_name='+user_name);
+	        }else { 
+	        	$.ajax({
+					url : "/auditManagement/searchEntity.do",
+					type : "POST",
+					data : {
+						"user_name" : user_name
+					},
+					dataType : "text",
+					success : function(data) {
+						var json = JSON.parse(data);
+						var code = json.code;
+						if("success" == code){
+							var obj = json.data;
+							var iPhone = obj.iPhone;
+							var eMail = obj.eMail;
+							var userLevel = obj.userLevel;
+							var operator = obj.operator;
+							var create_time = obj.create_time;
+							if(type == 1){
+	    						$('#win_phone').window('open');
+	    						$('#user_phone').val(iPhone);
+	    						$('#email').val(eMail);
+	    					} else if(type == 2){
+	    						$('#win_userLevel').window('open');
+	    						$('#operator').val(operator);
+	    						$('#create_time').val(create_time);
+	    						$("#userLevel").val(userLevel);
+	    					}
+						} else {
+							Common.showMsg('提示',"用户信息查询失败");
+						}
+					}
+				});
+	        }
+		}
+		
+		function on(){
+			enable(0);
+		}
+		
+		function off(){
+			enable(1);
+		}
+		
+		function enable(types){
+			var selecteds = $('#tb1').datagrid('getSelections');
+	        if (selecteds == null || selecteds.length == 0) { 
+	        	Common.showMsg('请选择操作项！');
+	        	return;
+	        }
+	        var str = "";
+	        if(types == 0){
+	        	str = "确定启用吗?";
+	        }else if(types == 1){
+	        	str = "确定停用吗?";
+	        }
+	        $.messager.confirm('提示',str, 
+	    	        function(r){
+	    	            if (r){
+	    	            	var ids = '';
+	    	                $(selecteds).each(function (index) {
+	    	                    ids = ids + selecteds[index].audit_id + ",";
+	    	                });
+	    	                ids = ids.substring(0, ids.length - 1);
+	    	        		$.ajax( {
+	    	    				url : '/auditManagement/enable.do?ids='+ids+'&del_status='+types,
+	    	    				dataType:'text',
+	    	    				type: 'get',
+	    	    				success : function(result) {
+	    	    					if ("success"==result){
+	    	    						Common.showMsg('提示',"修改成功");
+	    	        				    search();
+	    	    					}else{
+	    	    						Common.showMsg('提示',"修改失败");
+	    	    					}
+	    	    					
+	    	    				}
+	    	    			});
+	    	            }
+	    	        });
+		} 
+		 
+	</script>
+</body>

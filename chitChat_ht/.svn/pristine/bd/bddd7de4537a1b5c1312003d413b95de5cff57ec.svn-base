@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.mapper.tool.ToolMapper">
+	<select id="getSourceInfoList" parameterType="java.util.Map" resultType="java.util.Map">
+		select yfs.source, yfs.source_type, yfs.source_status, yu.nick_name from yt_financial_source yfs
+		left join yt_user yu on yfs.user_name = yu.user_name
+		<where>
+			<if test="source != null and source != '' "> and yfs.source = #{source}
+			</if>
+			<if test="source_type != null and source_type != '' "> and yfs.source_type = #{source_type}
+			</if>
+			<if test="source_status != null and source_status != '' "> and yfs.source_status = #{source_status}
+			</if>
+			<if test="nick_name != null and nick_name != '' "> and yu.nick_name = #{nick_name}
+			</if>
+		</where>
+		order by yfs.create_date desc
+	</select>
+
+	<insert id="insertSourceEntity" parameterType="java.util.Map">
+		insert into yt_financial_source
+		(
+		source,source_type,source_status,create_date
+		<if test="user_name != null and user_name != ''">
+			,user_name
+		</if>
+		) values (
+		#{source},#{source_type},#{source_status},sysdate
+		<if test="user_name != null and user_name != ''">
+			,#{user_name}
+		</if>
+		)
+	</insert>
+
+</mapper>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+<table id="tb1" class="easyui-datagrid" title="" width="100%"
+       height="100%" fit="true" border="0"
+       data-options="rownumbers:true,pagination:true,url:'/userManage/getTeacherList.do?sortNum=21',singleSelect:true,method:'get',toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc'">
+    <thead>
+    <tr>
+        <th data-options="field:'ck',checkbox:true"></th>
+        <th data-options="field:'ID',width:50,align:'center',hidden:true">id</th>
+        <th data-options="field:'NICK_NAME',width:100,align:'center'">昵称</th>
+        <th data-options="field:'SEX',width:50,align:'center',sortable:'true',
+            	     formatter:function(value,row){
+            							if (value == 1) return '男';
+            							if (value == 2) return '女';
+            							if (value == 0) return '保密';
+	                		  }
+            	">性别
+        </th>
+        <th data-options="field:'REGION',width:100,align:'center'">国家/地区</th>
+        <th data-options="field:'LANGUAGE',width:100,align:'center'">母语</th>
+        <th data-options="field:'MASTERLANGUAGE',width:100,align:'center'">精通语言</th>
+        <th data-options="field:'AGENTNAME',width:100,align:'center',sortable:'true',
+            	     formatter:function(value,row){
+            							if (value != null) return value;
+            							if (value == null) return '--';
+	                		  }
+            	">代理
+        </th>
+        <th data-options="field:'DATE_CREATED',width:100,align:'center'">注册时间</th>
+        <!--<th data-options="field:'MOBILE',width:100,align:'center'">手机号</th>-->
+
+        <th data-options="field:'MOBILE',width:100,align:'center',sortable:'false',
+            	     formatter:function(value,row){
+            	                     if (value == null) return '无';
+            							else return common(value,row,this);
+	                		  }
+            	">手机号
+        </th>
+
+        <th data-options="field:'CREATE_TIME',width:100,align:'center'">申请时间</th>
+        <th data-options="field:'AUDIT_TIME',width:50,align:'center',sortable:'true',
+            	     formatter:function(value,row){
+            							if (value != null) return value;
+            							if (value == null) return '--';
+	                		  }
+            	">审核时间
+        </th>
+        <th data-options="field:'STATUS',width:100,align:'center',sortable:'true',
+            	     formatter:function(value,row){
+            							if (value == 2) return '已通过';
+            							if (value == -1) return '已拒绝';
+            							else  return '待审核';
+	                		  }
+            	">审核状态
+        </th>
+        <th data-options="field:'AUDIT_NAME',width:100,align:'center'">审核人</th>
+        <th data-options="field:'STATUS1',width:100,align:'center',sortable:'false',
+            	     formatter:function(value,row){
+            							return common1(value,row);
+	                		  }
+            	">操作
+        </th>
+    </tr>
+    </thead>
+</table>
+<div id="toolbar1" class="easyui-layout"
+     style="height: 65px; margin: 3px;">
+    <div data-options="region:'center',border:false">
+        <a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+           th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+           th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+    </div>
+    <div data-options="region:'north',border:true" style="height: 40px;">
+        <form id="fm" method="post" novalidate>
+            <table cellpadding="5">
+                <tr>
+                    <td>申请时间:</td>
+                    <td><input class="easyui-datebox" id="startTime"
+                               data-options="formatter:myformatter,parser:myparser">到 <input
+                            class="easyui-datebox" id="endTime"
+                            data-options="formatter:myformatter,parser:myparser"></td>
+
+                    <td>昵称:</td>
+                    <td><input class="easyui-validatebox textbox" type="text"
+                               name="nickName" id="nickName"/></td>
+
+                    <td>审核状态:</td>
+                    <td>
+                        <select id="status" class="easyui-combobox" name="status">
+                            <option value="">全部</option>
+                            <option value="-1">已拒绝</option>
+                            <option value="2">已通过</option>
+                            <option value="1">待审核</option>
+                        </select>
+                    </td>
+
+                    <td><a href="javascript:search()" class="easyui-linkbutton"
+                           iconCls="icon-search">查找</a></td>
+
+                </tr>
+            </table>
+        </form>
+    </div>
+
+</div>
+<script th:inline="javascript">
+    var menuName = [[${menuName}]]
+
+    function search() {
+        var startTime = $("#startTime").datebox('getValue');
+        var endTime = $("#endTime").datebox('getValue');
+        var nickName = $("#nickName").val();
+        var status = $('#status').combobox('getValue');
+
+        $('#tb1').datagrid({
+            url: "/userManage/getTeacherList.do",
+            queryParams: {
+                startTime: startTime,
+                endTime: endTime,
+                nickName: nickName,
+                status: status,
+                sortNum : "21"
+            }
+        });
+    }
+
+
+    function common(value,row,event) {
+        return '<a href="javascript:queryMobile(\''+value+'\','+row.ID+')">查看</a>';
+    }
+
+    function queryMobile(mobile,id){
+        alert(mobile);
+    }
+
+    function common1(value,row) {
+        var id = row.ID;
+        if(value==1){
+            return '<a href="javascript:verify(2,'+id+',\''+row.USER_NAME+'\')">通过</a>' +
+                    '&nbsp;<a href="javascript:verify(-1,'+id+',\''+row.USER_NAME+'\')">拒绝</a>';
+        }else if(value==2){
+            return '--';
+        }else if(value==-1){
+            return '<a href="javascript:verify(0,'+id+')">查看理由</a>';
+        }
+    }
+
+    //审核
+    function verify(status,id,user_name){
+        if(0 == status){
+            $.ajax({
+                url: "/userManage/getReason.do",
+                type: "POST",
+                data: {
+                    "id": id
+                },
+                dataType: "text",
+                success: function (data) {
+                    alert(data);
+                }
+            });
+            return;
+        }
+
+        var reason = "";
+        if(-1 == status){
+            reason = prompt("请输入拒绝理由");
+            if(reason == null){
+                return;
+            }
+        }
+
+        if(2 == status){
+            if(!confirm("确定审核通过吗?")){
+                return;
+            }
+        }
+
+        $.ajax({
+            url: "/userManage/teacherVerify.do",
+            type: "POST",
+            data: {
+                "status": status,
+                "id": id,
+                "reason" : reason,
+                "userName" : user_name
+            },
+            dataType: "text",
+            success: function (data) {
+                if ("success" == data) {
+                    Common.showMsg('提示', "修改成功");
+                    search();
+                } else {
+                    Common.showMsg('提示', "修改失败");
+                }
+            }
+        });
+    }
+
+    function entitySearch(){
+        var selecteds = $('#tb1').datagrid('getSelections');
+        if (selecteds == null || selecteds.length == 0) {
+            Common.showMsg('查看详情按钮','请选择操作项！');
+            return;
+        }
+        if (selecteds.length>1) {
+            Common.showMsg('查看详情按钮','不支持多个操作！');
+            return;
+        }
+        top.framework.openTab('查看详情', '/userView/getTeacherDetail.do?menuName=查看userManage&parentMenuName='+menuName+'&id='+selecteds[0].ID);
+
+    }
+</script>
+</body>

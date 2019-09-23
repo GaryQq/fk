@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<div data-options="region:'center'" border="false">
+		<div id="dlg" style="padding: 10px 20px">
+			<div class="myftitle">基本信息</div>
+			<form id="myfm" method="post" novalidate>
+
+				<table cellpadding="7">
+					<tr>
+						<td>标题:</td>
+						<td><input class="easyui-textbox" type="text"
+							name="look_title" id="look_title" readonly="true"
+							data-options=""></td>
+					</tr>
+					<tr>
+						<td>推送内容:</td>
+						<td><input class="easyui-validatebox" type="text"
+							name="look_content" id="look_content" readonly="true"
+							data-options="multiline:true"></td>
+					</tr>
+					<tr>
+						<td>跳转类型:</td>
+						<td><input class="easyui-validatebox" type="text"
+							name="look_jms_type" id="look_jms_type" readonly="true"
+							data-options=""></td>
+					</tr>
+					<tr>
+						<td>推送APP:</td>
+						<td><input class="easyui-validatebox" type="text"
+							name="look_app_type" id="look_app_type" readonly="true"
+							data-options=""></td>
+					</tr>
+					<tr>
+						<td>推送用户范围:</td>
+						<td><input class="easyui-validatebox" type="text"
+							name="look_user_type" id="look_user_type" readonly="true"
+							data-options=""></td>
+					</tr>
+					<tr>
+						<td>推送用户性别:</td>
+						<td><input class="easyui-validatebox" type="text"
+							name="look_sex_type" id="look_sex_type" readonly="true"
+							data-options=""></td>
+					</tr>
+					<tr>
+						<td>推送用户:</td>
+						<td><input class="easyui-validatebox" type="text"
+							name="look_type" id="look_type" readonly="true"
+							data-options=""></td>
+					</tr>
+					<tr>
+						<td>推送时间:</td>
+						<td><input class="easyui-validatebox" type="text"
+							name="look_jms_date" id="look_jms_date" readonly="true"
+							data-options=""></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+	<div data-options="region:'south'" style="height: 40px;" border="false">
+		<hr>
+		<div style="text-align: center;">
+			<a href="javascript:void(0)" class="easyui-linkbutton"
+				th:onclick="|top.framework.closeTab('${menu.menuName}')|">关闭</a>
+		</div>
+	</div>
+	<script th:inline="javascript">
+	 
+	var parentMenuName=[[${menu.parentMenuName}]]
+	var menuName=[[${menu.menuName}]]
+	$(function(){
+		var entity=[[${entity}]];
+		var title = entity.TITLE;
+		var content = entity.CONTENT;
+		var jms_type = entity.JMS_TYPE;
+		var jms_type_url = entity.JMS_TYPE_URL;
+		var app_type = entity.APP_TYPE;
+		var user_type = entity.USER_TYPE;
+		var sex_type = entity.SEX_TYPE;
+		var type = entity.TYPE;
+		var jms_date = entity.JMS_DATE;
+		var user_type_name = entity.USER_TYPE_NAME;
+		
+		$('#look_title').val(title);
+		$('#look_content').val(content);
+		if (jms_type == 1) {
+			$('#look_jms_type').val('唤醒当前应用');
+		} else if (jms_type == 2) {
+			$('#look_jms_type').val('直播间:' + jms_type_url);
+		} else if (jms_type == 3) {
+			$('#look_jms_type').val('跳转H5地址:' + jms_type_url);
+		} else if (jms_type == 4) {
+			$('#look_jms_type').val('跳转个人主页:' + jms_type_url);
+		}
+		
+		app_type = app_type.replace('1', 'ios疯聊').replace('2', '安卓疯聊');
+		$('#look_app_type').val(app_type);
+		
+		if (user_type == 1) {
+			$('#look_user_type').val('全部用户');
+		} else if (user_type == 2) {
+			$('#look_user_type').val('全部老师');
+		} else if (user_type == 3) {
+			$('#look_user_type').val('非老师用户');
+		} else if (user_type == 6) {
+			$('#look_user_type').val('指定用户:' + user_type_name);
+		}
+		
+		if (sex_type == 1) {
+			$('#look_sex_type').val('男');
+		} else if (sex_type == 2) {
+			$('#look_sex_type').val('女');
+		} else if (sex_type == 3) {
+			$('#look_sex_type').val('全部');
+		}
+		
+		if (type == 1) {
+			$('#look_type').val('三天内未登录的');
+		} else if (type == 2) {
+			$('#look_type').val('七天内未登录的');
+		} else if (type == 3) {
+			$('#look_type').val('全部');
+		}
+
+		$('#look_jms_date').val(jms_date);
+	})
+	  
+	</script>
+</body>

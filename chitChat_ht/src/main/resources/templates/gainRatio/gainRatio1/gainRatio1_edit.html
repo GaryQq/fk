@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body class="easyui-layout">
+<div data-options="region:'center'" border="false">
+    <div id="dlg" style="padding: 10px 20px">
+        <div class="myftitle">基本信息</div>
+        <form id="myfm" method="post" novalidate>
+            <table cellpadding="7">
+                <input class="easyui-validatebox" type="hidden" id="gain_ratio_id">
+
+                <tr>
+                    <td>1v1 S:</td>
+                    <td><input class="easyui-validatebox" type="text"
+                               name="levels" id="levels"
+                               data-options="required:true,validType:'length[1,100]'"/></td>
+                </tr>
+
+                <tr>
+                    <td>1v1 A:</td>
+                    <td><input class="easyui-validatebox" type="text"
+                               name="levela" id="levela"
+                               data-options="required:true,validType:'length[1,100]'"/></td>
+                </tr>
+
+                <tr>
+                    <td>1v1 B:</td>
+                    <td>
+                        <input class="easyui-validatebox" type="text"
+                               name="levelb" id="levelb"
+                               data-options="required:true,validType:'length[1,100]'"/>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>1v1 C:</td>
+                    <td>
+                        <input class="easyui-validatebox" type="text"
+                               name="levelc" id="levelc"
+                               data-options="required:true,validType:'length[1,500]'"/>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>1v1 普通用户:</td>
+                    <td>
+                        <input class="easyui-validatebox" type="text"
+                               name="common" id="common"
+                               data-options="required:true,validType:'length[1,500]'"/>
+                    </td>
+                </tr>
+
+            </table>
+        </form>
+    </div>
+</div>
+<div data-options="region:'south'" style="height: 40px;" border="false">
+    <hr>
+    <div style="text-align: center;">
+        <a href="javascript:void(0)" class="easyui-linkbutton"
+           onclick="submitForm()">保存</a> <a href="javascript:void(0)"
+                                            class="easyui-linkbutton"
+                                            th:onclick="|top.framework.closeTab('${menu.menuName}')|">关闭</a>
+    </div>
+</div>
+<script th:inline="javascript">
+    $(function () {
+        var entity = [[${entity}]];
+        var gain_ratio_id = entity.ID;
+        $('#gain_ratio_id').val(gain_ratio_id);
+
+        var levels = entity.LEVELS;
+        $('#levels').val(levels);
+
+        var levela = entity.LEVELA;
+        $('#levela').val(levela);
+
+        var levelb = entity.LEVELB;
+        $('#levelb').val(levelb);
+
+        var levelc = entity.LEVELC;
+        $('#levelc').val(levelc);
+
+        var common = entity.COMMON;
+        $('#common').val(common);
+    })
+
+    function myformatter(date) {
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        var d = date.getDate();
+        return y + '-' + (m < 10 ? ('0' + m) : m) + '-'
+                + (d < 10 ? ('0' + d) : d);
+    }
+    function myparser(s) {
+        if (!s)
+            return new Date();
+        var ss = (s.split('-'));
+        var y = parseInt(ss[0], 10);
+        var m = parseInt(ss[1], 10);
+        var d = parseInt(ss[2], 10);
+        if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
+            return new Date(y, m - 1, d);
+        } else {
+            return new Date();
+        }
+    }
+
+    var parentMenuName = [[${menu.parentMenuName}]]
+    var menuName = [[${menu.menuName}]]
+    function submitForm() {
+        var gain_ratio_id = $('#gain_ratio_id').val();
+        var levels = $('#levels').val();
+        var levela = $('#levela').val();
+        var levelb = $("#levelb").val();
+        var levelc = $("#levelc").val();
+        var common = $("#common").val();
+
+        if (levels == "") {
+            alert("s分成不能为空");
+            return;
+        } else if (levela == "") {
+            alert("a分成不能为空");
+            return;
+        } else if (levelb == "") {
+            alert("b分成不能为空");
+            return;
+        } else if (levelc == "") {
+            alert("c分成不能为空");
+            return;
+        } else if (common == "") {
+            alert("普通用户分成不能为空");
+            return;
+        }
+
+        $.ajax({
+            url: "/gainRatio/edit.do",
+            type: "POST",
+            data: {
+                "gain_ratio_id": gain_ratio_id,
+                "levels": levels,
+                "levela": levela,
+                "levelb": levelb,
+                "levelc": levelc,
+                "common": common
+            },
+            dataType: "text",
+            success: function (data) {
+                if ("success" == data) {
+                    Common.showMsg('提示', "修改成功");
+                    top.framework.closeAndReloadTab(menuName, parentMenuName);
+                } else {
+                    Common.showMsg('提示', "添加失败");
+                }
+            }
+        });
+    }
+</script>
+</body>

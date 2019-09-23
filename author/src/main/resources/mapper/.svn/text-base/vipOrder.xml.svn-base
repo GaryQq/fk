@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fengkuang.author.dao.VipOrderDao">
+    <resultMap id="vipOrder" type="com.fengkuang.author.bean.VipOrder">
+        <id column="id" property="id" jdbcType="NUMERIC"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="pay_order_id" property="payOrderId" jdbcType="VARCHAR"/>
+        <result column="vip_type" property="vipType" jdbcType="INTEGER"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="post_id" property="postId" jdbcType="VARCHAR"/>
+        <result column="amount" property="amount" jdbcType="NUMERIC"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+        <result column="pay_type" property="payType" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="columnsAll">id, user_name, create_time, pay_order_id, vip_type, remark, post_id, amount, status, modify_time, pay_type</sql>
+
+    <select id="getByParams" resultMap="vipOrder" parameterType="java.util.Map">
+        select
+        <include refid="columnsAll"/>
+        from INFO_VIP_ORDER
+        <where>
+            1 = 1
+            <if test="null != postId">
+                and post_id = #{postId}
+            </if>
+            <if test="null != status">
+                and status = #{status}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+</mapper>

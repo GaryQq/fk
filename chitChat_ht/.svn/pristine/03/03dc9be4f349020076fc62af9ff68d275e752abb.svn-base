@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.mapper.management.OpinionFeedbackMapper">
+ 	
+ 	<select id="findFeedbackData" parameterType="java.util.Map"
+		resultType="java.util.Map">
+ 		select
+			yu.nick_name,
+			to_char (ylf.create_time, 'yyyy-mm-dd hh24:mi:ss') create_time,
+			ylf. content,
+			ylf.imgsyrl,
+			ylf.contact,
+			yu.register_source
+		from
+			yt_user yu
+		inner join yt_live_feedback ylf on yu.user_name = ylf.user_name
+		where
+			yu. source in ('150', '151')
+		and ylf.create_time <![CDATA[ >= to_date(#{start_time},'yyyy-mm-dd') ]]>
+		and ylf.create_time <![CDATA[ <= to_date(#{end_time},'yyyy-mm-dd') ]]>
+		<if test="nick_name != null and nick_name != '' ">
+			and yu.nick_name = #{nick_name}
+		</if>
+	</select>
+	
+</mapper>

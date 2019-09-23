@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+</head>
+<body class="easyui-layout">
+	<div data-options="region:'center'" style="background: #eee;">
+		<table id="tb1" class="easyui-datagrid" title="" width="100%"
+			height="100%" fit="true" border="0"
+			data-options="url:'/flAgency/findAgencyPayDetailList.do',singleSelect:false,method:'get',
+						toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc',rownumbers:true,
+						pagination:true,showFooter:true">
+			<thead>
+				<tr>
+					<th data-options="field:'ck',checkbox:true"></th>
+					<th data-options="field:'CREATE_DATE',width:200,align:'center'">申请提现时间</th>
+					<th data-options="field:'AMOUNT',width:100,align:'center'">金额(元)</th>
+					<th
+						data-options="field:'STATUS',width:200,align:'center',
+					formatter:function(value,row){
+            	     	if(value == 1){
+            	     		return '待发放';
+            	     	}else if(value == 2){
+            	     		return '已发放';
+            	     	} 
+               		 }">提现状态</th>
+				</tr>
+			</thead>
+		</table>
+		<div id="toolbar1" class="easyui-layout"
+			style="height: 80px; margin: 3px;">
+			<div data-options="region:'center',border:false"></div>
+			<div data-options="region:'north',border:true" style="height: 75px;">
+				<form id="fm" method="post" novalidate>
+					<table cellpadding="5">
+						<tr>
+							<td>提现时间:</td>
+							<td><input class="easyui-datebox" id="start_time"
+								data-options="formatter:myformatter,parser:myparser"></td>
+							<td>到<input class="easyui-datebox" id="end_time"
+								data-options="formatter:myformatter,parser:myparser"></td>
+
+							<td><a href="javascript:search()" class="easyui-linkbutton"
+								iconCls="icon-search">查找</a></td>
+						</tr>
+					</table>
+					<table cellpadding="5">
+						<tr>
+							<td>当前余额:</td>
+							<td><input class="easyui-validatebox textbox" type="text"
+								readonly="readonly" id="balance" data-options="required:false"></input>元</td>
+							<td>累计收入:</td>
+							<td><input class="easyui-validatebox textbox" type="text"
+								readonly="readonly" id="income" data-options="required:false"></input>元</td>
+							<td>当前充值分成:</td>
+							<td><input class="easyui-validatebox textbox" type="text"
+								readonly="readonly" id="ratio" data-options="required:false"></input></td>
+							<td><a href="javascript:cashPay()" class="easyui-linkbutton"
+								iconCls="icon-filter">全部提现</a></td>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<script th:inline="javascript">
+	var menuName=[[${menuName}]]
+	function search() {
+		var start_time = $('#start_time').datebox('getValue');
+		var end_time = $('#end_time').datebox('getValue');
+		$('#tb1').datagrid({
+			url : "/flAgency/findAgencyPayDetailList.do",
+			queryParams : {
+				start_time : start_time,
+				end_time : end_time
+			}
+		});
+		
+		searchAccount();
+	}
+	
+	$(function(){
+		searchAccount();
+	})
+	
+	function searchAccount(){
+		var start_time = $('#start_time').datebox('getValue');
+		var end_time = $('#end_time').datebox('getValue');
+		$.ajax({
+			url : "/flAgency/findAgencyPayAccount.do",
+			type : "POST",
+			data : {
+				"start_time" : start_time,
+				"end_time" : end_time
+			},
+			dataType : "text",
+			success : function(data) {
+				console.info(data);
+				var data=JSON.parse(data);
+				var income = data.income;
+				var balance = data.balance;
+				var ratio = data.ratio;
+				$("#income").val(income);
+				$("#balance").val(balance);
+				$("#ratio").val(ratio);
+			}
+		});
+	}
+	
+	function cashPay(){
+		
+		$.messager.confirm('提示','确定申请全部提现吗?', 
+   	        function(r){
+   	            if (r){
+   	            	var balance = $("#balance").val();
+   	            	if(balance <= 0){
+   	            		Common.showMsg('提示',"当前账户没有可提现金额");
+   	         		}else {
+	   	         		$.ajax({
+	   	         			url : "/flAgency/saveAgencyCashPay.do",
+	   	         			type : "POST",
+	   	         			data : {
+	   	         			},
+	   	         			dataType : "text",
+	   	         			success : function(data) {
+	   	         				if ("success" == data){
+	   	                         	Common.showMsg('提示',"添加成功");
+	   	                         	search();
+	   	                         } else {
+	   	                         	Common.showMsg('提示',"添加失败");
+	   	                         }	
+	   	         			}
+	   	         		});
+   	         		}
+   	            }
+   	        });
+	}
+	 
+	</script>
+</body>
+</html>

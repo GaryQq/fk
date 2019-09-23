@@ -1,0 +1,84 @@
+
+spring.datasource.type=com.alibaba.druid.pool.DruidDataSource
+#MYSQL
+#spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+#spring.datasource.url=jdbc:mysql://localhost:3306/shiro_t
+#spring.datasource.username=root
+#spring.datasource.password=kyh16000771
+#spring.datasource.initialSize=80
+#spring.datasource.minIdle=80
+#spring.datasource.maxActive=300
+
+#oracle
+spring.datasource1.driverClassName=oracle.jdbc.driver.OracleDriver
+spring.datasource1.url=jdbc:oracle:thin:@//172.20.16.194:1521/smsdb
+spring.datasource1.username=lotterytie
+spring.datasource1.password=lotterytie
+
+spring.datasource2.driverClassName=oracle.jdbc.driver.OracleDriver
+spring.datasource2.url=jdbc:oracle:thin:@//172.20.16.194:1521/smsdb
+spring.datasource2.username=lottery
+spring.datasource2.password=lottery
+
+spring.datasource.initialSize=80
+spring.datasource.minIdle=80
+spring.datasource.maxActive=300
+spring.datasource.maxWait=50000
+spring.datasource.timeBetweenEvictionRunsMillis=50000
+ 
+ 
+#spring.datasource.filters=stat,wall,log4j
+#spring.datasource.connectionProperties=druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+#spring.datasource.useGlobalDataSourceStat=true
+
+
+
+########################################################
+###THYMELEAF (ThymeleafAutoConfiguration)
+########################################################
+spring.thymeleaf.prefix=classpath:/templates/
+spring.thymeleaf.suffix=.html
+spring.thymeleaf.mode=HTML5
+#spring.thymeleaf.encoding=UTF-8;charset=<encoding>  
+spring.thymeleaf.content-type=text/html
+spring.thymeleaf.cache=false
+spring.thymeleaf.mode=LEGACYHTML5
+
+mybatis.type-aliases-package=com.study.model.*
+mybatis.mapper-locations=classpath:mapper/*/*.xml
+mapper.mappers=com.study.util.permissions.MyMapper
+mapper.not-empty=false
+mapper.identity=ORACLE
+
+pagehelper.helperDialect=ORACLE
+pagehelper.reasonable=true
+pagehelper.supportMethodsArguments=true
+pagehelper.params=count\=countSql
+
+#redis
+#spring.redis.host= 172.20.16.50
+#spring.redis.port= 6379
+#spring.redis.pool.max-idle= 100
+#spring.redis.pool.min-idle= 50
+#spring.redis.pool.max-active= 200
+#spring.redis.pool.max-wait= 100
+#spring.redis.dbindex=8
+#spring.redis.timeout= 0 
+
+
+spring.redis.host= redistest.fengkuang.cn
+spring.redis.port= 6379
+spring.redis.pool.max-idle= 100
+spring.redis.pool.min-idle= 50
+spring.redis.pool.max-active= 200
+spring.redis.pool.max-wait= 100
+spring.redis.timeout= 0 
+
+
+#Tomcat为Spring Boot的默认容器，下面是几个常用配置：
+# tomcat最大线程数，默认为200
+server.tomcat.max-threads=800
+server.tomcat.uri-encoding: UTF-8
+
+#mongo
+spring.data.mongodb.uri= mongodb://lotterytie:lotterytie@mongo1.nb.com:27017/lotterytie

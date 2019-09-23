@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.mapper.management.BannerMapper">
+
+	<select id="findBannerView" parameterType="java.util.Map"
+		resultType="java.util.Map">
+
+		SELECT
+		ID,
+		TYPE,
+		create_date,
+		update_date,
+		pic_url,
+		case when start_date is
+		not null THEN
+		'从' || TO_CHAR (start_date,'yyyy-mm-dd')
+		|| '到' || TO_CHAR
+		(stop_date,
+		'yyyy-mm-dd')|| ';' || EVERYDAYTIME else
+		WEEK end time,
+		h5_url,
+		typeid,
+		weight,
+		title,
+		status,
+		homepage,
+		shareimg,
+		sharecontent,
+		week,
+		OPERATOR,
+		OPEN_SID,
+		CLOSE_SID
+		FROM
+		yt_square_pic_info_live
+		where app_type = 2
+		<if test="id != null and id!='' ">
+			and id=#{id}
+		</if>
+		<if test="title != null and title!='' ">
+			and title=#{title}
+		</if>
+		<if test="operator != null and operator!='' ">
+			and operator=#{operator}
+		</if>
+		<if test="status != null and status!='' ">
+			and status=#{status}
+		</if>
+		ORDER BY STATUS ASC,WEIGHT DESC
+
+	</select>
+
+
+	<select id="findBannerEntity" parameterType="int" resultType="java.util.Map">
+
+		SELECT
+		ID,PIC_URL,START_DATE,STOP_DATE,H5_URL,TYPE,TYPEID,WEIGHT,
+		TITLE,STATUS,HOMEPAGE,SHAREIMG,CLIENTTYPE,
+		SHARECONTENT,WEEK,EVERYDAYTIME,OPEN_SID,CLOSE_SID
+		FROM
+		yt_square_pic_info_live
+		WHERE
+		ID = #{id}
+
+	</select>
+
+	<insert id="insertBannerEntity" parameterType="java.util.Map">
+		INSERT INTO yt_square_pic_info_live
+		(
+		ID,CREATE_DATE,UPDATE_DATE,START_DATE,STOP_DATE,STATUS,app_type
+		<if test="picUrl!=null and picUrl!=''">
+			,PIC_URL
+		</if>
+		<if test="h5Url!=null and h5Url!=''">
+			,H5_URL
+		</if>
+		<if test="type!=null and type!=''">
+			,TYPE
+		</if>
+		<if test="typeId!=null and typeId!=''">
+			,TYPEID
+		</if>
+		<if test="title!=null and title!=''">
+			,TITLE
+		</if>
+		<if test="homepage!=null and homepage!=''">
+			,homepage
+		</if>
+		<if test="shareImg!=null and shareImg!=''">
+			,shareImg
+		</if>
+		<if test="shareContent!=null and shareContent!=''">
+			,shareContent
+		</if>
+		<if test="week!=null and week!=''">
+			,week
+		</if>
+		<if test="operator!=null and operator!=''">
+			,operator
+		</if>
+		<if test="eventDayTime!=null and eventDayTime!=''">
+			,EVERYDAYTIME
+		</if>
+		<if test="open_sid!=null and open_sid!=''">
+			,open_sid
+		</if>
+		<if test="close_sid!=null and close_sid!=''">
+			,close_sid
+		</if>
+		<if test="client_type!=null and client_type!=''">
+			,clienttype
+		</if>
+		<if test="weight!=null and weight!=''">
+			,weight
+		</if>
+		)
+		VALUES(
+		SEQ_YT_SQUARE_PIC_INFO_LIVE.NEXTVAL,sysdate,sysdate
+		,to_date(#{startTime},'yyyy-mm-dd'),to_date(#{stopTime},'yyyy-mm-dd'),#{status},2
+		<if test="picUrl!=null and picUrl!=''">
+			,#{picUrl}
+		</if>
+		<if test="h5Url!=null and h5Url!=''">
+			,#{h5Url}
+		</if>
+		<if test="type!=null and type!=''">
+			,#{type}
+		</if>
+		<if test="typeId!=null and typeId!=''">
+			,#{typeId}
+		</if>
+		<if test="title!=null and title!=''">
+			,#{title}
+		</if>
+		<if test="homepage!=null and homepage!=''">
+			,#{homepage}
+		</if>
+		<if test="shareImg!=null and shareImg!=''">
+			,#{shareImg}
+		</if>
+		<if test="shareContent!=null and shareContent!=''">
+			,#{shareContent}
+		</if>
+		<if test="week!=null and week!=''">
+			,#{week}
+		</if>
+		<if test="operator!=null and operator!=''">
+			,#{operator}
+		</if>
+		<if test="eventDayTime!=null and eventDayTime!=''">
+			,#{eventDayTime}
+		</if>
+		<if test="open_sid!=null and open_sid!=''">
+			,#{open_sid}
+		</if>
+		<if test="close_sid!=null and close_sid!=''">
+			,#{close_sid}
+		</if>
+		<if test="client_type!=null and client_type!=''">
+			,#{client_type}
+		</if>
+		<if test="weight!=null and weight!=''">
+			,#{weight}
+		</if>
+		)
+	</insert>
+
+	<delete id="deleteBannerEntity" parameterType="java.util.Map">
+		DELETE FROM
+		yt_square_pic_info_live WHERE id = #{id}
+	</delete>
+
+	<update id="updateBannerEntity" parameterType="java.util.Map">
+		update yt_square_pic_info_live set update_date = sysdate
+		<if test="picUrl!=null and picUrl!=''">
+			,pic_url = #{picUrl}
+		</if>
+		<if test="h5Url!=null and h5Url!=''">
+			,h5_url = #{h5Url}
+		</if>
+		<if test="type!=null and type!=''">
+			,type = #{type}
+		</if>
+		<if test="typeId!=null and typeId!=''">
+			,typeid = #{typeId}
+		</if>
+		<if test="title!=null and title!=''">
+			,title = #{title}
+		</if>
+		<if test="homepage!=null and homepage!=''">
+			,homepage = #{homepage}
+		</if>
+		<if test="shareImg!=null and shareImg!=''">
+			,shareImg = #{shareImg}
+		</if>
+		<if test="shareContent!=null and shareContent!=''">
+			,shareContent = #{shareContent}
+		</if>
+		<if test="week!=null and week!=''">
+			,week = #{week}
+		</if>
+		<if test="operator!=null and operator!=''">
+			,operator = #{operator}
+		</if>
+		<if test="eventDayTime!=null and eventDayTime!=''">
+			,everydaytime = #{eventDayTime}
+		</if>
+		<if test="open_sid!=null and open_sid!=''">
+			,open_sid = #{open_sid}
+		</if>
+		<if test="close_sid!=null and close_sid!=''">
+			,close_sid = #{close_sid}
+		</if>
+		<if test="client_type!=null and client_type!=''">
+			,clienttype = #{client_type}
+		</if>
+		<if test="weight!=null and weight!=''">
+			,weight = #{weight}
+		</if>
+		where id = #{id}
+	</update>
+
+	<update id="enableBannerEntity" parameterType="java.util.Map">
+		update
+		yt_square_pic_info_live set update_date = sysdate
+		,operator =
+		#{operator} ,status = #{enable}
+		where id = #{id}
+	</update>
+	
+	
+	<select id="findYubanWithDrawsDetail" parameterType="java.util.Map"
+		resultType="java.util.Map">
+
+		SELECT
+		*
+		FROM
+		
+		YUBAN_ABROAD_TX_ORDER o
+		
+		where 1=1 
+		<if test="start_time != null and start_time!='' ">
+			and o.create_time<![CDATA[ >= to_date(#{start_time},'yyyy-mm-dd') ]]>
+		</if>
+		<if test="end_time != null and end_time!='' ">
+			and o.create_time<![CDATA[ <= to_date(#{end_time},'yyyy-mm-dd') ]]>
+		</if>
+		<if test="order_status != null and order_status!='' ">
+			and o.status=#{order_status}
+		</if>
+		ORDER BY STATUS ASC,o.create_time ASC
+
+	</select>
+	
+	<select id="getTxAmount" parameterType="int" resultType="java.util.Map">
+
+		select o.amount,o.user_name from YUBAN_ABROAD_TX_ORDER o where o.id=#{id}
+
+	</select>
+	
+	<update id="updateUserAccount" parameterType="java.util.Map">
+		update ayoi_account t set t.brick_amount=t.brick_amount+#{BRICK_AMOUNT} where t.user_name=#{USER_NAME}
+	</update>
+	
+	<insert id="insertUserDetail" parameterType="java.util.Map">
+		INSERT INTO AYOI_ACCOUNT_BRICK_DETAIL (ID, CREATE_TIME, MODIFY_TIME, USER_NAME, AMOUNT, OPT_TYPE1, OPT_TYPE2, OPT_TYPE3, BEFORE_AMOUNT, AFTER_AMOUNT, REMARK, ORDER_ID) VALUES (SEQ_AYOI_ACCOUNT_BRICK_DETAIL.NEXTVAL, SYSDATE, SYSDATE, #{USER_NAME}, #{AMOUNT}, #{OPT_TYPE1}, #{OPT_TYPE2}, #{OPT_TYPE3}, #{BEFORE_AMOUNT}, #{AFTER_AMOUNT}, #{REMARK}, #{ORDER_ID})
+	</insert>
+
+    <select id="getUserAccount" parameterType="java.lang.String" resultType="java.lang.Double">
+
+		select t.brick_amount from ayoi_account t where t.user_name=#{user_name}
+
+	</select>
+	
+	<update id="updateTxOrderStatus" parameterType="java.util.Map">
+		update YUBAN_ABROAD_TX_ORDER o set o.status=#{status} where o.id=#{id}
+	</update>
+</mapper>

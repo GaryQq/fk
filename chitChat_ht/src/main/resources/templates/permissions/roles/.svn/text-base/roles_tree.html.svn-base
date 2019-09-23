@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/easy_ui/js/jquery-easyui/themes/gray/easyui.css}" id="skin">
+    <link rel="stylesheet" type="text/css" th:href="@{/easy_ui/js/jquery-easyui/themes/icon.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/easy_ui/js/jquery-easyui/demo/demo.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/easy_ui/css/style.css}">
+    <link th:href="@{/ztree/css/zTreeStyle.css}" type="text/css" rel="stylesheet" >
+    <script type="text/javascript" th:src="@{/js/jquery-1.11.2.min.js}"></script>
+    <script type="text/javascript" th:src="@{/easy_ui/js/jquery.cookie.js}"></script>
+    <script type="text/javascript" th:src="@{/easy_ui/js/jquery.easyui.min.js}"></script>
+    <script type="text/javascript" th:src="@{/easy_ui/js/easyui-lang-zh_CN.js}"></script>
+    <script type="text/javascript" th:src="@{/easy_ui/js/common.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jquery.ztree.core.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jquery.ztree.excheck.js}"></script>
+</head>
+<body class="easyui-layout">
+	<div data-options="region:'center'" border="false">
+	<div id="dlg" style="padding:10px 20px">
+			<ul id="tree" class="ztree" ></ul>
+    </div>
+    </div>
+    <div data-options="region:'south'" style="height: 40px;" border="false">
+		<hr>
+		<div style="text-align:center;">
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()">保存</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="closeBtn()">关闭</a>
+    	</div>
+	</div>
+	<script th:inline="javascript">
+	 $(function(){
+		 var rid=[[${rid}]];
+		 var setting = {
+		            check: {
+		                enable: true,
+		                chkboxType:  { "Y" : "p", "N" : "s" }
+		            },
+		            data: {
+		                simpleData: {
+		                    enable: true,
+		                    idKey: "id",
+		                    pIdKey: "parentid",
+		                }
+		            }
+		        };
+
+		        $.ajax({
+		            async:false,
+		            type : "GET",
+		            data:{rid:rid},
+		            url: "/resources/resourcesWithSelected",
+		            dataType:'json',
+		            success: function(data){
+		                $.fn.zTree.init($("#tree"), setting, data);
+		                var zTree = $.fn.zTree.getZTreeObj("tree");
+		                zTree.expandAll(true);
+		            }
+		        });
+	 })
+      function closeBtn(){
+    	  window.parent.closeWindow();
+      }
+	 function submitForm(){
+		 var rid=[[${rid}]];
+		 var zTree = $.fn.zTree.getZTreeObj("tree"),
+         checkNode= zTree.getCheckedNodes(true);
+		 var ids = new Array();
+		 for(var i=0;i<checkNode.length;i++){
+    	  ids.push(checkNode[i].id);
+		 }
+		 $.ajax({
+	            async:false,
+	            type : "GET",
+	            data:{roleid:rid,resourcesid:ids.join(",")},
+	            url: "/roles/saveRoleResources",
+	            dataType:"text",
+	            success: function(data){
+	                if(data=="success"){
+	                	Common.showMsg('提示',"保存成功");
+	                    window.parent.closeWindow();
+	                }else{
+	                	Common.showMsg('提示',"保存失败");
+	                    window.parent.closeWindow();
+	                }
+	            }
+	        });
+	 }
+	</script>
+</body>
+

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+<table id="tb1" class="easyui-datagrid" title="" width="100%"
+       height="100%" fit="true" border="0"
+       data-options="rownumbers:true,pagination:true,url:'/gift/getGiftList.do',singleSelect:true,method:'get',toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc'">
+    <thead>
+    <tr>
+        <th data-options="field:'ck',checkbox:true"></th>
+        <th data-options="field:'ID',width:50,align:'center'">id</th>
+        <th data-options="field:'GIFT_NAME',width:100,align:'center'">礼物名称</th>
+        <th data-options="field:'TYPE',width:100,align:'center',sortable:'true',
+            	     formatter:function(value,row){
+            							if (value ==1) return '普通';
+	                		  }
+            	">类型
+        </th>
+
+        <th data-options="field:'SOURCE',width:100,align:'center',sortable:'true',
+            	     formatter:function(value,row){
+            							if (value ==4) return '语伴1v1';
+	                		  }
+            	">入口
+        </th>
+
+        <th data-options="field:'GIFT_PRICE',width:100,align:'center'">金币价格</th>
+        <th data-options="field:'GIFT_CRYSTAL',width:100,align:'center'">水晶价格</th>
+        <th
+                data-options="field:'GIFT_LOGO_LOCATION',width:100,height:30,align:'center',
+            	     formatter:function(value,row){
+            	     	var style = 'width:30px;height:30px';
+            	     	return '<img src='+value+' style='+style+' />';
+               		 }">图片
+        </th>
+
+        <th data-options="field:'GIFT_GIF_LOCATION',width:50,align:'center',sortable:'true',
+            	     formatter:function(value,row){
+            							if (value != null) return '有';
+            							if (value == null) return '----';
+	                		  }
+            	">动效
+        </th>
+
+        <th data-options="field:'STATUS',width:100,align:'center',sortable:'true',
+            	     formatter:function(value,row){
+            							if (value == 0) return '在线';
+	                                if (value != 0) return '待上线';
+	                		  }
+            	">状态
+        </th>
+
+        <th data-options="field:'SORT',width:50,align:'center'">排序</th>
+        <th data-options="field:'OPERATOR',width:100,align:'center'">操作人</th>
+        <th data-options="field:'UPDATE_TIME',width:150,align:'center'">最近操作时间</th>
+
+        <th data-options="field:'STATUS1',width:50,align:'center',sortable:'false',
+            	     formatter:function(value,row){
+            							return common(value,row);
+	                		  }
+            	">操作
+        </th>
+
+    </tr>
+    </thead>
+</table>
+<div id="toolbar1" class="easyui-layout"
+     style="height: 65px; margin: 3px;">
+    <div data-options="region:'center',border:false">
+        <a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+           th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+           th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+    </div>
+    <div data-options="region:'north',border:true" style="height: 40px;">
+        <form id="fm" method="post" novalidate>
+            <table cellpadding="5">
+                <tr>
+                    <td>礼物名称:</td>
+                    <td><input class="easyui-validatebox textbox" type="text"
+                               name="name" id="name"/></td>
+                    <td>类型:</td>
+                    <td>
+                        <select id="type" class="easyui-combobox" name="type">
+                            <option value="">全部</option>
+                            <option value="1">普通</option>
+                        </select>
+                    </td>
+                    <td>入口:</td>
+                    <td>
+                        <select id="source" class="easyui-combobox" name="source">
+                            <option value="">全部</option>
+                            <option value="4">语伴1v1</option>
+                        </select>
+                    </td>
+
+                    <td>动效:</td>
+                    <td>
+                        <select id="gifLocation" class="easyui-combobox" name="gifLocation">
+                            <option value="">全部</option>
+                            <option value="1">有</option>
+                            <option value="2">无</option>
+                        </select>
+                    </td>
+
+                    <td>状态:</td>
+                    <td>
+                        <select id="status" class="easyui-combobox" name="status">
+                            <option value="">全部</option>
+                            <option value="0">在线</option>
+                            <option value="-1">待上线</option>
+                        </select>
+                    </td>
+
+                    <td>操作人:</td>
+                    <td>
+                        <input class="easyui-validatebox textbox" type="text"
+                               name="operator" id="operator"/>
+                    </td>
+
+                    <td><a href="javascript:search()" class="easyui-linkbutton"
+                           iconCls="icon-search">查找</a></td>
+
+                </tr>
+            </table>
+        </form>
+    </div>
+
+</div>
+<script th:inline="javascript">
+    var menuName = [[${menuName}]]
+    function add() {
+        top.framework.openTab('新增gift', '/giftView/add.do?menuName=新增gift&parentMenuName=' + menuName);
+    }
+
+    function edit(){
+        var selecteds = $('#tb1').datagrid('getSelections');
+        if (selecteds == null || selecteds.length == 0) {
+            Common.showMsg('修改按钮','请选择操作项！');
+            return;
+        }
+        if (selecteds.length>1) {
+            Common.showMsg('修改按钮','不支持多个操作！');
+            return;
+        }
+        top.framework.openTab('修改gift', '/giftView/add.do?menuName=修改gift&parentMenuName='+menuName+'&id='+selecteds[0].ID);
+
+    }
+
+    function search() {
+        var name = $("#name").val();
+        var type = $('#type').combobox('getValue');
+        var source = $('#source').combobox('getValue');
+        var gifLocation = $('#gifLocation').combobox('getValue');
+        var status = $('#status').combobox('getValue');
+        var operator = $("#operator").val();
+
+        $('#tb1').datagrid({
+            url: "/gift/getGiftList.do",
+            queryParams: {
+                name: name,
+                type: type,
+                source: source,
+                gifLocation: gifLocation,
+                status: status,
+                operator: operator
+            }
+        });
+    }
+
+
+    function common(value,row) {
+        var gift_id = row.ID;
+        if(value==0){
+            return '<a href="javascript:operate(-1,'+gift_id+')">下线</a>';
+        }else{
+            return '<a href="javascript:operate(0,'+gift_id+')">上线</a>';
+        }
+    }
+
+    //操作上下线
+    function operate(status,gift_id){
+        $.ajax({
+            url: "/gift/edit.do",
+            type: "POST",
+            data: {
+                "status": status,
+                "gift_id": gift_id
+            },
+            dataType: "text",
+            success: function (data) {
+                if ("success" == data) {
+                    Common.showMsg('提示', "修改成功");
+                    top.framework.closeAndReloadTab(null,menuName);
+                } else {
+                    Common.showMsg('提示', "修改失败");
+                }
+            }
+        });
+    }
+
+</script>
+</body>

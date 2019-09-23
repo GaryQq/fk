@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>我的主页</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1"/>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="http://www.fengkuang.cn/css/reset.css">
+    <link rel="stylesheet" href="http://www.fengkuang.cn/fbht/css/homepage.css">
+</head>
+<body>
+<div class="header">
+    <div class="tab layout">
+        <div class="logo">
+            <h3>疯狂号</h3>
+            <span>全球体育作者联盟</span>
+        </div>
+        <div class="info">
+            <img src="http://download.yuecai365.com/cp365/face/temp/ycDftHead.png" alt="">
+            <span>疯狂小树懒</span>
+            <em></em>
+        </div>
+    </div>
+</div>
+<div class="content layout">
+    <div class="left">
+        <ul>
+            <li  class="on">
+                <em class="one"></em>
+                <span>我的主页</span>
+            </li>
+            <li>
+                <em class="two"></em>
+                <span>我的收入</span>
+            </li>
+            <li>
+                <em class="three"></em>
+                <span>已发文章</span>
+            </li>
+            <li>
+                <em class="four"></em>
+                <span>已存草稿</span>
+            </li>
+            <li>
+                <em class="five"></em>
+                <span>官方公告</span>
+            </li>
+        </ul>
+    </div>
+    <div class="right">
+        <div class="top">
+            <div class="cont"><span>
+                    <em>0</em>
+                    <b>发表数</b>
+                </span><span>
+                    <em>135万</em>
+                    <b>累计阅读量</b>
+                </span><span>
+                    <em>6万</em>
+                    <b>累计订阅量</b>
+                </span>
+            </div>
+            <div class="news">
+                <p>
+                    <em>公告</em>
+                    <span>
+                        <b>更多</b>
+                        <img src="http://www.fengkuang.cn/fbht/images/jiantou.png" alt="">
+                    </span>
+                </p>
+                <div>
+                    <span>恭喜疯狂体育成功上市！恭喜疯狂体育成功上市</span>
+                    <em>
+                        <b>2018-12-31</b>
+                        <img src="http://www.fengkuang.cn/fbht/images/jiantou.png" alt="">
+                    </em>
+                </div>
+            </div>
+        </div>
+        <div class="publish">
+            <h3>最新文章</h3>
+            <div>发表</div>
+        </div>
+        <div class="tittle">
+            <span>文章标题</span>
+            <span>阅读量</span>
+            <span>订阅量</span>
+            <span>发表时间</span>
+        </div>
+        <ul>
+            <li>
+                <em>复盘皇马：双核发威，阿森西奥完成肋部进攻构建</em>
+                <em>1.3万</em>
+                <em>1.3万</em>
+                <em>2018.12.13 09:30</em>
+            </li>
+            <li>
+                <em>复盘皇马：双核发威，阿森西奥完成肋部进攻构建</em>
+                <em>1.3万</em>
+                <em>1.3万</em>
+                <em>2018.12.13 09:30</em>
+            </li>
+            <li>
+                <em>复盘皇马：双核发威，阿森西奥完成肋部进攻构建</em>
+                <em>1.3万</em>
+                <em>1.3万</em>
+                <em>2018.12.13 09:30</em>
+            </li>
+            <li>
+                <em>复盘皇马：双核发威，阿森西奥完成肋部进攻构建</em>
+                <em>1.3万</em>
+                <em>1.3万</em>
+                <em>2018.12.13 09:30</em>
+            </li>
+            <li>
+                <em>复盘皇马：双核发威，阿森西奥完成肋部进攻构建</em>
+                <em>1.3万</em>
+                <em>1.3万</em>
+                <em>2018.12.13 09:30</em>
+            </li>
+            <li>
+                <em>复盘皇马：双核发威，阿森西奥完成肋部进攻构建</em>
+                <em>1.3万</em>
+                <em>1.3万</em>
+                <em>2018.12.13 09:30</em>
+            </li>
+            <li>
+                <em>复盘皇马：双核发威，阿森西奥完成肋部进攻构建</em>
+                <em>1.3万</em>
+                <em>1.3万</em>
+                <em>2018.12.13 09:30</em>
+            </li>
+            <li>
+                <em>复盘皇马：双核发威，阿森西奥完成肋部进攻构建</em>
+                <em>1.3万</em>
+                <em>1.3万</em>
+                <em>2018.12.13 09:30</em>
+            </li>
+            <li>
+                <em>复盘皇马：双核发威，阿森西奥完成肋部进攻构建</em>
+                <em>1.3万</em>
+                <em>1.3万</em>
+                <em>2018.12.13 09:30</em>
+            </li>
+            <li>
+                <em>复盘皇马：双核发威，阿森西奥完成肋部进攻构建</em>
+                <em>1.3万</em>
+                <em>1.3万</em>
+                <em>2018.12.13 09:30</em>
+            </li>
+            <li>
+                <em>复盘皇马：双核发威，阿森西奥完成肋部进攻构建</em>
+                <em>1.3万</em>
+                <em>1.3万</em>
+                <em>2018.12.13 09:30</em>
+            </li>
+            <li>
+                <em>复盘皇马：双核发威，阿森西奥完成肋部进攻构建</em>
+                <em>1.3万</em>
+                <em>1.3万</em>
+                <em>2018.12.13 09:30</em>
+            </li>
+            <li>
+                <em>复盘皇马：双核发威，阿森西奥完成肋部进攻构建</em>
+                <em>1.3万</em>
+                <em>1.3万</em>
+                <em>2018.12.13 09:30</em>
+            </li>
+            <li>
+                <em>复盘皇马：双核发威，阿森西奥完成肋部进攻构建</em>
+                <em>1.3万</em>
+                <em>1.3万</em>
+                <em>2018.12.13 09:30</em>
+            </li>
+            <li>
+                <em>复盘皇马：双核发威，阿森西奥完成肋部进攻构建</em>
+                <em>1.3万</em>
+                <em>1.3万</em>
+                <em>2018.12.13 09:30</em>
+            </li>
+        </ul>
+        <div class="noData" style="display: none">
+            还没发过文章，快去发一篇~
+        </div>
+    </div>
+</div>
+<div class="foot layout">
+    关于疯狂体育 | 用户协议 | 官方微博 | 客户端下载 | 联系邮箱 | 联系电话：010-64797862
+</div>
+</body>
+</html>

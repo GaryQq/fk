@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fengkuang.author.dao.AuthorDao">
+    <resultMap id="author" type="com.fengkuang.author.bean.Author">
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>
+        <result column="introduction" property="introduction" jdbcType="VARCHAR"/>
+        <result column="author_name" property="authorName" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+        <result column="audit_time" property="auditTime" jdbcType="TIMESTAMP"/>
+        <result column="id_card" property="idCard" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="source" property="source" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="columnsAll">user_name, status, image_url, introduction, author_name, email, mobile, create_time, modify_time, audit_time, id_card, remark, source</sql>
+    <sql id="columnsWithoutTime">user_name, status, image_url, introduction, author_name, email, mobile, id_card, remark, source</sql>
+
+    <select id="getByUserName" parameterType="java.lang.String" resultMap="author">
+        select
+        <include refid="columnsAll"/>
+        from INFO_AUTHOR where USER_NAME = #{userName} and STATUS != -1
+    </select>
+
+    <select id="authorSummary" parameterType="java.lang.String" resultType="java.util.HashMap">
+        select nvl(count(1), 0) info_count, nvl(sum(READ_NUMBER_REAL), 0) read_count, nvl(sum(order_count), 0) order_count
+        from (
+              select t.POST_ID,
+              t.READ_NUMBER_REAL,
+              (select count(1)
+                from info_vip_order o
+                where o.post_id = t.post_id
+                and o.STATUS = 1) order_count
+            from info_post t
+            where t.USER_NAME = #{userName}
+              and t.STATUS = 1
+            )
+    </select>
+
+    <select id="totalIncome" parameterType="java.util.Map" resultType="java.util.Map">
+        select nvl(sum(t.DEDUCT_MONEY), 0) DEDUCT_MONEY
+        from INFO_VIP_ORDER t
+        join INFO_POST_BY_AUTHOR i
+        on t.POST_ID = i.POST_ID
+        <where>
+            i.user_name = #{userName}
+            and t.status = 1
+            <if test="null != startTime">
+                and #{startTime} &lt; to_number(to_char(t.modify_time, 'yyyymmddhh24miss'))
+            </if>
+            <if test="null != endTime">
+                and #{endTime} >= to_number(to_char(t.modify_time, 'yyyymmddhh24miss'))
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.fengkuang.author.bean.Author">
+        insert into INFO_AUTHOR
+          (USER_NAME, IMAGE_URL, INTRODUCTION, AUTHOR_NAME, EMAIL, MOBILE, ID_CARD, SOURCE)
+        values
+          (#{userName}, #{imageUrl}, #{introduction}, #{authorName}, #{email, jdbcType=VARCHAR}, #{mobile}, #{idCard}, #{source})
+    </insert>
+
+    <select id="getAuthorNameCount" parameterType="com.fengkuang.author.bean.Author" resultType="java.lang.Integer">
+        select count(1) from INFO_AUTHOR where AUTHOR_NAME = #{authorName, jdbcType=VARCHAR}
+    </select>
+</mapper>

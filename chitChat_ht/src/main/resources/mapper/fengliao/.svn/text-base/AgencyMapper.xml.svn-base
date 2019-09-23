@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.mapper.fengliaoAgency.FengLiaoAgencyMapper">
+
+	<select id="findUserRegisterList" parameterType="java.util.Map"
+		resultType="java.util.Map">
+
+		select
+		yu.nick_name,
+		to_char (yu.date_created,'yyyy-mm-dd hh24:mi:ss')
+		date_created
+		from
+		yt_user yu
+		where
+		yu.register_source in (
+		select
+		source
+		from
+		yt_financial_source yfs
+		where
+		yfs.user_name = #{fkUserName}
+		and
+		yfs.source_status = 2
+		and yfs.source_type = 3
+		)
+		and yu.date_created <![CDATA[ >= to_date(#{start_time},'yyyy-mm-dd') ]]>
+		and yu.date_created <![CDATA[ <= to_date(#{end_time},'yyyy-mm-dd') ]]>
+		and yu.nick_name is not null
+		order by yu.date_created desc
+	</select>
+
+	<select id="findUserPayDetailList" parameterType="java.util.Map"
+		resultType="java.util.Map">
+
+		select
+		yu.nick_name,
+		to_char (yu.date_created,'yyyy-mm-dd hh24:mi:ss')
+		date_created,
+		yu.user_name,
+		to_char (aad.create_time,'yyyy-mm-dd
+		hh24:mi:ss') create_time,
+		aad.goal_amount
+		from
+		yt_user yu
+		inner join (
+		select
+		aad.create_time,
+		aad.user_name,
+		aad.goal_amount/10 goal_amount
+		from
+		ayoi_account_detail aad
+		where
+		aad.opt_type1 = 1
+		and aad.opt_type2 = 1
+		and aad.opt_type3 = 1
+		and aad.create_time <![CDATA[ >= to_date(#{start_time},'yyyy-mm-dd') ]]>
+		and aad.create_time <![CDATA[ <= to_date(#{end_time},'yyyy-mm-dd') ]]>
+		) aad on yu.user_name = aad.user_name
+		where
+		yu.register_source in (
+		select
+		source
+		from
+		yt_financial_source yfs
+		where
+		yfs.user_name =
+		#{fkUserName}
+		and yfs.source_status = 2
+		and yfs.source_type = 3
+		)
+		and
+		yu.date_created <![CDATA[ >= to_date(#{start_time},'yyyy-mm-dd') ]]>
+		and yu.date_created <![CDATA[ <= to_date(#{end_time},'yyyy-mm-dd') ]]>
+		and yu.nick_name is not null
+		order by
+		aad.create_time desc
+	</select>
+
+	<select id="findUserPaySumInfo" parameterType="java.util.Map"
+		resultType="int">
+
+		select
+		sum(aad.goal_amount) goal_amount
+		from
+		yt_user yu
+		inner join (
+		select
+		aad.create_time,
+		aad.user_name,
+		aad.goal_amount/10 goal_amount
+		from
+		ayoi_account_detail aad
+		where
+		aad.opt_type1 = 1
+		and aad.opt_type2 = 1
+		and aad.opt_type3 = 1
+		and aad.create_time <![CDATA[ >= to_date(#{start_time},'yyyy-mm-dd') ]]>
+		and aad.create_time <![CDATA[ <= to_date(#{end_time},'yyyy-mm-dd') ]]>
+		) aad on yu.user_name = aad.user_name
+		where
+		yu.register_source in (
+		select
+		source
+		from
+		yt_financial_source yfs
+		where
+		yfs.user_name =
+		#{fkUserName}
+		and yfs.source_status = 2
+		and yfs.source_type = 3
+		)
+		and
+		yu.date_created <![CDATA[ >= to_date(#{start_time},'yyyy-mm-dd') ]]>
+		and yu.date_created <![CDATA[ <= to_date(#{end_time},'yyyy-mm-dd') ]]>
+		and yu.nick_name is not null
+		order by
+		aad.create_time desc
+	</select>
+
+	<select id="findAgencyPayDetailList" parameterType="java.util.Map"
+		resultType="java.util.Map">
+
+		select
+		to_char (create_date,'yyyy-mm-dd hh24:mi:ss')
+		create_date,
+		amount / 10 amount,
+		status
+		from
+		yt_agency_pay_detail
+		where
+		user_name = #{fkUserName}
+		order by
+		create_date desc
+
+	</select>
+
+	<select id="findAgencyPaySumInfo" parameterType="java.util.Map"
+		resultType="String">
+
+		select
+		nvl (sum(amount) / 10, 0) amount
+		from
+		yt_agency_pay_detail
+		where
+		user_name = #{fkUserName}
+
+	</select>
+
+	<select id="findAgencyPayIncome" parameterType="java.util.Map"
+		resultType="String">
+
+		select
+		nvl (sum(aad.goal_amount/10), 0) goal_amount
+		from
+		ayoi_account_detail aad
+		where
+		aad.opt_type1 = 1
+		and aad.opt_type2 = 6
+		and aad.opt_type3 = 157
+		and
+		aad.user_name =
+		#{fkUserName}
+		and aad.create_time <![CDATA[ >= to_date(#{start_time},'yyyy-mm-dd') ]]>
+		and aad.create_time <![CDATA[ <= to_date(#{end_time},'yyyy-mm-dd') ]]>
+
+	</select>
+
+	<select id="findAgencyPayBalance" parameterType="java.util.Map"
+		resultType="String">
+
+		select
+		nvl (cps_amount/10, 0) cps_amount
+		from
+		ayoi_account
+		where
+		user_name =
+		#{fkUserName}
+
+	</select>
+
+	<select id="findAgencyPayRatio" parameterType="java.util.Map"
+		resultType="String">
+		select tmp_page.*  from (
+		select
+		remark2 ratio
+		from
+		ayoi_account_detail
+		where
+		create_time
+		= (
+		select
+		max (distinct create_time)
+		from
+		ayoi_account_detail
+		where
+		user_name = #{fkUserName}
+		and opt_type1 = 1
+		and opt_type2 = 6
+		and
+		opt_type3 = 157
+		)
+		) tmp_page where rownum = 1 
+	</select>
+
+	<insert id="saveAgencyPayDetail" parameterType="java.util.Map">
+		insert into
+		yt_agency_pay_detail (
+		id,
+		user_name,
+		create_date,
+		update_date,
+		amount
+		)
+		values
+		(
+		seq_yt_agency_pay_detail.nextval,
+		#{fkUserName},
+		sysdate,
+		sysdate,
+		#{balance} * 10
+		)
+	</insert>
+
+	<update id="updateAgencyAccount" parameterType="java.util.Map">
+		update
+		ayoi_account set cps_amount = 0,modify_time = sysdate
+		where
+		user_name =
+		#{fkUserName}
+	</update>
+
+	<insert id="saveAgencyAccountDetail" parameterType="java.util.Map">
+		
+		insert into ayoi_account_detail (
+			id,
+			create_time,
+			modify_time,
+			user_name,
+			goal_amount,
+			opt_type1,
+			opt_type2,
+			opt_type3,
+			before_amount,
+			after_amount
+		)
+		values
+			(
+				seq_ayoi_account_detail.nextval,
+				sysdate,
+				sysdate,
+				#{fkUserName},
+				#{balance} * 10,
+				2,
+				2,
+				158,
+				#{balance} * 10,
+				0
+			)
+	</insert>
+
+</mapper>

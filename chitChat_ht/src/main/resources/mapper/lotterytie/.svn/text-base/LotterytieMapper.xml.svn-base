@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.mapper.lotterytie.LotterytieMapper">
+
+	<select id="findUser" parameterType="java.util.Map" resultType="java.util.Map">
+
+		select yu.id user_id,yu.user_name,yu.nick_name from yt_user yu
+		where 1 = 1
+		<if test="user_id != null and user_id != '' ">
+			and yu.id = #{user_id}
+		</if>
+		<if test="user_name != null and user_name != '' ">
+			and yu.user_name = #{user_name}
+		</if>
+		<if test="nick_name != null and nick_name != '' ">
+			and yu.nick_name = #{nick_name}
+		</if>
+	</select>
+
+	<insert id="insertChangeRecordsEntity" parameterType="java.util.Map">
+		insert into teacher_change_records
+		(
+		id,create_time,modify_time,operator
+		<if test="user_name != null and user_name != ''">
+			,user_name
+		</if>
+		<if test="type != null and type != ''">
+			,type
+		</if>
+		<if test="context != null and context != ''">
+			,context
+		</if>
+		) values (
+		seq_teacher_change_records.nextval,sysdate,sysdate,#{operator}
+		<if test="user_name != null and user_name != ''">
+			,#{user_name}
+		</if>
+		<if test="type != null and type != ''">
+			,#{type}
+		</if>
+		<if test="context != null and context != ''">
+			,#{context}
+		</if>
+		)
+	</insert>
+	
+	<select id="findWhiteUserList" parameterType="java.util.Map" resultType="java.util.Map">
+
+		select create_time,username from yt_live_backstageblack
+		 
+	</select>
+	 
+</mapper>

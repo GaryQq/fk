@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<table id="tb1" class="easyui-datagrid" title="" width="100%"
+		height="100%" fit="true" border="0"
+		data-options="url:'/dailyData/oneToOneDay.do?status=1',singleSelect:false,method:'get',
+					toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc',rownumbers:true,
+					pagination:true,showFooter:true">
+		<thead>
+			<tr>
+				<th data-options="field:'create_date',width:100,align:'center'">日期</th>
+				<th data-options="field:'long_time',width:200,align:'center'">通话总时长</th>
+
+				<th data-options="field:'fq_video_num',width:150,align:'center'">视频发起次数</th>
+				<th data-options="field:'fq_voice_num',width:150,align:'center'">音频发起次数</th>
+				<th data-options="field:'jt_video_num',width:150,align:'center'">视频接通次数</th>
+				<th data-options="field:'jt_voice_num',width:150,align:'center'">音频接通次数</th>
+				<th data-options="field:'video_valid',width:200,align:'center'">视频有效发起次数(20s内发起挂断)</th>
+				<th data-options="field:'voice_valid',width:200,align:'center'">音频有效发起次数(20s内发起挂断)</th>
+				<th
+					data-options="field:'jtl_video_percent',width:200,align:'center'">视频接通率</th>
+				<th
+					data-options="field:'jtl_voice_percent',width:200,align:'center'">音频接通率</th>
+				<th data-options="field:'jj_video_percent',width:200,align:'center'">视频拒绝率</th>
+				<th data-options="field:'jj_voice_percent',width:200,align:'center'">音频拒绝率</th>
+				<th data-options="field:'fq_video_user',width:200,align:'center'">视频发起用户数</th>
+				<th data-options="field:'fq_voice_user',width:200,align:'center'">音频发起用户数</th>
+				<th data-options="field:'jt_video_user',width:200,align:'center'">视频接通用户数</th>
+				<th data-options="field:'jt_voice_user',width:200,align:'center'">音频接通用户数</th>
+				<th data-options="field:'gift_amount',width:200,align:'center'">礼物消耗金币</th>
+				<th data-options="field:'video_amount',width:200,align:'center'">视频消耗金币</th>
+				<th data-options="field:'voice_amount',width:200,align:'center'">音频消耗金币</th>
+				<th data-options="field:'msg_amount',width:200,align:'center'">私信消耗金币</th>
+				<th data-options="field:'onetoone_user',width:200,align:'center'">累计参与用户</th>
+				<th data-options="field:'amount',width:200,align:'center'">累计消耗金币</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar1" class="easyui-layout"
+		style="height: 65px; margin: 3px;">
+		<div data-options="region:'center',border:false">
+			<a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+				th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+				th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+		</div>
+		<div data-options="region:'north',border:true" style="height: 40px;">
+			<form id="fm" method="post" novalidate>
+				<table cellpadding="5">
+					<tr>
+						<td>查询时间:</td>
+						<td><input class="easyui-datebox" id="start_time"
+							data-options="formatter:myformatter,parser:myparser">到 <input
+							class="easyui-datebox" id="end_time"
+							data-options="formatter:myformatter,parser:myparser"></td>
+						<td>用户范围:</td>
+						<td><select id="status" style="width: 100px"
+							class="easyui-combobox" name="status">
+								<option value="1">全部用户</option>
+								<option value="2">去除白名单</option>
+						</select></td>
+						<td><a href="javascript:search()" class="easyui-linkbutton"
+							iconCls="icon-search">查找</a></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+
+	</div>
+	<script th:inline="javascript">
+		function search() {
+			var start_time = $("#start_time").datebox('getValue');
+			var end_time = $("#end_time").datebox('getValue');
+			var status = $('#status').combobox('getValue');
+
+			$('#tb1').datagrid({
+				url : "/dailyData/oneToOneDay.do",
+				queryParams : {
+					status : status,
+					start_time : start_time,
+					end_time : end_time
+				}
+			});
+		}
+	</script>
+</body>

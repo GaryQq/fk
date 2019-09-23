@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body class="easyui-layout">
+<div data-options="region:'center'" border="false">
+    <div id="dlg" style="padding: 10px 20px">
+        <div class="myftitle">基本信息</div>
+        <form id="myfm" method="post" novalidate>
+            <table cellpadding="7">
+                <input class="easyui-validatebox" type="hidden" id="id">
+                <input class="easyui-validatebox" type="hidden" id="user_name">
+
+                <tr>
+                    <td>上次修改人:</td>
+                    <td>
+                        <span id="operator"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>上次修时间:</td>
+                    <td>
+                        <span id="create_time"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>修改评级:</td>
+                    <td><select class="easyui-combobox" name="ratio_level"
+                                id="ratio_level" style="width: 148px;">
+                        <option value="s">S</option>
+                        <option value="a">A</option>
+                        <option value="b">B</option>
+                        <option value="c">C</option>
+                    </select></td>
+                </tr>
+
+            </table>
+        </form>
+    </div>
+</div>
+<div data-options="region:'south'" style="height: 40px;" border="false">
+    <hr>
+    <div style="text-align: center;">
+        <a href="javascript:void(0)" class="easyui-linkbutton"
+           onclick="submitForm()">保存</a> <a href="javascript:void(0)"
+                                            class="easyui-linkbutton"
+                                            th:onclick="|top.framework.closeTab('${menu.menuName}')|">关闭</a>
+    </div>
+</div>
+<script th:inline="javascript">
+    $(function () {
+        var entity = [[${entity}]];
+        if(entity != null ){
+            var operator = entity.OPERATOR;
+            $("#operator").html(operator);
+
+            var create_time = entity.CREATE_TIME;
+            $("#create_time").html(create_time);
+        }
+
+        var id = [[${id}]];
+        $('#id').val(id);
+
+        var user_name = [[${userName}]];
+        $('#user_name').val(user_name);
+    })
+
+    function myformatter(date) {
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        var d = date.getDate();
+        return y + '-' + (m < 10 ? ('0' + m) : m) + '-'
+                + (d < 10 ? ('0' + d) : d);
+    }
+    function myparser(s) {
+        if (!s)
+            return new Date();
+        var ss = (s.split('-'));
+        var y = parseInt(ss[0], 10);
+        var m = parseInt(ss[1], 10);
+        var d = parseInt(ss[2], 10);
+        if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
+            return new Date(y, m - 1, d);
+        } else {
+            return new Date();
+        }
+    }
+
+    var parentMenuName = [[${menu.parentMenuName}]]
+    var menuName = [[${menu.menuName}]]
+    function submitForm() {
+        var id = $("#id").val();
+        var userName = $("#user_name").val();
+        var ratioLevel = $('#ratio_level').combobox('getValue');
+
+        $.ajax({
+            url: "/userManage/editTeacherLevel.do",
+            type: "POST",
+            data: {
+                "id" : id,
+                "userName" : userName,
+                "ratioLevel" : ratioLevel
+            },
+            dataType: "text",
+            success: function (data) {
+                if ("success" == data) {
+                    Common.showMsg('提示', "修改成功");
+                    top.framework.closeAndReloadTab(menuName, parentMenuName);
+                } else {
+                    Common.showMsg('提示', "修改失败");
+                }
+            }
+        });
+    }
+</script>
+</body>

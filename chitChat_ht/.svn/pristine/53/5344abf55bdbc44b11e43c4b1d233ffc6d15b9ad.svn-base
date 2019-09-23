@@ -1,0 +1,14 @@
+package com.study.util.yunzhanghu;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class PayTest2 {
+	public static void main(String[] args) throws Exception { 
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("order_id", "1538132573813492");
+		param.put("app_type", "1");
+		String result = PayYunZhangHuUtil.findPayOrderDetail(param);
+		System.out.println(result);
+	}
+}

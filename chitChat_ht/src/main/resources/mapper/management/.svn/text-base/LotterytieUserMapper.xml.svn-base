@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.mapper.management.LotterytieUserMapper">
+
+	<select id="findUserEntity" parameterType="java.util.Map"
+		resultType="java.util.Map">
+
+		select yu.user_name,yu.nick_name,
+		to_char(yu.date_created ,'YYYY-MM-DD HH24:MI:SS') date_created 
+		from yt_user yu where 1 = 1
+		<if test="nick_name != null and nick_name != '' ">
+			and yu.nick_name = #{nick_name}
+		</if>
+		<if test="user_name != null and user_name != '' ">
+			and yu.user_name = #{user_name}
+		</if>
+
+	</select>
+
+
+
+
+
+</mapper>

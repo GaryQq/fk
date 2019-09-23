@@ -1,0 +1,898 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.mapper.management.UsersMapper">
+
+	<select id="findUserList" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		select u.id userid,
+		u.user_name,
+		u.nick_name,
+		u.register_source,
+		p.status,
+		h.user_level,
+		a.account_new,
+		case
+		when b.username is null then
+		'否'
+		else
+		'是'
+		end isWhite,
+		TO_CHAR(u.date_created ,'YYYY-MM-DD HH24:MI:SS') date_created,
+		p.anchor_status,
+		case
+		when u.true_name is null then
+		'未认证'
+		else
+		'已认证'
+		end isAuth,
+		h.birthday,
+		u.mid_image,
+		u.type,
+		h.autograph,
+		u.sex，
+		p.education,
+		p.school，
+		p.region,
+		p.language,
+		l.loginsource，
+        l1.loginsource loginsource1，
+		u.mobile,
+		s.voice_price,
+		s.video_price,
+		h.revice_rate,
+		h.average_score,
+		ua.info instruction,
+		p.masterlanguage
+		from yt_user u
+		left join yb_user_first_page p
+		on u.user_name = p.user_name
+		left join yt_liveuserhome h
+		on u.user_name = h.user_name
+		left join yt_live_extract_account a
+		on u.user_name = a.user_name
+		left join YT_LIVE_BACKSTAGEBLACK b
+		on b.username = u.user_name
+		left join
+        (
+        select * from YT_BINDLOGIN where loginsource=10
+        )
+        l
+		on u.id=l.userid
+        left join
+        (
+        select * from YT_BINDLOGIN where loginsource=3
+        )
+        l1
+        on u.id=l1.userid
+		left join YT_LIVE_USER_SETTING s
+		on u.user_name=s.user_name
+		left join YB_USER_AGENT ua
+		on u.user_name=ua.user_name
+		where 1 = 1
+		and u.source in ('150','151')
+		<if test="userName != null and userName!='' ">
+			and u.user_name = #{userName}
+		</if>
+
+		<if test="userId != null and userId!='' ">
+			and u.id = #{userId}
+		</if>
+
+		<if test="nickName != null and nickName!='' ">
+			and u.nick_name = #{nickName}
+		</if>
+
+		<if test="sid != null and sid!='' ">
+			and u.register_source = #{sid}
+		</if>
+
+		<if test="startTime != null and startTime!='' ">
+			and u.date_created >= cast(to_date(#{startTime},'yyyy-mm-dd,hh24:mi:ss')
+			as timestamp)
+		</if>
+
+		<if test="endTime != null and endTime!='' ">
+            <![CDATA[
+            and u.date_created <= cast(to_date(#{endTime},'yyyy-mm-dd,hh24:mi:ss') as timestamp)
+            ]]>
+		</if>
+		and u.user_name is not null
+		order by u.id desc
+
+	</select>
+
+
+	<update id="delHeadImage" parameterType="java.util.Map">
+		update yt_user u set u.mid_image = '' where id = #{userId}
+	</update>
+
+	<update id="delSign" parameterType="java.util.Map">
+		update yt_liveuserhome h
+		set h.autograph = ''
+		where h.user_name = (select user_name from yt_user where id = #{userId})
+	</update>
+
+	<select id="getUserNameById" resultType="java.lang.String"
+		parameterType="java.lang.String">
+		select user_name from yt_user where id=#{userId}
+	</select>
+
+	<select id="findTeacherList" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		select p.id,
+		u.nick_name,
+		u.id user_id,
+		u.user_name,
+		u.sex,
+		p.region,
+		p.language,
+		p.masterlanguage,
+		agent.invitation_name,
+		agent.nick_name agentName,
+		to_char(u.date_created,'yyyy-MM-dd HH24:mi:ss') date_created,
+		trim(u.mobile) mobile,
+		to_char(p.create_time,'yyyy-MM-dd HH24:mi:ss') create_time,
+		p.status,
+		p.status status1,
+		to_char(p.audit_time,'yyyy-MM-dd HH24:mi:ss') audit_time,
+		p.audit_name,
+		h.birthday,
+		h.autograph,
+		p.education,
+		p.school，
+		u.true_name,
+		s.voice_price,
+		s.video_price,
+		h.revice_rate,
+		h.average_score,
+		u.mid_image,
+		l.loginsource,
+        l1.loginsource loginsource1，
+		u.type,
+		a.account_new,
+		p.ratio_level,
+		p.operator,
+		p.weight,
+ 
+		<if test="range != null and range!='' and range=='1' ">
+			
+			nvl(p.con_video_times_white,0) con_video_times,
+			nvl(p.rec_video_times_white,0) rec_video_times,
+			case when nvl(p.rec_video_times_white,0) = 0 then 0 else p.video_odds_white end video_odds,
+			nvl(p.con_voice_times_white,0) con_voice_times,
+			nvl(p.rec_voice_times_white,0) rec_voice_times,
+			case when nvl(p.rec_voice_times_white,0) = 0 then 0 else p.voice_odds_white end voice_odds,
+			nvl(p.con_times_white,0) con_times,
+			nvl(p.rec_times_white,0) rec_times,
+			case when nvl(p.rec_times_white,0) = 0 then 0 else p.odds_white end odds,
+			
+		</if>
+
+		<if test="range == null or range=='' ">
+	 
+			nvl(p.con_video_times,0) con_video_times,
+			nvl(p.rec_video_times,0) rec_video_times,
+			case when nvl(p.rec_video_times,0) = 0 then 0 else p.video_odds end video_odds,
+			nvl(p.con_voice_times,0) con_voice_times,
+			nvl(p.rec_voice_times,0) rec_voice_times,
+			case when nvl(p.rec_voice_times,0) = 0 then 0 else p.voice_odds end voice_odds,
+			nvl(p.con_times,0) con_times,
+			nvl(p.rec_times,0) rec_times,
+			case when nvl(p.rec_times,0) = 0 then 0 else p.odds end odds,
+		</if>
+		
+		nvl(p.score,0) score,
+		p.anchor_status,
+		p.anchor_status anchor_status1,
+		to_char(p.update_time,'yyyy-MM-dd HH24:mi:ss') update_time
+		from yb_user_first_page p
+		left join yt_user u
+		on p.user_name = u.user_name
+		left join (select i.user_name, i.invitation_name, usr.nick_name
+		from yt_live_invitation_detail i
+		left join yt_user usr
+		on i.invitation_name = usr.user_name
+		group by i.user_name,
+		i.invitation_name,
+		usr.nick_name) agent
+		on p.user_name = agent.user_name
+
+		left join yt_liveuserhome h
+		on p.user_name = h.user_name
+		left join yt_live_extract_account a
+		on p.user_name = a.user_name
+        left join
+        (
+        select * from YT_BINDLOGIN where loginsource=10
+        ) l
+		on u.id = l.userid
+        left join
+        (
+        select * from YT_BINDLOGIN where loginsource=3
+        )
+        l1
+        on u.id=l1.userid
+		left join YT_LIVE_USER_SETTING s
+		on p.user_name = s.user_name
+
+		where 1=1
+		<if test="startTime != null and startTime!='' ">
+			and p.create_time >= cast(to_date(#{startTime},'yyyy-mm-dd,hh24:mi:ss')
+			as timestamp)
+		</if>
+
+		<if test="endTime != null and endTime!='' ">
+            <![CDATA[
+            and p.create_time <= cast(to_date(#{endTime},'yyyy-mm-dd,hh24:mi:ss') as timestamp)
+            ]]>
+		</if>
+
+		<if test="nickName != null and nickName!='' ">
+			and u.nick_name = #{nickName}
+		</if>
+		
+		<if test="region != null and region != '' ">
+			and p.region = #{region}
+		</if>
+
+		<if test="status != null and status!='' ">
+			and p.status = #{status}
+		</if>
+
+		<if test="id != null and id!='' ">
+			and p.id = #{id}
+		</if>
+
+		<if test="agentName != null and agentName!='' ">
+			and agent.nick_name=#{agentName}
+		</if>
+
+		<if test="anchorStatus != null and anchorStatus!='' ">
+			and p.anchor_status=#{anchorStatus}
+		</if>
+
+		<if test="language != null and language!='' ">
+			and p.language=#{language}
+		</if>
+
+		<if test="ratioLevel != null and ratioLevel!='' ">
+			and p.ratio_level=#{ratioLevel}
+		</if>
+
+		<if test="sort==1 ">
+			order by video_odds desc
+		</if>
+
+		<if test="sort==2 ">
+			order by video_odds asc
+		</if>
+
+		<if test="sort==3 ">
+			order by voice_odds desc
+		</if>
+
+		<if test="sort==4 ">
+			order by voice_odds asc
+		</if>
+
+		<if test="sort==5 ">
+			order by nvl(p.rec_video_times,0) desc
+		</if>
+
+		<if test="sort==6 ">
+			order by nvl(p.rec_video_times,0) asc
+		</if>
+
+		<if test="sort==7 ">
+			order by nvl(p.rec_voice_times,0) desc
+		</if>
+
+		<if test="sort==8 ">
+			order by nvl(p.rec_voice_times,0) asc
+		</if>
+		
+		<if test="sort==101 ">
+			order by nvl(p.con_video_times,0) asc
+		</if>
+		
+		<if test="sort==102 ">
+			order by nvl(p.con_video_times,0) desc
+		</if>
+		
+		<if test="sort==103 ">
+			order by nvl(p.con_voice_times,0) asc
+		</if>
+		
+		<if test="sort==104 ">
+			order by nvl(p.con_voice_times,0) desc
+		</if>
+		
+		<if test="sort==105 ">
+			order by odds asc
+		</if>
+		
+		<if test="sort==106 ">
+			order by odds desc
+		</if>
+		
+		<if test="sort==107 ">
+			nvl(p.score,0) desc
+		</if>
+	
+		<if test="sort==9 ">
+			order by h.average_score desc
+		</if>
+
+		<if test="sort==10 ">
+			order by h.average_score asc
+		</if>
+
+		<if test="sort==11 ">
+			order by u.date_created desc
+		</if>
+
+		<if test="sort==12 ">
+			order by p.weight desc
+		</if>
+
+		<if test="sort==13 ">
+			order by p.video_odds_white desc
+		</if>
+
+		<if test="sort==14 ">
+			order by p.video_odds_white asc
+		</if>
+
+		<if test="sort==15 ">
+			order by p.voice_odds_white desc
+		</if>
+
+		<if test="sort==16 ">
+			order by p.voice_odds_white asc
+		</if>
+
+		<if test="sort==17 ">
+			order by p.video_odds_times_white desc
+		</if>
+
+		<if test="sort==18 ">
+			order by p.video_odds_times_white asc
+		</if>
+
+		<if test="sort==19 ">
+			order by p.voice_odds_times_white desc
+		</if>
+
+		<if test="sort==20 ">
+			order by p.voice_odds_times_white asc
+		</if>
+
+		<if test="sort==21 ">
+			order by p.create_time
+		</if>
+
+	</select>
+
+	<update id="updateFirstPage" parameterType="java.util.Map">
+
+		update yb_user_first_page
+		set
+		<if test="status != null and status!='' ">
+			status = #{status},
+			audit_time = sysdate,
+		</if>
+		<if test="audit_name != null and audit_name!='' ">
+			audit_name = #{audit_name},
+		</if>
+		<if test="reason != null and reason!='' ">
+			reason = #{reason},
+		</if>
+		<if test="anchorStatus != null and anchorStatus!='' ">
+			anchor_status = #{anchorStatus},
+		</if>
+
+		<if test="operator != null and operator!='' ">
+			operator = #{operator},
+		</if>
+
+		<if test="region != null and region!='' ">
+			region = #{region},
+		</if>
+
+		<if test="language != null and language!='' ">
+			language = #{language},
+		</if>
+
+		<if test="masterlanguage != null and masterlanguage!='' ">
+			masterlanguage = #{masterlanguage},
+		</if>
+
+		<if test="education != null and education!='' ">
+			education = #{education},
+		</if>
+
+		<if test="school != null and school!='' ">
+			school = #{school},
+		</if>
+
+		<if test="ratioLevel != null and ratioLevel!='' ">
+			ratio_level = #{ratioLevel},
+		</if>
+
+		<if test="weight != null and weight!='' ">
+			weight = #{weight},
+		</if>
+		<if test="content != null and content != '' ">
+			content = #{content},
+		</if>
+
+		update_time = sysdate
+		where id = #{id}
+	</update>
+
+	<select id="getFirstPageById" parameterType="int" resultType="java.util.Map">
+		select * from yb_user_first_page where id=#{id}
+
+	</select>
+
+	<insert id="insertTeacher" parameterType="java.util.Map">
+		insert into yb_user_first_page
+		(id,
+		user_name,
+		create_time,
+		update_time,
+		status,
+		region,
+		language,
+		masterlanguage,
+		education,
+		school,
+		anchor_status)
+		values
+		(seq_yb_user_first_page.nextval,
+		(select user_name from yt_user where nick_name=#{nickName}),
+		sysdate,
+		sysdate,
+		#{status},
+		#{region},
+		#{language},
+		#{masterlanguage},
+		#{education},
+		#{school},
+		#{anchor_status})
+	</insert>
+
+	<select id="getUserByNickName" resultType="java.lang.Integer"
+		parameterType="java.lang.String">
+		select count(*) from yt_user where nick_name=#{nickName}
+	</select>
+
+	<select id="getAgencyTeacherList" parameterType="java.util.Map"
+		resultType="java.util.Map">
+
+select p.id,
+		u.nick_name,
+		u.id user_id,
+		u.user_name,
+		u.sex,
+		p.region,
+		p.language,
+		p.masterlanguage,
+		agent.invitation_name,
+		agent.nick_name agentName,
+		to_char(u.date_created,'yyyy-MM-dd HH24:mi:ss') date_created,
+		trim(u.mobile) mobile,
+		to_char(p.create_time,'yyyy-MM-dd HH24:mi:ss') create_time,
+		p.status,
+		p.status status1,
+		to_char(p.audit_time,'yyyy-MM-dd HH24:mi:ss') audit_time,
+		p.audit_name,
+		h.birthday,
+		h.autograph,
+		p.education,
+		p.school，
+		u.true_name,
+		s.voice_price,
+		s.video_price,
+		h.revice_rate,
+		h.average_score,
+		u.mid_image,
+		l.loginsource,
+        l1.loginsource loginsource1，
+		u.type,
+		a.account_new,
+		p.ratio_level,
+		p.operator,
+		p.weight,
+
+		<if test="range != null and range!='' and range=='1' ">
+			<!-- p.rec_video_times_white rec_video_times,
+			p.rec_voice_times_white rec_voice_times,
+			p.video_odds_white video_odds,
+			p.voice_odds_white voice_odds, -->
+			
+			p.con_video_times_white con_video_times,
+			p.rec_video_times_white rec_video_times,
+			p.video_odds_white video_odds,
+			p.con_voice_times_white con_voice_times,
+			p.rec_voice_times_white rec_voice_times,
+			p.voice_odds_white voice_odds,
+			p.con_times_white con_times,
+			p.rec_times_white rec_times,
+			p.odds_white odds,
+			
+		</if>
+
+		<if test="range == null and range=='' ">
+		<!-- 	p.rec_video_times,
+			p.rec_voice_times,
+			p.video_odds,
+			p.voice_odds, -->
+			
+			p.con_video_times,
+			p.rec_video_times,
+			p.video_odds,
+			p.con_voice_times,
+			p.rec_voice_times,
+			p.voice_odds,
+			p.con_times,
+			p.rec_times,
+			p.odds,
+		</if>
+		nvl(p.score,0) score,
+		p.anchor_status,
+		p.anchor_status anchor_status1,
+		to_char(p.update_time,'yyyy-MM-dd HH24:mi:ss') update_time
+		from (
+				select
+					ylid.user_name,
+					ylid.invitation_name
+				from
+					yt_live_invitation_detail ylid
+				where
+					ylid.invitation_name = #{fkUserName}
+				group by
+					ylid.user_name,
+					ylid.invitation_name
+			) ylid
+		inner join yb_user_first_page p on ylid.user_name = p .user_name
+		left join yt_user u
+		on p.user_name = u.user_name
+		left join (select i.user_name, i.invitation_name, usr.nick_name
+		from yt_live_invitation_detail i
+		left join yt_user usr
+		on i.invitation_name = usr.user_name
+		group by i.user_name,
+		i.invitation_name,
+		usr.nick_name) agent
+		on p.user_name = agent.user_name
+
+		left join yt_liveuserhome h
+		on p.user_name = h.user_name
+		left join yt_live_extract_account a
+		on p.user_name = a.user_name
+        left join
+        (
+        select * from YT_BINDLOGIN where loginsource=10
+        ) l
+		on u.id = l.userid
+        left join
+        (
+        select * from YT_BINDLOGIN where loginsource=3
+        )
+        l1
+        on u.id=l1.userid
+		left join YT_LIVE_USER_SETTING s
+		on p.user_name = s.user_name
+
+		where 1=1
+		<if test="startTime != null and startTime!='' ">
+			and p.create_time >= cast(to_date(#{startTime},'yyyy-mm-dd,hh24:mi:ss')
+			as timestamp)
+		</if>
+
+		<if test="endTime != null and endTime!='' ">
+            <![CDATA[
+            and p.create_time <= cast(to_date(#{endTime},'yyyy-mm-dd,hh24:mi:ss') as timestamp)
+            ]]>
+		</if>
+
+		<if test="nickName != null and nickName!='' ">
+			and u.nick_name = #{nickName}
+		</if>
+
+		<if test="status != null and status!='' ">
+			and p.status = #{status}
+		</if>
+
+		<if test="id != null and id!='' ">
+			and p.id = #{id}
+		</if>
+
+		<if test="agentName != null and agentName!='' ">
+			and agent.nick_name=#{agentName}
+		</if>
+
+		<if test="anchorStatus != null and anchorStatus!='' ">
+			and p.anchor_status=#{anchorStatus}
+		</if>
+
+		<if test="language != null and language!='' ">
+			and p.language=#{language}
+		</if>
+
+		<if test="ratioLevel != null and ratioLevel!='' ">
+			and p.ratio_level=#{ratioLevel}
+		</if>
+
+		<if test="sort==1 ">
+			order by p.video_odds desc
+		</if>
+
+		<if test="sort==2 ">
+			order by p.video_odds asc
+		</if>
+
+		<if test="sort==3 ">
+			order by p.voice_odds desc
+		</if>
+
+		<if test="sort==4 ">
+			order by p.voice_odds asc
+		</if>
+
+		<if test="sort==5 ">
+			order by p.video_odds_times desc
+		</if>
+
+		<if test="sort==6 ">
+			order by p.video_odds_times asc
+		</if>
+
+		<if test="sort==7 ">
+			order by p.voice_odds_times desc
+		</if>
+
+		<if test="sort==8 ">
+			order by p.voice_odds_times asc
+		</if>
+
+		<if test="sort==9 ">
+			order by h.average_score desc
+		</if>
+
+		<if test="sort==10 ">
+			order by h.average_score asc
+		</if>
+
+		<if test="sort==11 ">
+			order by u.date_created desc
+		</if>
+
+		<if test="sort==12 ">
+			order by p.weight desc
+		</if>
+
+		<if test="sort==13 ">
+			order by p.video_odds_white desc
+		</if>
+
+		<if test="sort==14 ">
+			order by p.video_odds_white asc
+		</if>
+
+		<if test="sort==15 ">
+			order by p.voice_odds_white desc
+		</if>
+
+		<if test="sort==16 ">
+			order by p.voice_odds_white asc
+		</if>
+
+		<if test="sort==17 ">
+			order by p.video_odds_times_white desc
+		</if>
+
+		<if test="sort==18 ">
+			order by p.video_odds_times_white asc
+		</if>
+
+		<if test="sort==19 ">
+			order by p.voice_odds_times_white desc
+		</if>
+
+		<if test="sort==20 ">
+			order by p.voice_odds_times_white asc
+		</if>
+
+		<if test="sort==21 ">
+			order by p.create_time
+		</if>
+	</select>
+	
+	
+	<select id="findAgencyUserList" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		select u.id userid,
+		u.user_name,
+		u.nick_name,
+		u.register_source,
+		p.status,
+		h.user_level,
+		a.account_new,
+		case
+		when b.username is null then
+		'否'
+		else
+		'是'
+		end isWhite,
+		TO_CHAR(u.date_created ,'YYYY-MM-DD HH24:MI:SS') date_created,
+		p.anchor_status,
+		case
+		when u.true_name is null then
+		'未认证'
+		else
+		'已认证'
+		end isAuth,
+		h.birthday,
+		u.mid_image,
+		u.type,
+		h.autograph,
+		u.sex，
+		p.education,
+		p.school，
+		p.region,
+		p.language,
+		l.loginsource，
+        l1.loginsource loginsource1，
+		u.mobile,
+		s.voice_price,
+		s.video_price,
+		h.revice_rate,
+		h.average_score,
+		ua.info instruction,
+		p.masterlanguage
+		from (
+				select
+					ylid.user_name,
+					ylid.invitation_name
+				from
+					yt_live_invitation_detail ylid
+				where
+					ylid.invitation_name = #{fkUserName}
+				group by
+					ylid.user_name,
+					ylid.invitation_name
+			) ylid
+		inner join yt_user u on ylid.user_name = u .user_name
+		left join yb_user_first_page p
+		on u.user_name = p.user_name
+		left join yt_liveuserhome h
+		on u.user_name = h.user_name
+		left join yt_live_extract_account a
+		on u.user_name = a.user_name
+		left join YT_LIVE_BACKSTAGEBLACK b
+		on b.username = u.user_name
+        left join
+        (
+        select * from YT_BINDLOGIN where loginsource=10
+        ) l
+		on u.id=l.userid
+        left join
+        (
+        select * from YT_BINDLOGIN where loginsource=3
+        )
+        l1
+        on u.id=l1.userid
+		left join YT_LIVE_USER_SETTING s
+		on u.user_name=s.user_name
+		left join YB_USER_AGENT ua
+		on u.user_name=ua.user_name
+		where 1 = 1
+		and u.source in ('150','151')
+		<if test="userName != null and userName!='' ">
+			and u.user_name = #{userName}
+		</if>
+
+		<if test="userId != null and userId!='' ">
+			and u.id = #{userId}
+		</if>
+
+		<if test="nickName != null and nickName!='' ">
+			and u.nick_name = #{nickName}
+		</if>
+
+		<if test="sid != null and sid!='' ">
+			and u.register_source = #{sid}
+		</if>
+
+		<if test="startTime != null and startTime!='' ">
+			and u.date_created >= cast(to_date(#{startTime},'yyyy-mm-dd,hh24:mi:ss')
+			as timestamp)
+		</if>
+
+		<if test="endTime != null and endTime!='' ">
+            <![CDATA[
+            and u.date_created <= cast(to_date(#{endTime},'yyyy-mm-dd,hh24:mi:ss') as timestamp)
+            ]]>
+		</if>
+		and u.user_name is not null
+		order by u.id desc
+
+	</select>
+	
+	<select id="findAgencyDeleteDetailList" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		select
+			tcr. id,
+			yu.nick_name,
+			to_char (
+				tcr.modify_time,
+				'yyyy-mm-dd hh24:mi:ss'
+			) modify_time,
+			tcr. type,
+			tcr. context,
+			cu. name,
+			to_char (
+				tcr.create_time,
+				'yyyy-mm-dd hh24:mi:ss'
+			) create_time 
+		from
+			teacher_change_records tcr
+		inner join yt_user yu on tcr.user_name = yu.user_name
+		inner join chitchat_user cu on tcr. operator = cu.username
+		where
+			cu.username = #{username}
+		and tcr.type in ('3','4','5')
+		and tcr.create_time <![CDATA[ >= to_date(#{startTime},'yyyy-mm-dd') ]]>
+		and tcr.create_time <![CDATA[ <= to_date(#{endTime},'yyyy-mm-dd') ]]>
+		<if test="nickName != null and nickName!='' ">
+			and u.nick_name = #{nickName}
+		</if>
+	</select>
+
+    <select id="getUserInfo" parameterType="int" resultType="java.util.Map">
+		select ID,
+            STATE,
+            to_char(LAST_UPDATED,'yyyy-MM-dd HH24:mi:ss') LAST_UPDATED,
+            URL,
+            EMAIL,
+            NICK_NAME,
+            USER_NAME,
+            MOBILE,
+            ACTIVATION,
+            FANS,
+            LAST_BLOG_TIME,
+            ID_NUMBER,
+            YT_MAP_LIB_ID,
+            TRUE_NAME,
+            RECOMMENDATION,
+            URL1TIE,
+            ATTENTION,
+            LAST_LOGIN_TIME,
+            AUTOCODE,
+            SEX,
+            INSTRUCTION,
+            BIG_IMAGE,
+            ACTIVE_CODE,
+            BIRRHDAY,
+            VIP,
+            MAC_CODE,
+            AUDI,
+            CITY,
+            LOCATION,
+            SHOWNAMETYPE,
+            SOURCE,
+            THEMESIZE,
+            REGISTER_SOURCE,
+            DEVICETOKEN_CP,
+            LAST_LOGIN_IP,
+            DEVICETOKEN_QH,
+            SALESMEN,
+            TYPE from yt_user where id = #{id}
+	</select>
+
+    <select id="getLiveUserHome" parameterType="int" resultType="java.util.Map">
+      select * from yt_liveuserhome where h.user_name = (select user_name from yt_user where id = #{userId})
+	</select>
+</mapper>

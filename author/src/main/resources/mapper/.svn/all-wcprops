@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/cp/!svn/ver/159003/LotteryDev4/Server/author/src/main/resources/mapper
+END
+author.xml
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/cp/!svn/ver/158791/LotteryDev4/Server/author/src/main/resources/mapper/author.xml
+END
+infoPost.xml
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/cp/!svn/ver/159003/LotteryDev4/Server/author/src/main/resources/mapper/infoPost.xml
+END
+vipOrder.xml
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/cp/!svn/ver/158696/LotteryDev4/Server/author/src/main/resources/mapper/vipOrder.xml
+END
+infoChannel.xml
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/cp/!svn/ver/158696/LotteryDev4/Server/author/src/main/resources/mapper/infoChannel.xml
+END
+article.xml
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/cp/!svn/ver/159003/LotteryDev4/Server/author/src/main/resources/mapper/article.xml
+END

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.mapper.permissions.ResourcesMapper">
+	<resultMap id="BaseResultMap" type="com.study.model.permissions.Resources">
+		<id column="ID" jdbcType="INTEGER" property="id" />
+		<result column="NAME" jdbcType="VARCHAR" property="name" />
+		<result column="RESURL" jdbcType="VARCHAR" property="resurl" />
+		<result column="TYPE" jdbcType="INTEGER" property="type" />
+		<result column="PARENTID" jdbcType="INTEGER" property="parentid" />
+		<result column="SORT" jdbcType="INTEGER" property="sort" />
+		<result column="ICONCLS" jdbcType="VARCHAR" property="iconCls" />
+		<result column="BUT_FUN" jdbcType="VARCHAR" property="butFun" />
+	</resultMap>
+
+	<select id="queryAll" resultType="com.study.model.permissions.Resources">
+		SELECT
+		id,name,parentId,resUrl,type,sort
+		FROM CHITCHAT_RESOURCES
+		ORDER BY sort
+		ASC
+	</select>
+
+	<select id="loadUserResources" parameterType="java.util.HashMap"
+		resultType="com.study.model.permissions.Resources">
+		SELECT
+		re. ID,
+		re. NAME,
+		re.parentId,
+		re.resUrl
+		FROM
+		CHITCHAT_RESOURCES re
+		LEFT JOIN CHITCHAT_role_resources rr ON re. ID = rr.resourcesId
+		LEFT
+		JOIN CHITCHAT_user_role ur ON rr.roleId = ur.roleId
+		WHERE
+		ur.userId=#{userid}
+		<if test="type != null">
+			AND re.type= #{type}
+		</if>
+		ORDER BY re.sort ASC
+	</select>
+
+	<select id="queryResourcesListWithSelected" parameterType="int"
+		resultType="com.study.model.permissions.Resources">
+		SELECT re.id,re.name,re.parentId,re.resUrl,re.type,
+		(CASE WHEN
+		EXISTS(SELECT 1 FROM CHITCHAT_ROLE_RESOURCES rr
+		WHERE
+		rr.resourcesId=re.id AND rr.roleId=#{rid})
+		THEN 'true' ELSE 'false'
+		END) AS checked
+		FROM CHITCHAT_RESOURCES re
+		<!-- WHERE re.parentId !=0 -->
+		ORDER BY re.sort ASC
+	</select>
+
+	<select id="queryByType" resultType="com.study.model.permissions.Resources"
+		parameterType="com.study.model.permissions.Resources">
+
+		SELECT
+		T .*
+		FROM
+		(
+		SELECT
+		r1. ID,
+		r1. NAME,
+		r1.parentId,
+		r1.resUrl,
+		r1. TYPE,
+		r1. SORT,
+		r2. NAME AS parentName,
+		r1.iconCls,
+		r1.but_fun AS butFun
+		FROM
+		CHITCHAT_RESOURCES r1
+		LEFT JOIN CHITCHAT_RESOURCES r2 ON r1.parentId =
+		r2. ID
+		) T
+		WHERE
+		1 = 1
+		<if test="type!=null">
+			AND type= #{type}
+		</if>
+		<if test="name!=null and name!=''">
+			and name like CONCAT(CONCAT('%', #{name}), '%')
+		</if>
+		<if test="parentid!=null and parentid!=''">
+			and parentid like CONCAT(CONCAT('%', #{parentid}), '%')
+		</if>
+		order by sort
+	</select>
+
+	<insert id="insertResources" parameterType="com.study.model.permissions.Resources">
+		INSERT INTO
+		CHITCHAT_RESOURCES (
+		ID,NAME,RESURL,TYPE,PARENTID,SORT
+		<if test="iconCls!=null and iconCls!=''">
+			,ICONCLS
+		</if>
+		<if test="butFun!=null and butFun!=''">
+			,BUT_FUN
+		</if>
+		) VALUES(
+		SEQ_CHITCHAT_RESOURCES.nextval,#{name},#{resurl},#{type},
+		#{parentid},#{sort}
+		<if test="iconCls!=null and iconCls!=''">
+			,#{iconCls}
+		</if>
+		<if test="iconCls!=null and iconCls!=''">
+			,#{butFun}
+		</if>
+		)
+	</insert>
+
+	<update id="updateResources" parameterType="com.study.model.permissions.Resources">
+	
+		UPDATE
+		CHITCHAT_RESOURCES SET NAME = #{name}
+		<if test="butFun!=null and butFun!=''">
+			,BUT_FUN = #{butFun}
+		</if>
+		<if test="sort!=null and sort!=''">
+			,SORT = #{sort}
+		</if>
+		<if test="parentid!=null and parentid!=''">
+			,PARENTID = #{parentid}
+		</if>
+		<if test="iconCls!=null and iconCls!=''">
+			,ICONCLS = #{iconCls}
+		</if>
+		<if test="resurl!=null and resurl!=''">
+			,RESURL = #{resurl}
+		</if>
+		<if test="type!=null and type!=''">
+			,TYPE = #{type}
+		</if>
+		 
+		WHERE ID = #{id}
+	</update>
+	
+	
+	<select id="findByUserButtonList" parameterType="java.util.HashMap"
+		resultType="com.study.model.permissions.Resources">
+		select
+			re.id,
+			re.NAME,
+			re.TYPE,
+			re.resUrl,
+			re.parentId,
+			re.SORT,
+			re.iconCls,
+			re.but_fun AS butFun
+		from
+			chitchat_resources re
+		left join chitchat_role_resources rr on re. id = rr.resourcesid
+		left join chitchat_user_role ur on rr.roleid = ur.roleid
+		where
+			ur.userid = #{userid}
+		and re. type = #{type}
+		and re.parentid = #{parentid} 
+		order by
+			re. sort asc
+	</select>
+</mapper>

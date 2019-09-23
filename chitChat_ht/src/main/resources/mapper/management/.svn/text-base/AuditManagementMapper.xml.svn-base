@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.mapper.management.AuditManagementMapper">
+
+	<select id="findAuditManagementView" parameterType="java.util.Map"
+		resultType="java.util.Map">
+
+		select
+		yua.id,
+		yu.nick_name,
+		yua.user_name,
+		yu.sex,
+		yua.region,
+		yua.masterlanguage,
+		yua.agent_name,
+		to_char (yu.date_created,
+		'yyyy-mm-dd hh24:mi:ss'
+		) create_date,
+		to_char (
+		yua.create_time,
+		'yyyy-mm-dd hh24:mi:ss'
+		) create_time,
+		to_char (
+		yua.audit_time,
+		'yyyy-mm-dd hh24:mi:ss'
+		) audit_time,
+		yua.status,
+		yua.audit_name,
+		yua.status status1,
+		yua.content
+		from
+		yb_user_agent yua
+		inner join yt_user
+		yu on yua.user_name = yu.user_name
+		where yua.create_time <![CDATA[ >= to_date(#{start_time},'yyyy-mm-dd') ]]>
+		and yua.create_time <![CDATA[ <= to_date(#{end_time},'yyyy-mm-dd') ]]>
+		<if test="nick_name != null and nick_name != '' ">
+			and yu.nick_name = #{nick_name}
+		</if>
+		<if test="status != null and status != '' ">
+			and yua.status = #{status}
+		</if>
+
+		order by create_time asc,case when yua.status = 1 then 10 else yua.status end desc
+	</select>
+
+	<update id="enableUserAgentEntity" parameterType="java.util.Map">
+		update yb_user_agent set update_time = sysdate,audit_time = sysdate
+		<if test="status != null and status != '' ">
+			,status = #{status}
+		</if>
+		<if test="content != null and content != '' ">
+			,content = #{content}
+		</if>
+		<if test="operator != null and operator != '' ">
+			,audit_name = #{operator}
+		</if>
+		<if test="del_status != null and del_status != '' or del_status == 0 ">
+			,del_status = #{del_status}
+		</if>
+		where id = #{id}
+	</update>
+
+	<select id="findAuditManagementEntity" parameterType="string"
+		resultType="java.util.Map">
+
+		select
+			yua.area_code || ' ' || yua.iphone iphone,
+			yua.email,
+			yua.info,
+			yu.nick_name,
+			yu.mid_image,
+			yu. type,
+			yufp.education,
+			yufp.school,
+			to_char (
+				to_date (yl.birthday, 'yyyy-mm-dd'),
+				'yyyy-mm-dd'
+			) birthday,
+			yua.user_name,
+			yua.user_level,
+			tcr.operator,
+			tcr.create_time
+		from
+			yb_user_agent yua
+		inner join yt_user yu on yua.user_name = yu.user_name
+		left join yt_liveuserhome yl on yua.user_name = yl.user_name
+		left join yb_user_first_page yufp on yua.user_name = yufp.user_name
+		left join (select
+			*
+		from
+			(
+				select
+					row_number () over (
+						partition by tcr.user_name,
+						tcr. operator
+					order by
+						tcr.create_time desc
+					) rm,
+					tcr.*
+				from
+					(
+						select
+							user_name,
+							operator,
+							create_time
+						from
+							teacher_change_records
+						where
+							type = '/auditManagement/editAuditLevel'
+					) tcr
+			) tt
+		where
+			tt.rm = 1) tcr on yua.user_name = tcr.user_name
+		where
+			yua.user_name = #{user_name}
+
+	</select>
+
+	<select id="findAuditView" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		select
+		yua.id audit_id,
+		yu.id user_id,
+		yua.user_name,
+		yu.nick_name,
+		yua.region,
+		yufp.language,
+		yua.masterlanguage,
+		yu.date_created,
+		ylid.coun_user_name,
+		<if test="user_status == null and user_status == '' ">
+			ylid.video_odds,
+			ylid.voice_odds,
+		</if>
+		<if test="user_status != null and user_status != '' and user_status == 0 ">
+			ylid.video_odds_white video_odds,
+			ylid.voice_odds_white
+			voice_odds,
+		</if>
+		ylid.average_score,
+		yua.user_level,
+		yua.del_status,
+		yua.audit_time,
+		yua.audit_name
+		from
+		yb_user_agent yua
+		inner join yt_user yu on
+		yua.user_name = yu.user_name
+		left join
+		yb_user_first_page yufp on
+		yua.user_name = yufp.user_name
+		left join (
+		select
+		count (yufp.user_name)
+		coun_user_name,
+		round (
+		sum (yufp.video_odds) / count (yufp.user_name),
+		2
+		) video_odds,
+		round (
+		sum (yufp.voice_odds) / count (yufp.user_name),
+		2
+		) voice_odds,
+		round (
+		sum (yufp.video_odds_white) / count
+		(yufp.user_name),
+		2
+		) video_odds_white,
+		round (
+		sum
+		(yufp.voice_odds_white) / count (yufp.user_name),
+		2
+		) voice_odds_white,
+		round (
+		sum (yl.average_score) / count (yufp.user_name),
+		2
+		)
+		average_score,
+		ylid.invitation_name
+		from yb_user_first_page yufp
+		inner
+		join yt_live_invitation_detail ylid
+		on ylid.user_name = yufp.user_name
+		inner join yt_liveuserhome yl on
+		yufp.user_name = yl.user_name
+		<if test="user_status != null and user_status != '' and user_status == 0 ">
+			where yl.user_name not in (select username from
+			yt_live_backstageblack)
+		</if>
+		group by
+		ylid.invitation_name
+		) ylid on ylid.invitation_name =
+		yua.user_name
+		where yua.create_time <![CDATA[ >= to_date(#{start_time},'yyyy-mm-dd') ]]>
+		and yua.create_time <![CDATA[ <= to_date(#{end_time},'yyyy-mm-dd') ]]>
+		and yua.status = 2
+		<if test="nick_name != null and nick_name != '' ">
+			and yu.nick_name = #{nick_name}
+		</if>
+		<if test="del_status != null and del_status != '' and del_status == 1 ">
+			and yua.del_status = #{del_status}
+		</if>
+		<if test="del_status != null and del_status != '' and del_status == 0 ">
+			and yua.del_status = #{del_status}
+		</if>
+		<if test="language != null and language != '' ">
+			and yufp.language = #{language}
+		</if>
+		<if test="level != null and level != '' ">
+			and yua.user_level = #{level}
+		</if>
+		order by
+		<if test="user_status == null and user_status == '' ">
+			<if test="sort_status != null and sort_status != '' and sort_status == 1 ">
+				ylid.video_odds desc,
+			</if>
+			<if test="sort_status != null and sort_status != '' and sort_status == 2 ">
+				ylid.video_odds asc,
+			</if>
+			<if test="sort_status != null and sort_status != '' and sort_status == 3 ">
+				ylid.voice_odds desc,
+			</if>
+			<if test="sort_status != null and sort_status != '' and sort_status == 4 ">
+				ylid.voice_odds asc,
+			</if>
+		</if>
+		<if test="user_status != null and user_status != '' and user_status == 0 ">
+			<if test="sort_status != null and sort_status != '' and sort_status == 1 ">
+				ylid.video_odds_white desc,
+			</if>
+			<if test="sort_status != null and sort_status != '' and sort_status == 2 ">
+				ylid.video_odds_white asc,
+			</if>
+			<if test="sort_status != null and sort_status != '' and sort_status == 3 ">
+				ylid.voice_odds_white desc,
+			</if>
+			<if test="sort_status != null and sort_status != '' and sort_status == 4 ">
+				ylid.voice_odds_white asc,
+			</if>
+		</if>
+		<if test="sort_status != null and sort_status != '' and sort_status == 5 ">
+			ylid.average_score desc,
+		</if>
+		<if test="sort_status != null and sort_status != '' and sort_status == 6 ">
+			ylid.average_score asc,
+		</if>
+		<if test="sort_status != null and sort_status != '' and sort_status == 7 ">
+			yu.date_created desc,
+		</if>
+		ylid.coun_user_name desc
+
+	</select>
+
+	<select id="findAuditEntity" parameterType="string" resultType="java.util.Map">
+		select
+		yu. id user_id,
+		yu.user_name,
+		yu.nick_name,
+		yu.mid_image,
+		yu. type,
+		yluh.birthday,
+		yu.sex,
+		yluh.autograph,
+		yufp.education,
+		yufp.school,
+		yua.region,
+		yufp.language,
+		yua.masterlanguage,
+		yu2.nick_name
+		invitation_name,
+		yu.mobile,
+		yb.loginsource,
+		yu.true_name,
+		ylea.account_new,
+		ylus.voice_price,
+		ylus.video_price,
+		yluh.revice_rate,
+		nvl(ylus.average_score,0) average_score,
+		yua.info
+		from
+		yb_user_agent yua
+		inner join yt_user yu
+		on yu.user_name = yua.user_name
+		left join
+		yt_liveuserhome yluh on
+		yu.user_name = yluh.user_name
+		left join yt_bindlogin yb on yu. id =
+		yb.userid
+		left join (
+		select
+		user_name,
+		invitation_name
+		from
+		yt_live_invitation_detail
+		group by
+		user_name,
+		invitation_name
+		) ylid on
+		ylid.user_name = yua.user_name
+		left join
+		yt_live_extract_account ylea on
+		ylea.user_name = yu.user_name
+		left join
+		yt_live_user_setting ylus on
+		ylus.user_name = yu.user_name
+		left join
+		yb_user_first_page yufp on
+		yu.user_name = yufp.user_name
+		left join
+		yt_user yu2 on yu2.user_name =
+		ylid.invitation_name
+		where yua.user_name = #{user_name} and yua.status = 2
+	</select>
+
+	<insert id="insertAuditEntity" parameterType="java.util.Map">
+		insert into yb_user_agent
+		(
+		id,create_time,update_time,audit_time,status
+		<if test="region != null and region != ''">
+			,region
+		</if>
+		<if test="user_name != null and user_name != ''">
+			,user_name
+		</if>
+		<if test="operator != null and operator != ''">
+			,audit_name
+		</if>
+		<if test="info != null and info != ''">
+			,info
+		</if>
+		<if test="eMail != null and eMail != ''">
+			,eMail
+		</if>
+		<if test="area_code != null and area_code != ''">
+			,area_code
+		</if>
+		<if test="mobile != null and mobile != ''">
+			,iphone
+		</if>
+		<if test="user_nick_name != null and user_nick_name != ''">
+			,agent_name
+		</if>
+		<if test="master != null and master != ''">
+			,masterlanguage
+		</if>
+		) values (
+		seq_yb_user_agent.nextval,sysdate,sysdate,sysdate,2
+		<if test="region != null and region != ''">
+			,#{region}
+		</if>
+		<if test="user_name != null and user_name != ''">
+			,#{user_name}
+		</if>
+		<if test="operator != null and operator != ''">
+			,#{operator}
+		</if>
+		<if test="info != null and info != ''">
+			,#{info}
+		</if>
+		<if test="eMail != null and eMail != ''">
+			,#{eMail}
+		</if>
+		<if test="area_code != null and area_code != ''">
+			,#{area_code}
+		</if>
+		<if test="mobile != null and mobile != ''">
+			,#{mobile}
+		</if>
+		<if test="user_nick_name != null and user_nick_name != ''">
+			,#{user_nick_name}
+		</if>
+		<if test="master != null and master != ''">
+			,#{master}
+		</if>
+		)
+	</insert>
+
+	<select id="findAuditByIdEntity" parameterType="int" resultType="java.util.Map">
+		select
+		id,
+		user_name,
+		region,
+		masterlanguage,
+		agent_name,
+		area_code,
+		iphone,
+		email,
+		info
+		from
+		yb_user_agent
+		where id = #{audit_id}
+	</select>
+
+	<update id="updateAuditEntity" parameterType="java.util.Map">
+		update yb_user_agent set update_time = sysdate
+		<if test="region != null and region != '' ">
+			,region = #{region}
+		</if>
+		<if test="master != null and master != '' ">
+			,masterlanguage = #{master}
+		</if>
+		<if test="agent_name != null and agent_name != '' ">
+			,agent_name = #{agent_name}
+		</if>
+		<if test="area_code != null and area_code != '' ">
+			,area_code = #{area_code}
+		</if>
+		<if test="mobile != null and mobile != '' ">
+			,iphone = #{mobile}
+		</if>
+		<if test="eMail != null and eMail != '' ">
+			,eMail = #{eMail}
+		</if>
+		<if test="info != null and info != '' ">
+			,info = #{info}
+		</if>
+		<if test="operator != null and operator != ''">
+			,audit_name = #{operator}
+		</if>
+		<if test="user_level != null and user_level != ''">
+			,user_level = #{user_level}
+		</if>
+		where id = #{audit_id}
+	</update>
+	
+	<select id="findAuditTeacherView" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+			yufp.id audit_id,
+			ylid.user_name,
+			yu.nick_name,
+			yu.sex,
+			yufp.region,
+			yufp.language,
+			yufp.masterlanguage,
+			yu2.nick_name agency_nick_name,
+			yu.date_created,
+			yufp.create_time,
+			yufp.audit_time,
+			yufp.status,
+			yufp.audit_name,
+			yufp.content
+		from
+			(
+				select
+					ylid.user_name,
+					ylid.invitation_name
+				from
+					yt_live_invitation_detail ylid
+				where
+					ylid.invitation_name = #{fkUserName}
+				group by
+					ylid.user_name,ylid.invitation_name
+			) ylid
+		inner join yb_user_first_page yufp on ylid.user_name = yufp.user_name
+		inner join yt_user yu on ylid.user_name = yu.user_name
+		inner join yt_user yu2 on ylid.invitation_name = yu2.user_name
+		where 
+		yufp.create_time <![CDATA[ >= to_date(#{start_time},'yyyy-mm-dd') ]]>
+		and yufp.create_time <![CDATA[ <= to_date(#{end_time},'yyyy-mm-dd') ]]>
+		<if test="nick_name != null and nick_name != '' ">
+			and yu2.nick_name = #{nick_name}
+		</if>
+		<if test="status != null and status != '' ">
+			and yufp.status = #{status}
+		</if>
+		<if test="status == null and status == '' ">
+			and yufp.status = 1
+		</if>
+		order by yufp.status desc
+		
+	</select>
+
+</mapper>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body class="easyui-layout">
+<div data-options="region:'center'" border="false">
+    <div id="dlg" style="padding: 10px 20px">
+        <div class="myftitle">基本信息</div>
+        <form id="myfm" method="post" novalidate>
+            <table cellpadding="7">
+                <input class="easyui-validatebox" type="hidden" id="gain_ratio_id">
+
+                <tr>
+                    <td>金牌</td>
+                    <td><input class="easyui-validatebox" type="text"
+                               name="gold_medal" id="gold_medal"
+                               data-options="required:true,validType:'length[1,100]'"/></td>
+                </tr>
+
+                <tr>
+                    <td>银牌:</td>
+                    <td><input class="easyui-validatebox" type="text"
+                               name="silver_medal" id="silver_medal"
+                               data-options="required:true,validType:'length[1,100]'"/></td>
+                </tr>
+
+                <tr>
+                    <td>铜牌:</td>
+                    <td>
+                        <input class="easyui-validatebox" type="text"
+                               name="copper_medal" id="copper_medal"
+                               data-options="required:true,validType:'length[1,100]'"/>
+                    </td>
+                </tr>
+
+            </table>
+        </form>
+    </div>
+</div>
+<div data-options="region:'south'" style="height: 40px;" border="false">
+    <hr>
+    <div style="text-align: center;">
+        <a href="javascript:void(0)" class="easyui-linkbutton"
+           onclick="submitForm()">保存</a> <a href="javascript:void(0)"
+                                            class="easyui-linkbutton"
+                                            th:onclick="|top.framework.closeTab('${menu.menuName}')|">关闭</a>
+    </div>
+</div>
+<script th:inline="javascript">
+    $(function () {
+        var entity = [[${entity}]];
+        var gain_ratio_id = entity.ID;
+        $('#gain_ratio_id').val(gain_ratio_id);
+
+        var gold_medal = entity.GOLD_MEDAL;
+        $('#gold_medal').val(gold_medal);
+
+        var silver_medal = entity.SILVER_MEDAL;
+        $('#silver_medal').val(silver_medal);
+
+        var copper_medal = entity.COPPER_MEDAL;
+        $('#copper_medal').val(copper_medal);
+    })
+
+    function myformatter(date) {
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        var d = date.getDate();
+        return y + '-' + (m < 10 ? ('0' + m) : m) + '-'
+                + (d < 10 ? ('0' + d) : d);
+    }
+    function myparser(s) {
+        if (!s)
+            return new Date();
+        var ss = (s.split('-'));
+        var y = parseInt(ss[0], 10);
+        var m = parseInt(ss[1], 10);
+        var d = parseInt(ss[2], 10);
+        if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
+            return new Date(y, m - 1, d);
+        } else {
+            return new Date();
+        }
+    }
+
+    var parentMenuName = [[${menu.parentMenuName}]]
+    var menuName = [[${menu.menuName}]]
+    function submitForm() {
+        var gain_ratio_id = $('#gain_ratio_id').val();
+        var gold_medal = $('#gold_medal').val();
+        var silver_medal = $('#silver_medal').val();
+        var copper_medal = $("#copper_medal").val();
+
+        if (gold_medal == "") {
+            alert("金牌分成不能为空");
+            return;
+        } else if (silver_medal == "") {
+            alert("银牌分成不能为空");
+            return;
+        } else if (copper_medal == "") {
+            alert("铜牌分成不能为空");
+            return;
+        }
+
+        $.ajax({
+            url: "/gainRatio/edit.do",
+            type: "POST",
+            data: {
+                "gain_ratio_id": gain_ratio_id,
+                "gold_medal": gold_medal,
+                "silver_medal": silver_medal,
+                "copper_medal": copper_medal
+            },
+            dataType: "text",
+            success: function (data) {
+                if ("success" == data) {
+                    Common.showMsg('提示', "修改成功");
+                    top.framework.closeAndReloadTab(menuName, parentMenuName);
+                } else {
+                    Common.showMsg('提示', "添加失败");
+                }
+            }
+        });
+    }
+</script>
+</body>

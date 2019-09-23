@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<table id="tb1" class="easyui-datagrid" title="" width="100%"
+		height="100%" fit="true" border="0"
+		data-options="rownumbers:true,pagination:true,url:'/financial/findFinancialOnlineDetail.do?select_status=1',singleSelect:true,method:'get',toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc'">
+		<thead>
+			<tr>
+				<th data-options="field:'ck',checkbox:true"></th>
+				<th data-options="field:'NICK_NAME',width:200,align:'center'">用户昵称</th>
+				<th data-options="field:'PAY_TYPENAME',width:200,align:'center'">支付方式</th>
+				<th
+					data-options="field:'MONEY',width:200,align:'center',
+            	     formatter:function(value,row){
+           	     			 	return '￥'+value;
+	                		  }">充值金额</th>
+				<th data-options="field:'PRODUCT',width:200,align:'center'">渠道</th>
+				<th data-options="field:'PRODUCT_NAME',width:200,align:'center'">来源</th>
+				<th data-options="field:'TRADE_NO',width:200,align:'center'">订单号</th>
+				<th data-options="field:'CREATE_TIME',width:200,align:'center'">充值提交时间</th>
+				<th
+					data-options="field:'TRADE_STATUS',width:200,align:'center',
+            	     formatter:function(value,row){
+            	     			 if(value == '-'){
+            	     			 	return '-';
+            	     			 } else if(value == 1){
+            	     			 	return '成功';
+            	     			 } else if(value != 1){
+            	     			 	return '失败';
+            	     			 }
+            					 
+	                		  }">状态</th>
+				<th data-options="field:'BEFORE_AMOUNT',width:200,align:'center'">充值前金币值</th>
+				<th data-options="field:'AFTER_AMOUNT',width:200,align:'center'">充值后金币值</th>
+				<th data-options="field:'CREATE_DATE',width:200,align:'center'">注册时间</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar1" class="easyui-layout"
+		style="height: 85px; margin: 3px;">
+		<div data-options="region:'center',border:false">
+			<a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+				th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+				th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+		</div>
+		<div data-options="region:'north',border:true" style="height: 140px;">
+			<form id="fm" method="post" novalidate>
+				<table cellpadding="5">
+					<tr>
+						<td>申请时间:</td>
+						<td><input class="easyui-datebox" id="start_time"
+							data-options="formatter:myformatter,parser:myparser"></td>
+						<td>到 <input class="easyui-datebox" id="end_time"
+							data-options="formatter:myformatter,parser:myparser"></td>
+						<td>用户类型:</td>
+						<td><select id="user_status" class="easyui-combobox"
+							style="width: 130px" name="user_status">
+								<option value="">全部</option>
+								<option value="-1">去除白名单用户</option>
+								<option value="2">白名单用户</option>
+								<option value="1">运营用户</option>
+						</select></td>
+						<td>支付方式:</td>
+						<td><select id="pay_type" class="easyui-combobox"
+							style="width: 100px" name="pay_type">
+								<option value="">全部</option>
+								<option value="1">微信</option>
+								<option value="2">支付宝</option>
+								<option value="4">苹果支付</option>
+								<option value="3">易宝支付</option>
+						</select></td>
+						<td>渠道:</td>
+						<td><input class="easyui-textbox" type="text" name="source"
+							id="source"></input></td>
+						<td>来源:</td>
+						<td><select id="app_type" class="easyui-combobox"
+							style="width: 100px" name="app_type">
+								<option value="">全部</option>
+								<option value="1">语伴IOS</option>
+								<option value="2">语伴Android</option>
+						</select></td>
+					</tr>
+					<tr>
+						<td>支付状态:</td>
+						<td><select id="pay_status" class="easyui-combobox"
+							style="width: 100px" name="pay_status">
+								<option value="">全部</option>
+								<option value="1">成功</option>
+								<option value="2">失败</option>
+						</select></td>
+						<td>查询类型:<select id="select_status" class="easyui-combobox"
+							style="width: 100px" name="select_status">
+								<option value="1">明细</option>
+								<option value="2">汇总</option>
+						</select></td>
+						<td>用户昵称:</td>
+						<td><input class="easyui-textbox" type="text"
+							name="nick_name" id="nick_name"></input></td>
+						<td><a href="javascript:search()" class="easyui-linkbutton"
+							iconCls="icon-search">查找</a></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+
+	</div>
+	<script th:inline="javascript">
+		function search() {
+			var start_time = $('#start_time').datebox('getValue');
+			var end_time = $('#end_time').datebox('getValue');
+			var user_status = $('#user_status').combobox('getValue');
+			var pay_type = $('#pay_type').combobox('getValue');
+			var source = $('#source').textbox('getValue');
+			var app_type = $('#app_type').combobox('getValue');
+			var pay_status = $('#pay_status').combobox('getValue');
+			var select_status = $('#select_status').combobox('getValue');
+			var nick_name = $('#nick_name').textbox('getValue');
+			$('#tb1').datagrid({
+				url : "/financial/findFinancialOnlineDetail.do",
+				queryParams : {
+					start_time : start_time,
+					end_time : end_time,
+					user_status : user_status,
+					pay_type : pay_type,
+					source : source,
+					app_type : app_type,
+					pay_status : pay_status,
+					select_status : select_status,
+					nick_name : nick_name
+				}
+			});
+		}
+	</script>
+</body>

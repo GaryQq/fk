@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/cp/!svn/ver/153774/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management
+END
+WhiteUserController.java
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/svn/cp/!svn/ver/149286/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/WhiteUserController.java
+END
+LotterytieUserController.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/cp/!svn/ver/149062/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/LotterytieUserController.java
+END
+UserManageController.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/svn/cp/!svn/ver/152518/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/UserManageController.java
+END
+GiftController.java
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/svn/cp/!svn/ver/149286/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/GiftController.java
+END
+AuditManagementController.java
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/svn/cp/!svn/ver/149316/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/AuditManagementController.java
+END
+GainRatioController.java
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/svn/cp/!svn/ver/149286/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/GainRatioController.java
+END
+BannerController.java
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/cp/!svn/ver/149286/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/BannerController.java
+END
+FinancialController.java
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/svn/cp/!svn/ver/153654/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/FinancialController.java
+END
+OpinionFeedbackController.java
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/svn/cp/!svn/ver/149643/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/OpinionFeedbackController.java
+END
+IdfaController.java
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/svn/cp/!svn/ver/153774/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/IdfaController.java
+END
+PushJMSController.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/svn/cp/!svn/ver/149286/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/PushJMSController.java
+END
+AgencyController.java
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/cp/!svn/ver/152206/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/controller/management/AgencyController.java
+END

@@ -1,0 +1,43 @@
+10
+
+dir
+167392
+http://svn.yuecai365.com/svn/cp/LotteryDev4/Server/chitChat_ht/src/main/resources/templates/permissions
+http://svn.yuecai365.com/svn/cp
+
+
+
+2019-03-07T03:55:54.354097Z
+160108
+niehongtao
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+a014eba1-2fae-834b-8157-1c48fd466da1
+
+buttons
+dir
+
+depts
+dir
+
+resources
+dir
+
+roles
+dir
+
+users
+dir
+

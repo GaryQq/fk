@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<table id="tb1" class="easyui-datagrid" title="" width="100%"
+		height="100%" fit="true" border="0"
+		data-options="url:'/oneToOneDetail/getOneToOneMsgDetail.do',singleSelect:false,method:'get',
+					toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc',rownumbers:true,
+					pagination:true,showFooter:true">
+		<thead>
+			<tr>
+				<th data-options="field:'user_nick_name',width:100,align:'center'">发起者昵称</th>
+				<th data-options="field:'create_time',width:200,align:'center'">日期</th>
+				<th data-options="field:'anchor_nick_name',width:200,align:'center'">接收者昵称</th>
+				<th data-options="field:'msgPrice',width:200,align:'center'">接收者价格</th>
+				<th data-options="field:'msg_amount',width:200,align:'center'">消耗金币</th>
+				<th data-options="field:'brick_amount',width:200,align:'center'">增加现金</th>
+				<th data-options="field:'content',width:200,align:'center'">私信内容</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar1" class="easyui-layout"
+		style="height: 100px; margin: 3px;">
+		<div data-options="region:'center',border:false">
+			<a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+				th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+				th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+		</div>
+		<div data-options="region:'north',border:true" style="height: 80px;">
+			<form id="fm" method="post" novalidate>
+				<table cellpadding="5">
+					<tr>
+						<td>查询时间:</td>
+						<td><input class="easyui-datebox" id="start_time"
+							data-options="formatter:myformatter,parser:myparser">到 <input
+							class="easyui-datebox" id="end_time"
+							data-options="formatter:myformatter,parser:myparser"></td>
+
+
+						<td>发起者昵称:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							id="user_nick_name" /></td>
+
+						<td>接听者昵称:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							id="anchor_nick_name" /></td>
+					</tr>
+				</table>
+				<table cellpadding="5">
+					<tr>
+						<td>发起者类型:</td>
+						<td><select id="anchor_status" style="width: 150px"
+							class="easyui-combobox">
+								<option value="1">全部</option>
+								<option value="2">去除白名单用户</option>
+								<option value="3">白名单</option>
+						</select></td>
+
+						<td>接听者类型:</td>
+						<td><select id="user_status" style="width: 150px"
+							class="easyui-combobox">
+								<option value="1">全部</option>
+								<option value="2">去除白名单用户</option>
+								<option value="3">白名单</option>
+						</select></td>
+
+						<td><a href="javascript:search()" class="easyui-linkbutton"
+							iconCls="icon-search">查找</a></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+
+	</div>
+	<script th:inline="javascript">
+		function search() {
+			var start_time = $("#start_time").datebox('getValue');
+			var end_time = $("#end_time").datebox('getValue');
+			var user_nick_name = $("#user_nick_name").val();
+			var anchor_nick_name = $("#anchor_nick_name").val();
+			var anchor_status = $('#anchor_status').combobox('getValue');
+			var user_status = $('#user_status').combobox('getValue');
+			$('#tb1').datagrid({
+				url : "/oneToOneDetail/getOneToOneMsgDetail.do",
+				queryParams : {
+					end_time : end_time,
+					start_time : start_time,
+					user_nick_name : user_nick_name,
+					anchor_nick_name : anchor_nick_name,
+					anchor_status : anchor_status,
+					user_status : user_status
+				}
+			});
+		}
+	</script>
+</body>

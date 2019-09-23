@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body class="easyui-layout">
+<table id="tb1" class="easyui-datagrid" title="" width="100%"
+       height="100%" fit="true" border="0"
+       data-options="rownumbers:true,pagination:true,url:'/idfa/idfaStastic.do',singleSelect:true,method:'get',toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc'">
+    <thead>
+    <tr>
+        <th data-options="field:'ck',checkbox:true"></th>
+        <th data-options="field:'sourceName',width:100,align:'center',hidden:false">source</th>
+        <th data-options="field:'totalCount',width:100,align:'center'">总数</th>
+        <th data-options="field:'activateCount',width:100,align:'center'">激活数</th>
+        <th data-options="field:'unActivateCount',width:100,align:'center'">未激活数</th>
+    </tr>
+    </thead>
+</table>
+
+<div id="toolbar1" class="easyui-layout"
+     style="height: 50px; margin: 3px;">
+    <div data-options="region:'center',border:false">
+        <a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+           th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+           th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+    </div>
+    <div data-options="region:'north',border:true" style="height: 100px;">
+        <form id="fm" method="post" novalidate>
+            <table cellpadding="5">
+                <tr>
+                    <td>申请时间:</td>
+                    <td><input class="easyui-datebox" id="startTime"
+                               data-options="formatter:myformatter,parser:myparser">到 <input
+                            class="easyui-datebox" id="endTime"
+                            data-options="formatter:myformatter,parser:myparser"></td>
+                    <td><a href="javascript:search()" class="easyui-linkbutton"
+                           iconCls="icon-search">查找</a></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+
+</div>
+
+<script th:inline="javascript">
+    var menuName = [[${menuName}]]
+
+    function search() {
+        var startTime = $("#startTime").datebox('getValue');
+        var endTime = $("#endTime").datebox('getValue');
+
+        $('#tb1').datagrid({
+            url: "/idfa/idfaStastic.do",
+            queryParams: {
+                startTime: startTime,
+                endTime: endTime
+            }
+        });
+    }
+
+</script>
+</body>

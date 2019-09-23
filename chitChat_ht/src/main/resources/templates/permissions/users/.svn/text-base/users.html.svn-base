@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+</head>
+<body class="easyui-layout">
+	<div data-options="region:'west',split:true" title="部门"
+		style="width: 160px; overflow: hidden;">
+		<ul id="jsontree" class="easyui-tree" />
+	</div>
+	<div data-options="region:'center'" style="background: #eee;">
+		<table id="tb1" class="easyui-datagrid" title="" width="100%"
+			height="100%" fit="true" border="0"
+			data-options="rownumbers:true,pagination:true,url:'',singleSelect:false,method:'get',toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc'">
+			<thead>
+				<tr>
+					<th data-options="field:'ck',checkbox:true"></th>
+					<th data-options="field:'id',hidden:true">id</th>
+					<th data-options="field:'username',width:100,align:'left'">登录名</th>
+					<th data-options="field:'name',width:150,align:'center'">用户名称</th>
+					<th data-options="field:'phone',width:150,align:'center'">联系电话</th>
+					<th data-options="field:'address',width:200,align:'center'">地址</th>
+					<th data-options="field:'deptName',width:100,align:'center'">所属部门</th>
+					<th
+						data-options="field:'userCode',width:100,align:'center',
+            		formatter:function(value,row){
+	                                    if(value == 1) return '私人账号';
+	                                    if(value == 0) return '企业账号';
+	                                    return '未定义';
+	                		  }">账号类型</th>
+					<th data-options="field:'fkUserName',width:100,align:'center'">关联账号</th>
+					<th data-options="field:'mark',width:250,align:'center'">备注</th>
+					<th
+						data-options="field:'enable',width:100,align:'center',
+            		formatter:function(value,row){
+	                                    if(value == 1) return '启用';
+	                                    if(value == 0) return '停用';
+	                                    return '未定义';
+	                		  }
+            	">状态</th>
+
+				</tr>
+			</thead>
+		</table>
+		<div id="toolbar1" class="easyui-layout"
+			style="height: 70px; margin: 3px;">
+			<div data-options="region:'center',border:false">
+				<a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+					th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+					th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+			</div>
+			<div data-options="region:'north',border:true" style="height: 40px;">
+				<form id="fm" method="post" novalidate>
+					<table cellpadding="5">
+						<tr>
+							<td>登录名:</td>
+							<td><input class="easyui-validatebox textbox" type="text"
+								name="username" id="username"></input></td>
+							<td>用户名:</td>
+							<td><input class="easyui-validatebox textbox" type="text"
+								name="name" id="name"></input></td>
+							<td>&nbsp;&nbsp;</td>
+							<td><a href="javascript:search()" class="easyui-linkbutton"
+								iconCls="icon-search">查找</a></td>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+	<script th:inline="javascript">
+	var menuName=[[${menuName}]]
+	var menuId=1;
+	function on(){
+		enable(1);
+	}
+	function off(){
+		enable(0);
+	}
+	function enable(types){
+		var selecteds = $('#tb1').datagrid('getSelections');
+        if (selecteds == null || selecteds.length == 0) { 
+        	Common.showMsg('请选择操作项！');
+        	return;
+        }
+        if (selecteds.length>1) {
+        	Common.showMsg('不支持多个操作！');
+        	return; 
+        }
+		$.ajax( {
+			url : '/users/enable.do?id='+selecteds[0].id+'&enable='+types,
+			dataType:'text',
+			type: 'get',
+			success : function(result) {
+				if ("success"==result){
+					Common.showMsg('提示',"操作成功");
+				    search();
+				}else{
+					Common.showMsg('提示',"操作失败");
+				}
+				
+			}
+		});
+	}
+	
+	$(function(){
+		$("#jsontree").tree({
+            url: '/dept/getDataTree.do',
+            method: 'get',
+            parentField:"pId",
+            textFiled:"name",
+            idFiled:"id",
+            onLoadSuccess: function (node, data) {
+            	var node = $('#jsontree').tree('getRoot');
+                if (node != undefined && node != null){
+                	$('#jsontree').tree('select', node.target);
+                	/*var children = node.children;
+                	  if (children == null){
+                		 $('#jsontree').tree('select', node.target);
+                	 }else{
+                		 var children = $('#jsontree').tree('getChildren',node.target);
+                    	 if (children != null){
+                    		 var child = children[0];
+                    		 $('#jsontree').tree('select', child.target);
+                    	 } 
+                	 } */
+                }
+            },
+            onSelect: function (node) {
+            		menuId=node.id;
+            		search();
+            }
+        });
+	})
+	function add(){
+		top.framework.openTab('新增用户', '/users/add.do?menuName=新增用户&parentMenuName='+menuName+'&deptId='+menuId);
+	}
+	function edit(){
+		var selecteds = $('#tb1').datagrid('getSelections');
+        if (selecteds == null || selecteds.length == 0) { 
+        	Common.showMsg('修改用户','请选择操作项！');
+        	return;
+        }
+        if (selecteds.length>1) {
+        	Common.showMsg('修改用户','不支持多个操作！');
+        	return; 
+        }
+		top.framework.openTab('修改用户', '/users/add.do?menuName=修改用户&parentMenuName='+menuName+'&id='+selecteds[0].id+'&deptId='+menuId);
+	}
+	 function remove(){
+			var selecteds = $('#tb1').datagrid('getSelections');
+	        if (selecteds == null || selecteds.length == 0) { 
+	        	Common.showMsg('提示','请选择操作项！');
+	        	return;
+	        }
+	        $.messager.confirm('提示','确定删除吗?', 
+	        function(r){
+	            if (r){
+	            	var ids = '';
+	                $(selecteds).each(function (index) {
+	                    ids = ids + selecteds[index].id + ",";
+	                });
+	                ids = ids.substring(0, ids.length - 1);
+	        		$.ajax( {
+	    				url : '/users/delete.do?ids='+ids,
+	    				dataType:'text',
+	    				type: 'delete',
+	    				success : function(result) {
+	    					if ("success"==result){
+	    						Common.showMsg('提示',"删除成功");
+	        				    search();
+	    					}else{
+	    						Common.showMsg('提示',"删除失败");
+	    					}
+	    					
+	    				}
+	    			});
+	            }
+	        });
+	        
+		}
+	function search(){
+		var username = $("#username").val();
+		var name = $("#name").val();
+		$('#tb1').datagrid({
+            url:"/users/getData.do",
+            queryParams:{
+            	deptId:menuId,
+            	name:name,
+            	username:username,
+            }
+        });
+	}
+	</script>
+</body>
+</html>

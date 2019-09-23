@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<div data-options="region:'center'" border="false">
+		<div id="dlg" style="padding: 10px 20px">
+			<div class="myftitle">基本信息</div>
+			<form id="myfm" method="post" novalidate>
+				<table cellpadding="7">
+					<input class="easyui-validatebox" type="hidden" id="audit_id">
+					<input class="easyui-validatebox" type="hidden" id="user_name">
+					<tr>
+						<td>代理区域:</td>
+						<td><input class="easyui-validatebox textbox" name="region"
+							id="region" data-options="required:true"></td>
+					</tr>
+					<tr>
+						<td>精通语言(可多选):</td>
+						<td><input type="checkbox" name="master" value="汉语">汉语
+							<input type="checkbox" name="master" value="英语">英语 <input
+							type="checkbox" name="master" value="俄语">俄语 <input
+							type="checkbox" name="master" value="法语">法语 <input
+							type="checkbox" name="master" value="德语">德语</br> <input
+							type="checkbox" name="master" value="日语">日语 <input
+							type="checkbox" name="master" value="西班牙语">西班牙语 <input
+							type="checkbox" name="master" value="阿拉伯语">阿拉伯语 <input
+							type="checkbox" name="master" value="韩语">韩语 <input
+							type="checkbox" name="master" value="乌克兰语">乌克兰语 </br> 其他：<input
+							class="easyui-validatebox textbox" name="language"
+							style="width: 200px; height: 20px" id="language" data-options=""></td>
+					</tr>
+					<tr>
+						<td>姓名:</td>
+						<td><input class="easyui-validatebox textbox"
+							name="agent_name" id="agent_name" data-options=""></td>
+					</tr>
+					<tr>
+						<td>手机号:</td>
+						<td><input class="easyui-validatebox textbox"
+							name="area_code" style="width: 40px; height: 20px" id="area_code"
+							data-options=""> &nbsp&nbsp&nbsp <input
+							class="easyui-validatebox textbox" name="iphone"
+							style="width: 150px; height: 20px" id="iphone" data-options=""></td>
+					</tr>
+					<tr>
+						<td>邮箱:</td>
+						<td><input class="easyui-validatebox textbox" name="email"
+							id="email" data-options=""></td>
+					</tr>
+					<tr>
+						<td>个人介绍:</td>
+						<td><input class="easyui-validatebox textbox" name="info"
+							id="info" data-options=""></td>
+					</tr>
+
+				</table>
+			</form>
+		</div>
+	</div>
+	<div data-options="region:'south'" style="height: 40px;" border="false">
+		<hr>
+		<div style="text-align: center;">
+			<a href="javascript:void(0)" class="easyui-linkbutton"
+				onclick="submitForm()">保存</a> <a href="javascript:void(0)"
+				class="easyui-linkbutton"
+				th:onclick="|top.framework.closeTab('${menu.menuName}')|">关闭</a>
+		</div>
+	</div>
+	<script th:inline="javascript">
+	var parentMenuName=[[${menu.parentMenuName}]]
+	var menuName=[[${menu.menuName}]]
+
+	$(function(){
+		var entity=[[${entity}]];
+		var user_name = entity.user_name;
+		$('#user_name').val(user_name);
+		
+		var audit_id = entity.id;
+		$('#audit_id').val(audit_id);
+		
+		var region = entity.region;
+		$("#region").val(region);
+		
+		var agent_name = entity.agent_name;
+		$("#agent_name").val(agent_name);
+		
+		var area_code = entity.area_code;
+		$("#area_code").val(area_code);
+		
+		var iphone = entity.iphone;
+		$("#iphone").val(iphone);
+		
+		var email = entity.email;
+		$("#email").val(email);
+		
+		var info = entity.info;
+		$("#info").val(info);
+		
+		var master = "";
+		$('input[name="master"]').each(function() {
+			var t = $(this).val();
+			master += t + ",";
+		});
+		
+		var masterLanguage = entity.masterLanguage;
+		var arrType = masterLanguage.split(",");
+		var channelBox = document.getElementsByName("master");
+		var language = "";
+		for (var a = 0; a < arrType.length; a++) {
+			for (var i = 0; i < channelBox.length; i++) {
+				if (channelBox[i].value == arrType[a]) {
+					channelBox[i].checked = true;
+				}else if(master.indexOf(arrType[a]) == -1 && language.indexOf(arrType[a]) == -1){
+					language = language + arrType[a] + ",";
+				}
+			}
+		}
+		language = language.substring(0, language.length - 1);
+		$("#language").val(language);
+ 	})
+	
+	function submitForm(){
+		var master = "";
+		$('input[name="master"]:checked').each(function() {
+			var t = $(this).val();
+			master += t + ",";
+		});
+		var language = $('#language').val();
+		master = master + language;
+		
+		var user_name = $('#user_name').val;
+		var region = $('#region').val();
+		var agent_name = $('#agent_name').val();
+		var area_code = $('#area_code').val();
+		var mobile = $('#mobile').val();	
+		var eMail = $('#email').val();
+		var info = $('#info').val();	
+		var audit_id = $('#audit_id').val();
+		
+		$.ajax({
+			url : "/auditManagement/editAudit.do",
+			type : "POST",
+			data : {
+				"user_name" : user_name,
+				"master" : master,
+				"region" : region,
+				"agent_name" : agent_name,
+				"area_code" : area_code,
+				"mobile" : mobile,
+				"eMail" : eMail,
+				"info" : info,
+				"audit_id" : audit_id
+			},
+			dataType : "text",
+			success : function(data) {
+				if ("success" == data){
+                	Common.showMsg('提示',"修改成功");
+                	top.framework.closeAndReloadTab(menuName, parentMenuName);
+                } else {
+                	Common.showMsg('提示',"添加失败");
+                }	
+			}
+		});
+	}
+</script>
+</body>

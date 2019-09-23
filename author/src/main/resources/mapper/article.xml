@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fengkuang.author.dao.ArticleDao">
+    <resultMap id="article" type="com.fengkuang.author.bean.Article">
+        <id column="id" property="id" jdbcType="NUMERIC" javaType="java.lang.Long"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR" javaType="java.lang.String"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="content" property="content" jdbcType="CLOB" javaType="java.lang.String"/>
+        <result column="status" property="status" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="post_id" property="postId" jdbcType="VARCHAR" javaType="java.lang.String"/>
+        <result column="title" property="title" jdbcType="VARCHAR" javaType="java.lang.String"/>
+        <result column="channel_id" property="channelId" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="pay_type" property="payType" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="word_count" property="wordCount" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="image_url" property="imageUrl" jdbcType="VARCHAR" javaType="java.lang.String"/>
+    </resultMap>
+
+    <resultMap id="articleWithAuthor" type="com.fengkuang.author.bean.Article">
+        <id column="id" property="id" jdbcType="NUMERIC" javaType="java.lang.Long"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="content" property="content" jdbcType="CLOB" javaType="java.lang.String"/>
+        <result column="status" property="status" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="post_id" property="postId" jdbcType="VARCHAR" javaType="java.lang.String"/>
+        <result column="title" property="title" jdbcType="VARCHAR" javaType="java.lang.String"/>
+        <result column="channel_id" property="channelId" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="pay_type" property="payType" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="word_count" property="wordCount" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="image_url" property="imageUrl" jdbcType="VARCHAR" javaType="java.lang.String"/>
+        <association property="author" column="user_name" select="com.fengkuang.author.dao.AuthorDao.getByUserName"/>
+    </resultMap>
+
+    <sql id="columnsAll">id, user_name, create_time, modify_time, content, status, post_id, channel_id, pay_type, title, word_count, image_url</sql>
+    <sql id="columnsWithoutTime">id, user_name, content, status, post_id, channel_id, pay_type, title, word_count, image_url</sql>
+
+    <insert id="insert" parameterType="com.fengkuang.author.bean.Article" useGeneratedKeys="true">
+        insert into INFO_POST_BY_AUTHOR (
+        <include refid="columnsWithoutTime"/>
+        )
+        values
+        (#{id}, #{userName}, #{content}, #{status}, #{postId, jdbcType=VARCHAR}, #{channelId}, #{payType}, #{title},
+        #{wordCount}, #{imageUrl})
+        <selectKey keyProperty="id" resultType="java.lang.Long" order="BEFORE">
+            select SEQ_INFO_POST_BY_AUTHOR.nextval from dual
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterType="com.fengkuang.author.bean.Article">
+        update INFO_POST_BY_AUTHOR
+        <set>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="postId != null">
+                post_id = #{postId},
+            </if>
+            <if test="content != null">
+                content = #{content},
+            </if>
+            <if test="payType != null">
+                pay_type = #{payType},
+            </if>
+            <if test="channelId != null">
+                channel_id = #{channelId},
+            </if>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="wordCount != null">
+                word_count = #{wordCount},
+            </if>
+            <if test="imageUrl != null">
+                image_url = #{imageUrl},
+            </if>
+            modify_time = sysdate,
+        </set>
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+        </where>
+    </update>
+
+    <select id="getListByParams" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+      select ID,
+       POST_ID,
+       TO_CHAR(CREATE_TIME, 'yyyy-mm-dd hh24:mi:ss') CREATE_TIME,
+       TO_CHAR(MODIFY_TIME, 'yyyy-mm-dd hh24:mi:ss') MODIFY_TIME,
+       READ_NUMBER_REAL,
+       TITLE,
+       CONTENT,
+       NVL(PAY_AMOUNT, 0) PAY_AMOUNT,
+       NVL(PAY_COUNT, 0)  PAY_COUNT
+      from (select M.*,
+             (select sum(t.DEDUCT_MONEY) from INFO_VIP_ORDER t where t.STATUS = 1
+                                                           and t.POST_ID = M.POST_ID) PAY_AMOUNT,
+             (select count(1) from INFO_VIP_ORDER t where t.STATUS = 1
+                                                      and t.POST_ID = M.POST_ID)      PAY_COUNT
+        from (select P.TITLE, TO_CHAR(P.CONTENT) CONTENT, A.ID, a.POST_ID, A.CREATE_TIME, A.MODIFY_TIME, P.READ_NUMBER_REAL
+            from INFO_POST_BY_AUTHOR A
+                  join INFO_POST P on A.POST_ID = P.POST_ID
+            where A.USER_NAME = #{userName}
+              and #{startTime} &lt; to_number(to_char(A.CREATE_TIME, 'yyyymmddhh24miss'))
+              and #{endTime} >= to_number(to_char(A.CREATE_TIME, 'yyyymmddhh24miss'))
+              and P.STATUS = #{status}
+              order by A.MODIFY_TIME DESC ) M)
+    </select>
+
+    <select id="getList" parameterType="java.util.Map" resultType="java.util.Map">
+        select t.ID,
+          TO_CHAR(t.CREATE_TIME, 'yyyy-mm-dd hh24:mi:ss') CREATE_TIME,
+          t.TITLE,
+          TO_CHAR(t.MODIFY_TIME, 'yyyy-mm-dd hh24:mi:ss') MODIFY_TIME
+          from INFO_POST_BY_AUTHOR t
+          where
+            t.STATUS = #{status}
+            and t.USER_NAME = #{userName}
+            and #{startTime} &lt; to_number(to_char(t.CREATE_TIME, 'yyyymmddhh24miss'))
+            and #{endTime} >= to_number(to_char(t.CREATE_TIME, 'yyyymmddhh24miss'))
+            order by t.MODIFY_TIME desc
+    </select>
+
+    <select id="getDetailByPostId" parameterType="java.lang.String" resultMap="articleWithAuthor">
+        select *
+        from INFO_POST_BY_AUTHOR
+        where POST_ID = #{postId}
+    </select>
+
+    <select id="getById" parameterType="java.lang.Long" resultMap="articleWithAuthor">
+        select *
+        from INFO_POST_BY_AUTHOR
+        where id = #{id}
+    </select>
+
+    <update id="updateByPostId" parameterType="java.util.Map">
+        update INFO_POST_BY_AUTHOR
+        <set>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        <where>
+            post_id = #{postId}
+        </where>
+    </update>
+
+    <select id="getAuthorIncomeDetail" parameterType="java.util.Map" resultType="java.util.Map">
+        select i.ID, i.POST_ID, i.TITLE, nvl(t.DEDUCT_MONEY, 0) DEDUCT_MONEY, to_char(t.MODIFY_TIME, 'yyyy-mm-dd hh24:mi:ss') MODIFY_TIME
+        from INFO_VIP_ORDER t
+        left join INFO_POST_BY_AUTHOR i
+        on t.POST_ID = i.POST_ID
+        where t.STATUS = 1
+        and i.USER_NAME = #{userName}
+        order by t.MODIFY_TIME desc
+    </select>
+
+    <select id="getArticleMonthes" parameterType="java.util.Map" resultType="java.lang.String">
+        select SUBSTR2(month, 0, 4) || '年' || SUBSTR2(month, 5, 2) || '月' month_str
+        from (select distinct to_char(t.CREATE_TIME, 'yyyymm') month
+              from INFO_POST_BY_AUTHOR t
+              where t.USER_NAME = #{userName}
+                and t.STATUS = #{status})
+        order by month desc
+    </select>
+</mapper>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<table id="tb1" class="easyui-datagrid" title="" width="100%"
+		height="100%" fit="true" border="0"
+		data-options="rownumbers:true,pagination:true,url:'/financial/getFinancialData.do',singleSelect:true,method:'get',toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc'">
+		<thead>
+			<tr>
+				<th data-options="field:'ck',checkbox:true"></th>
+				<th data-options="field:'CREATE_TIME',width:200,align:'center'">日期</th>
+				<th data-options="field:'MONEY',width:200,align:'center'">线上充值</th>
+				<th data-options="field:'AMOUNT',width:200,align:'center'">线下充值</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar1" class="easyui-layout"
+		style="height: 65px; margin: 3px;">
+		<div data-options="region:'center',border:false">
+			<a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+				th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+				th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+		</div>
+		<div data-options="region:'north',border:true" style="height: 40px;">
+			<form id="fm" method="post" novalidate>
+				<table cellpadding="5">
+					<tr>
+						<td>申请时间:</td>
+						<td><input class="easyui-datebox" id="start_time"
+							data-options="formatter:myformatter,parser:myparser"></td>
+						<td>到 <input class="easyui-datebox" id="end_time"
+							data-options="formatter:myformatter,parser:myparser"></td>
+
+
+						<td>用户类型:<select id="user_status" style="width: 100px"
+							class="easyui-combobox" style="width: 100px" name="user_status">
+								<option value="">全部</option>
+								<option value="-1">去除白名单用户</option>
+								<option value="2">白名单用户</option>
+								<option value="1">运营用户</option>
+						</select></td>
+						<td><a href="javascript:search()" class="easyui-linkbutton"
+							iconCls="icon-search">查找</a></td>
+
+					</tr>
+				</table>
+			</form>
+		</div>
+
+	</div>
+	<script th:inline="javascript">
+		function search() {
+			var start_time = $('#start_time').datebox('getValue');
+			var end_time = $('#end_time').datebox('getValue');
+			var user_status = $('#user_status').combobox('getValue');
+			$('#tb1').datagrid({
+				url : "/financial/getFinancialData.do",
+				queryParams : {
+					start_time : start_time,
+					end_time : end_time,
+					user_status : user_status
+				}
+			});
+		}
+	</script>
+</body>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<div data-options="region:'center'" border="false">
+		<div id="dlg" style="padding: 10px 20px">
+			<div class="myftitle">基本信息</div>
+			<form id="myfm" method="post" novalidate>
+
+				<table cellpadding="7">
+					<tr>
+						<td>头像:</td>
+						<td><img id="userImg" src=""
+							style="height: 100px; weight: 100px"></td>
+					</tr>
+					<tr>
+						<td>昵称:</td>
+						<td><input class="easyui-validatebox" type="text"
+							name="nickName" id=nickName readonly="true" data-options=""></td>
+					</tr>
+					<tr>
+						<td>生日:</td>
+						<td><input class="easyui-validatebox" type="text"
+							name="birthday" id="birthday" readonly="true" data-options=""></td>
+					</tr>
+					<tr>
+						<td>学历:</td>
+						<td><input class="easyui-validatebox" type="text"
+							name="education" id="education" readonly="true" data-options=""></td>
+					</tr>
+					<tr>
+						<td>学校:</td>
+						<td><input class="easyui-validatebox" type="text"
+							name="school" id="school" readonly="true" data-options=""></td>
+					</tr>
+					<tr>
+						<td>相册:</td>
+						<td><img id="imgs0" src="" style="height: 50px; weight: 50px"/>
+							<img id="imgs1" src="" style="height: 50px; weight: 50px"/>
+							<img id="imgs2" src="" style="height: 50px; weight: 50px"/></br>
+							<img id="imgs3" src="" style="height: 50px; weight: 50px"/>
+							<img id="imgs4" src="" style="height: 50px; weight: 50px"/>
+							<img id="imgs5" src="" style="height: 50px; weight: 50px"/></br>
+							<img id="imgs6" src="" style="height: 50px; weight: 50px"/>
+							<img id="imgs7" src="" style="height: 50px; weight: 50px"/>
+							<img id="imgs8" src="" style="height: 50px; weight: 50px"/></br></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+	<div data-options="region:'south'" style="height: 40px;" border="false">
+		<hr>
+		<div style="text-align: center;">
+			<a href="javascript:void(0)" class="easyui-linkbutton"
+				th:onclick="|top.framework.closeTab('${menu.menuName}')|">关闭</a>
+		</div>
+	</div>
+	<script th:inline="javascript">
+	 
+	var parentMenuName=[[${menu.parentMenuName}]]
+	var menuName=[[${menu.menuName}]]
+	
+	$(function(){
+		var entity=[[${entity}]];
+		var birthday = entity.birthday;
+		var education = entity.education;
+		var nickName = entity.nickName;
+		var school = entity.school;
+		var userImg = entity.userImg;
+		var img_arr = entity.img_list;
+		$('#userImg').attr("src", userImg);
+		$('#nickName').val(nickName);
+		$('#birthday').val(birthday);
+		$('#education').val(education);
+		$('#school').val(school);
+		 if(img_arr.length > 0){
+			for(var i = 0; i < img_arr.length; i++){
+				var img = img_arr[i].image;
+				$("#imgs"+i).attr("src", img);
+			}
+		} 
+	});
+	  
+	</script>
+</body>

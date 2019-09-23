@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fengkuang.author.dao.InfoPostDao">
+    <resultMap id="author" type="com.fengkuang.author.bean.InfoPost">
+        <id column="id" property="id" jdbcType="NUMERIC"/>
+        <result column="channel_id" property="channelId" jdbcType="NUMERIC"/>
+        <result column="post_id" property="postId" jdbcType="VARCHAR"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="pic" property="pic" jdbcType="VARCHAR"/>
+        <result column="flag" property="flag" jdbcType="INTEGER"/>
+        <result column="last_id" property="lastId" jdbcType="VARCHAR"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="nick_name" property="nickName" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="image_flag" property="imageFlag" jdbcType="INTEGER"/>
+        <result column="free" property="free" jdbcType="INTEGER"/>
+        <result column="word_count" property="wordCount" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="columnsAll">id, create_time, modify_time, channel_id, post_id, title, pic, flag, last_id, user_name, nick_name, type, content, status, image_flag, free, word_count</sql>
+
+    <insert id="insert" parameterType="com.fengkuang.author.bean.InfoPost" useGeneratedKeys="true">
+        insert into info_post (<include refid="columnsAll"/>)
+        values
+        (#{id}, sysdate, sysdate, #{channelId}, #{postId}, #{title}, #{pic, jdbcType=VARCHAR}, #{flag}, #{lastId}, #{userName}, #{nickName},
+        #{type}, #{content}, #{status}, #{imageFlag}, #{free}, ${wordCount})
+
+        <selectKey keyProperty="id" resultType="java.lang.Long" order="BEFORE">
+            select SEQ_INFO_POST.nextval from dual
+        </selectKey>
+    </insert>
+
+    <update id="updateByPostId" parameterType="java.util.Map">
+        update INFO_POST
+        <set>
+            modify_time = sysdate,
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="wordCount != null">
+                word_count = #{wordCount},
+            </if>
+            <if test="channelId != null">
+                channel_id = #{channelId},
+            </if>
+            <if test="free != null">
+                free = #{free},
+            </if>
+            <if test="pic != null">
+                pic = #{pic},
+            </if>
+        </set>
+        <where>
+            post_id = #{postId}
+        </where>
+    </update>
+</mapper>

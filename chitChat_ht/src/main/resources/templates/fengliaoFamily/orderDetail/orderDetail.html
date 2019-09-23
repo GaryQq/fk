@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+</head>
+<body class="easyui-layout">
+<div data-options="region:'center'" style="background: #eee;">
+    <table id="tb1" class="easyui-datagrid" title="" width="100%"
+           height="100%" fit="true" border="0"
+           data-options="rownumbers:true,pagination:true,url:'/flFamily/findFamilyOrderDetailList.do',singleSelect:false,method:'get',toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc',onLoadSuccess:function(data){
+				if(data!=null){
+					var data=$('#tb1').datagrid('getData');
+					$('#registerCount').val(data.total);
+				}
+			}">
+        <thead>
+        <tr>
+            <th data-options="field:'ck',checkbox:true"></th>
+            <th data-options="field:'USER_NICK_NAME',width:100,align:'center'">用户昵称</th>
+            <th data-options="field:'ANCHOR_NICK_NAME',width:150,align:'center'">主播昵称</th>
+            <th data-options="field:'SUB_TYPE_NAME',width:150,align:'center'">订单分类</th>
+            <th data-options="field:'ORDER_FEE',width:150,align:'center'">订单应付(元)</th>
+            <th data-options="field:'TICKET_NAME',width:150,align:'center'">亲密券</th>
+            <th data-options="field:'REAL_FEE',width:150,align:'center'">订单实付(元)</th>
+            <th data-options="field:'ORDER_STATUS',width:100,align:'center',sortable:'true',
+            	     formatter:function(value,row){
+            							if (value == 0){
+            							     return '待接单';
+            							} else if(value == 1){
+            							     return '待服务';
+            							} else if(value == 2){
+            							     return '进行中';
+            							} else if(value == 3){
+            							     return '已完成';
+            							} else if(value == -1){
+            							     return '已取消';
+            							} else if(value == -2){
+            							     return '主播拒接';
+            							} else if(value == -3){
+            							     return '主播未接';
+            							}
+	                		  }
+            	">订单状态
+            </th>
+            <th data-options="field:'CREATE_TIME',width:150,align:'center'">下单时间</th>
+            <th data-options="field:'SWITCH_ON_TIME',width:150,align:'center'">接单时间</th>
+            <th data-options="field:'START_TIME',width:150,align:'center'">开始时间</th>
+            <th data-options="field:'END_TIME',width:150,align:'center'">完成/取消时间</th>
+        </tr>
+        </thead>
+    </table>
+    <div id="toolbar1" class="easyui-layout"
+         style="height: 65px; margin: 3px;">
+        <div data-options="region:'center',border:false">
+            <a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+               th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+               th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+        </div>
+        <div data-options="region:'north',border:true" style="height: 40px;">
+            <form id="fm" method="post" novalidate>
+                <table cellpadding="5">
+                    <tr>
+                        <td>开始时间:</td>
+                        <td><input class="easyui-datebox" id="start_time"
+                                   data-options="formatter:myformatter,parser:myparser"></td>
+                        <td>到 <input class="easyui-datebox" id="end_time"
+                                     data-options="formatter:myformatter,parser:myparser"></td>
+                        <td>分类:</td>
+                        <td>
+                            <select id="skill_id" style="width: 100px" name="skill_id">
+                            </select>
+                        </td>
+                        <td>状态:</td>
+                        <td>
+                            <select id="order_status" style="width: 100px" class="easyui-combobox" name="order_status">
+                                <option value="">全部</option>
+                                <option value="0">待接单</option>
+                                <option value="1">待服务</option>
+                                <option value="2">进行中</option>
+                                <option value="3">已完成</option>
+                                <option value="-1">已取消</option>
+                                <option value="-2">主播拒接</option>
+                                <option value="-3">主播未接</option>
+                            </select>
+                        </td>
+                        <td>接听者:</td>
+                        <td><input class="easyui-validatebox textbox" type="text"
+                                   name="nick_name" id="nick_name"></input></td>
+                        <td>&nbsp;&nbsp;</td>
+                        <td><a href="javascript:search()" class="easyui-linkbutton"
+                               iconCls="icon-search">查找</a></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    var menuName = [[${menuName}]]
+
+    function search() {
+        var nick_name = $("#nick_name").val();
+        var start_time = $('#start_time').datebox('getValue');
+        var end_time = $('#end_time').datebox('getValue');
+        var order_status = $('#order_status').combobox('getValue');
+        var skill_id = $('#skill_id').val();
+        $('#tb1').datagrid({
+            url: "/flFamily/findFamilyOrderDetailList.do",
+            queryParams: {
+                nick_name: nick_name,
+                start_time: start_time,
+                end_time: end_time,
+                order_status: order_status,
+                skill_id: skill_id
+            }
+        })
+    }
+
+    $(function () {
+        $.ajax({
+            url: '/flFamily/findSkillList.do',
+            data: {},
+            dataType: 'text',
+            type: 'POST',
+            success: function (data) {
+                var jsonArr = JSON.parse(data);
+                $("#skill_id").prepend("<option value=''>请选择</option>");
+                for (var i = 0; i < jsonArr.length; i++) {
+                    var json = jsonArr[i];
+                    $("#skill_id").append("<option value='" + json.SKILL_ID + "'>" + json.SKILL_NAME + "</option>")
+                }
+            }
+        });
+    })
+</script>
+</body>
+</html>

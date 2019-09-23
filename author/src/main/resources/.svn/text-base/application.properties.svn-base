@@ -1,0 +1,14 @@
+spring.mvc.view.prefix=/WEB-INF/pages/
+spring.mvc.view.suffix=.jsp
+
+#接口路径
+h5.login.url=http://t.fengkuang.cn/postLogin/newLoginest
+h5.authCode.url=http://t.fengkuang.cn/postLogin/getVerifiCode
+h5.fastLogin.url=http://t.fengkuang.cn/postLogin/fastLogin
+
+#tomcat上传文件最大设置
+spring.servlet.multipart.max-file-size=10MB
+spring.servlet.multipart.max-request-size=100MB
+
+#去掉默认favicon
+spring.mvc.favicon.enabled=false

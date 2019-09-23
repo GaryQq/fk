@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body class="easyui-layout">
+<table id="tb1" class="easyui-datagrid" title="" width="100%"
+       height="100%" fit="true" border="0"
+       data-options="rownumbers:true,pagination:true,url:'/gainRatio/getGainRatioList.do?typeCode=5',singleSelect:true,method:'get',toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc'">
+    <thead>
+    <tr>
+        <th data-options="field:'ck',checkbox:true"></th>
+        <th data-options="field:'ID',width:50,align:'center',hidden:true">id</th>
+        <th data-options="field:'NAME',width:50,align:'center'">名称</th>
+        <th data-options="field:'LEVELS',width:100,align:'center',
+        formatter:function(value,row){
+            							return value + '%';
+	                		  }
+        ">1v1 S</th>
+        <th data-options="field:'LEVELA',width:100,align:'center',
+        formatter:function(value,row){
+            							return value + '%';
+	                		  }">1v1 A</th>
+        <th data-options="field:'LEVELB',width:100,align:'center',
+        formatter:function(value,row){
+            							return value + '%';
+	                		  }">1v1 B</th>
+        <th data-options="field:'LEVELC',width:100,align:'center',
+        formatter:function(value,row){
+            							return value + '%';
+	                		  }">1v1 C</th>
+        <th data-options="field:'COMMON',width:100,align:'center',
+        formatter:function(value,row){
+            							return value + '%';
+	                		  }">1v1 普通用户</th>
+
+    </tr>
+    </thead>
+</table>
+<div id="toolbar1" class="easyui-layout"
+     style="height: 65px; margin: 3px;">
+    <div data-options="region:'center',border:false">
+        <a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+           th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+           th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+    </div>
+    <div data-options="region:'north',border:true" style="height: 40px;">
+
+    </div>
+
+</div>
+<script th:inline="javascript">
+    var menuName = [[${menuName}]]
+
+    function edit() {
+        var selecteds = $('#tb1').datagrid('getSelections');
+        if (selecteds == null || selecteds.length == 0) {
+            Common.showMsg('修改按钮', '请选择操作项！');
+            return;
+        }
+        if (selecteds.length > 1) {
+            Common.showMsg('修改按钮', '不支持多个操作！');
+            return;
+        }
+        top.framework.openTab('修改gainRatio', '/gainRatioView/add.do?menuName=修改gainRatio&parentMenuName=' + menuName + '&id=' + selecteds[0].ID + "&from=2");
+
+    }
+
+
+</script>
+</body>

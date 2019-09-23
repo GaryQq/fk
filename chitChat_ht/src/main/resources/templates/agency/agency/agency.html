@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<table id="tb1" class="easyui-datagrid" title="" width="100%"
+		height="100%" fit="true" border="0"
+		data-options="rownumbers:true,pagination:true,url:'/auditManagement/getTeacherData.do',singleSelect:false,method:'get',toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc'">
+		<thead>
+			<tr>
+				<th data-options="field:'ck',checkbox:true"></th>
+				<th data-options="field:'audit_id',hidden:'true'">老师ID</th>
+				<th data-options="field:'user_name',hidden:'true'">user_name</th>
+				<th data-options="field:'content',hidden:'true'">备注</th>
+				<th data-options="field:'nick_name',width:200,align:'center'">昵称</th>
+				<th data-options="field:'sex',width:200,align:'center'">性别</th>
+				<th data-options="field:'region',width:200,align:'center'">代理地区</th>
+				<th data-options="field:'language',width:200,align:'center'">母语</th>
+				<th data-options="field:'masterLanguage',width:200,align:'center'">精通语言</th>
+				<th data-options="field:'agency_nick_name',width:200,align:'center'">代理人</th>
+				<th data-options="field:'create_date',width:200,align:'center'">注册时间</th>
+				<th
+					data-options="field:'phone',width:200,align:'center',
+					formatter:function(value,row){
+            	     	if(value == ''){
+            	     		return '无';
+            	     	}else {
+            	     		return common(value,row,'1');
+            	     	}
+            	     	return value;
+               		 }">手机号</th>
+				<th data-options="field:'create_time',width:200,align:'center'">申请时间</th>
+				<th data-options="field:'audit_time',width:200,align:'center'">审核时间</th>
+				<th
+					data-options="field:'status',width:200,align:'center',
+					formatter:function(value,row){
+            	     	if(value == -1){
+            	     		return '已拒绝';
+            	     	}else if(value == 2){
+            	     		return '已通过';
+            	     	}else if(value == 1){
+            	     		return '待审核';	
+            	     	}
+            	     	return value;
+               		 }">审核状态</th>
+				<th data-options="field:'audit_name',width:200,align:'center'">审核人</th>
+				<th
+					data-options="field:'status1',width:200,align:'center',
+            	     formatter:function(value,row){
+            	     		if(value == 0 || value == 1){
+            	     			return common(value,row,'2');
+            	     		} else {
+								return common(value,row,'3');
+            	     		}
+	                }">操作</th>
+
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar1" class="easyui-layout"
+		style="height: 65px; margin: 3px;">
+		<div data-options="region:'center',border:false">
+			<a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+				th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+				th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+		</div>
+		<div data-options="region:'north',border:true" style="height: 40px;">
+			<form id="fm" method="post" novalidate>
+				<table cellpadding="5">
+					<tr>
+						<td>申请时间:</td>
+						<td><input class="easyui-datebox" id="start_time"
+							data-options="formatter:myformatter,parser:myparser"></td>
+						<td>到 <input class="easyui-datebox" id="end_time"
+							data-options="formatter:myformatter,parser:myparser"></td>
+
+						<td>用户昵称:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="nick_name" id="nick_name"></input></td>
+						<td>审核状态:<select id="status" class="easyui-combobox"
+							style="width: 100px" name="del_status">
+								<option value="">全部</option>
+								<option value="-1">已拒绝</option>
+								<option value="2">已通过</option>
+								<option value="1">待审核</option>
+						</select></td>
+						<td><a href="javascript:search()" class="easyui-linkbutton"
+							iconCls="icon-search">查找</a></td>
+
+					</tr>
+				</table>
+			</form>
+		</div>
+
+		<div id="win_phone" class="easyui-window" title="个人联系方式"
+			style="width: 300px; height: 200px"
+			data-options="iconCls:'icon-search',modal:true">
+			<table cellpadding="5">
+				<tr style="height: 10px"></tr>
+				<tr>
+					<td>用户昵称:</td>
+					<td><input class="easyui-validatebox" type="text"
+						readonly="true" name="nick_name_phone" id="nick_name_phone"></input></td>
+				</tr>
+				<tr style="height: 10px"></tr>
+				<tr>
+					<td>手机号:</td>
+					<td><input class="easyui-validatebox" type="text"
+						readonly="true" name="user_phone" id="user_phone"></input></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<div style="margin: auto; text-align: center; top: 50px; left: 0">
+							<a href="javascript:void(0)" class="easyui-linkbutton"
+								onclick="$('#win_phone').window('close')">取消</a>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+
+
+	</div>
+	<script th:inline="javascript">
+		var menuName=[[${menuName}]]
+		
+		$(function() {
+			$('#win_phone').window('close');
+		})	
+		
+		
+		 
+		function search() {
+			var nick_name = $("#nick_name").val();
+			var start_time = $('#start_time').datebox('getValue');
+			var end_time = $('#end_time').datebox('getValue');
+			var status = $('#status').combobox('getValue');
+			$('#tb1').datagrid({
+				url : "/auditManagement/getTeacherData.do",
+				queryParams : {
+					nick_name : nick_name,
+					start_time : start_time,
+					end_time : end_time,
+					status : status
+				}
+			});
+		}
+		
+		function searchPhone(value,nick_name){
+			$('#win_phone').window('open');
+			$('#user_phone').val(value);
+			$('#nick_name_phone').val(nick_name);
+		}
+		
+		function common(value,row,type) {
+			if(type == 1){//显示手机
+	       		return '<a href="javascript:searchPhone(\''+value+'\',\''+row.nick_name+'\')">查看</a>';
+			}else if(type == 2){//已被审核
+				var audit_id = row.audit_id;
+				var user_name = row.user_name;
+				return '<a href="javascript:on('+audit_id+',\''+user_name+'\')">通过</a>&nbsp&nbsp<a href="javascript:off('+audit_id+',\''+user_name+'\')">拒绝</a>';
+			}else if(type == 3){//未被审核
+				var content = row.content;
+				return '<a href="javascript:contentShow(\''+content+'\')">查看理由</a>';
+			}
+	    }
+		
+		function contentShow(content){
+			Common.showMsg('提示', content);
+		}
+		
+		function on(audit_id,user_name){
+			$.messager.confirm('操作提示','您确定要审核通过吗',function(r){
+	             if (r){
+	            	 $.ajax( {
+		    				url : '/userManage/teacherVerify.do?id='+audit_id+'&status=2&userName='+user_name,
+		    				dataType:'text',
+		    				type: 'get',
+		    				success : function(result) {
+		    					if ("success"==result){
+		    						Common.showMsg('提示',"修改成功");
+		        				    search();
+		    					}else{
+		    						Common.showMsg('提示',"修改失败");
+		    					}
+		    					
+		    				}
+	    			});
+   	            }
+   	        });
+		}
+		
+		function off(audit_id,user_name){
+			$.messager.prompt("操作提示", "请输入拒绝理由", function (data) {
+	            if (data) {
+	                $.ajax( {
+	    				url : '/userManage/teacherVerify.do?id='+audit_id+'&status=-1&content='+data+'&userName='+user_name,
+	    				dataType:'text',
+	    				type: 'get',
+	    				success : function(result) {
+	    					if ("success"==result){
+	    						Common.showMsg('提示',"修改成功");
+	        				    search();
+	    					}else{
+	    						Common.showMsg('提示',"修改失败");
+	    					}
+	    					
+	    				}
+	    			});
+	            } 
+	        });
+		}
+		
+		function searchEntity(){
+			 var selecteds = $('#tb1').datagrid('getSelections');
+		        if (selecteds == null || selecteds.length == 0) {
+		            Common.showMsg('查看详情按钮','请选择操作项！');
+		            return;
+		        }
+		        if (selecteds.length>1) {
+		            Common.showMsg('查看详情按钮','不支持多个操作！');
+		            return;
+		        }
+		        top.framework.openTab('查看详情', '/userView/getTeacherDetail.do?menuName=查看userManage&parentMenuName='+menuName+'&id='+selecteds[0].audit_id);
+		}
+		 
+	</script>
+</body>

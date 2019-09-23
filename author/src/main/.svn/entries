@@ -1,0 +1,37 @@
+10
+
+dir
+162750
+http://svn.yuecai365.com/svn/cp/LotteryDev4/Server/author/src/main
+http://svn.yuecai365.com/svn/cp
+
+
+
+2019-01-31T03:41:39.081045Z
+159029
+zhaichong
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+a014eba1-2fae-834b-8157-1c48fd466da1
+
+java
+dir
+
+resources
+dir
+
+webapp
+dir
+

@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/cp/!svn/ver/149287/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/permissions
+END
+RoleResourcesMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/cp/!svn/ver/149287/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/permissions/RoleResourcesMapper.java
+END
+UserMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/cp/!svn/ver/149287/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/permissions/UserMapper.java
+END
+RoleMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/cp/!svn/ver/149287/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/permissions/RoleMapper.java
+END
+ResourcesMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/cp/!svn/ver/149287/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/permissions/ResourcesMapper.java
+END
+DeptMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/cp/!svn/ver/149287/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/permissions/DeptMapper.java
+END
+UserRoleMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/cp/!svn/ver/149287/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/mapper/permissions/UserRoleMapper.java
+END

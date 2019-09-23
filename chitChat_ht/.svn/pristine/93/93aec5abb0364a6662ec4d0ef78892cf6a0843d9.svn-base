@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body class="easyui-layout">
+<div data-options="region:'center'" border="false">
+    <div id="dlg" style="padding: 10px 20px">
+        <div class="myftitle">基本信息</div>
+        <form id="myfm" method="post" novalidate>
+            <table cellpadding="7">
+                <input class="easyui-validatebox" type="hidden" id="user_id">
+                <tr>
+                    <td>头像:</td>
+                    <td>
+                        <img src="" name="image" id="image" height="50" width="50"/>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>昵称:</td>
+                    <td>
+                        <span id="nick_name"></span>
+                    </td>
+                    <td>id:</td>
+                    <td>
+                        <span id="userid"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>生日:</td>
+                    <td>
+                        <span id="birthday"></span>
+                    </td>
+                    <td>性别:</td>
+                    <td>
+                        <span id="sex"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>签名:</td>
+                    <td>
+                        <span id="autograph"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>学历:</td>
+                    <td>
+                        <span id="education"></span>
+                    </td>
+                    <td>学校:</td>
+                    <td>
+                        <span id="school"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>国家/地区:</td>
+                    <td>
+                        <span id="region"></span>
+                    </td>
+                    <td>母语:</td>
+                    <td>
+                        <span id="language"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>精通语言:</td>
+                    <td>
+                        <span id="masterlanguage"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>手机号:</td>
+                    <td>
+                        <span id="mobile"></span>
+                    </td>
+                    <td>微信:</td>
+                    <td>
+                        <span id="wxbind"></span>
+                    </td>
+                    <td>QQ:</td>
+                    <td>
+                        <span id="qqbind"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>真实姓名:</td>
+                    <td>
+                        <span id="true_name"></span>
+                    </td>
+                    <td>提现账号:</td>
+                    <td>
+                        <span id="account"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>视频价格:</td>
+                    <td>
+                        <span id="video_price"></span>
+                    </td>
+                    <td>语音价格:</td>
+                    <td>
+                        <span id="voice_price"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>接通率:</td>
+                    <td>
+                        <span id="revice_rate"></span>
+                    </td>
+                    <td>评分:</td>
+                    <td>
+                        <span id="average_score"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>相册:</td>
+                    <td>
+                        <img  th:src="${userImage1}" height="50" width="50"/>
+                        <input class="easyui-validatebox" type="hidden" id="userImageId1">
+                    </td>
+                    <td>
+                        <img  th:src="${userImage2}" height="50" width="50"/>
+                        <input class="easyui-validatebox" type="hidden" id="userImageId2">
+                    </td>
+                    <td>
+                        <img  th:src="${userImage3}" height="50" width="50"/>
+                        <input class="easyui-validatebox" type="hidden" id="userImageId3">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>
+                        <img  th:src="${userImage4}" height="50" width="50"/>
+                        <input class="easyui-validatebox" type="hidden" id="userImageId4">
+                    </td>
+                    <td>
+                        <img  th:src="${userImage5}" height="50" width="50"/>
+                        <input class="easyui-validatebox" type="hidden" id="userImageId5">
+                    </td>
+                    <td>
+                        <img  th:src="${userImage6}" height="50" width="50"/>
+                        <input class="easyui-validatebox" type="hidden" id="userImageId6">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>
+                        <img  th:src="${userImage7}" height="50" width="50"/>
+                        <input class="easyui-validatebox" type="hidden" id="userImageId7">
+                    </td>
+                    <td>
+                        <img  th:src="${userImage8}" height="50" width="50"/>
+                        <input class="easyui-validatebox" type="hidden" id="userImageId8">
+                    </td>
+                    <td>
+                        <img  th:src="${userImage9}" height="50" width="50"/>
+                        <input class="easyui-validatebox" type="hidden" id="userImageId9">
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+<div data-options="region:'south'" style="height: 40px;" border="false">
+    <hr>
+    <div style="text-align: center;">
+    </div>
+</div>
+<script th:inline="javascript">
+    $(function () {
+        var entity = [[${entity}]];
+        var user_id = entity.USER_ID;
+        $('#user_id').val(user_id);
+        $("#userid").html(user_id);
+        var image = entity.IMAGE;
+        $("#image").attr('src',image);
+        var nick_name = entity.NICK_NAME;
+        $("#nick_name").html(nick_name);
+        var birthday = entity.BIRTHDAY;
+        $("#birthday").html(birthday);
+        var sex = entity.SEX;
+        $("#sex").html(sex);
+        var autograph = entity.AUTOGRAPH;
+        $("#autograph").html(autograph);
+        var education = entity.EDUCATION;
+        $("#education").html(education);
+        var school = entity.SCHOOL;
+        $("#school").html(school);
+        var region = entity.REGION;
+        $("#region").html(region);
+        var language = entity.LANGUAGE;
+        $("#language").html(language);
+        var mobile = entity.MOBILE;
+        $("#mobile").html(mobile);
+        var wxbind = entity.WXBIND;
+        $("#wxbind").html(wxbind);
+        var qqbind = entity.QQBIND;
+        $("#qqbind").html(qqbind);
+        var true_name = entity.TRUE_NAME;
+        $("#true_name").html(true_name);
+        var account = entity.ACCOUNT_NEW;
+        $("#account").html(account);
+        var video_price = entity.VIDEO_PRICE;
+        $("#video_price").html(video_price + "金币/分钟");
+        var voice_price = entity.VOICE_PRICE;
+        $("#voice_price").html(voice_price + "金币/分钟");
+        var revice_rate = entity.REVICE_RATE;
+        $("#revice_rate").html(revice_rate);
+        var average_score = entity.AVERAGE_SCORE;
+        $("#average_score").html(average_score);
+        var instruction = entity.INSTRUCATION;
+        $("#instruction").html(instruction);
+        var masterlanguage = entity.MASTERLANGUAGE;
+        $("#masterlanguage").html(masterlanguage);
+
+
+        var userImageId1 = [[${userImageId1}]];
+        $('#userImageId1').val(userImageId1);
+
+        var userImageId2 = [[${userImageId2}]];
+        $('#userImageId2').val(userImageId2);
+
+        var userImageId3 = [[${userImageId3}]];
+        $('#userImageId3').val(userImageId3);
+
+        var userImageId4 = [[${userImageId4}]];
+        $('#userImageId4').val(userImageId4);
+
+        var userImageId5 = [[${userImageId5}]];
+        $('#userImageId5').val(userImageId5);
+
+        var userImageId6 = [[${userImageId6}]];
+        $('#userImageId6').val(userImageId6);
+
+        var userImageId7 = [[${userImageId7}]];
+        $('#userImageId7').val(userImageId7);
+
+        var userImageId8 = [[${userImageId8}]];
+        $('#userImageId8').val(userImageId8);
+
+        var userImageId9 = [[${userImageId9}]];
+        $('#userImageId9').val(userImageId9);
+    })
+
+    function myformatter(date) {
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        var d = date.getDate();
+        return y + '-' + (m < 10 ? ('0' + m) : m) + '-'
+                + (d < 10 ? ('0' + d) : d);
+    }
+    function myparser(s) {
+        if (!s)
+            return new Date();
+        var ss = (s.split('-'));
+        var y = parseInt(ss[0], 10);
+        var m = parseInt(ss[1], 10);
+        var d = parseInt(ss[2], 10);
+        if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
+            return new Date(y, m - 1, d);
+        } else {
+            return new Date();
+        }
+    }
+
+    var parentMenuName = [[${menu.parentMenuName}]]
+    var menuName = [[${menu.menuName}]]
+
+</script>
+</body>

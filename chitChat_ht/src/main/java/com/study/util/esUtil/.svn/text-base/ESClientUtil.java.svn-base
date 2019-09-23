@@ -1,0 +1,202 @@
+package com.study.util.esUtil;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
+import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
+
+import com.study.config.ESTransportClient;
+import com.study.util.tool.PortraitImgUtil;
+import com.study.util.tool.StringUtil;
+
+public class ESClientUtil {
+	private static TransportClient client = ESTransportClient.getInstance();
+
+	/**
+	 * 添加数据
+	 * 
+	 * @param param
+	 *            数据
+	 * @param index
+	 *            索引
+	 * @param type
+	 *            类型
+	 * @return index 索引 type 类型 source_id 修改数据唯一标识 version 当前数据版本号 success
+	 *         成功失败标识
+	 */
+	public static Map<String, Object> createSource(Map<String, Object> param, String index, String type) {
+		// 存json入索引中
+		IndexResponse response = client.prepareIndex(index, type).setSource(param).get();
+		Map<String, Object> res_map = new HashMap<String, Object>();
+		res_map.put("index", response.getIndex());
+		res_map.put("type", response.getType());
+		res_map.put("source_id", response.getId());
+		res_map.put("version", response.getVersion());
+		res_map.put("success", response.isCreated());
+		return res_map;
+	}
+
+	public static Map<String, Object> createSource(Map<String, Object> param, String index, String type, String id) {
+		IndexResponse response = client.prepareIndex(index, type, id).setSource(param).get();
+		Map<String, Object> res_map = new HashMap<String, Object>();
+		res_map.put("index", response.getIndex());
+		res_map.put("type", response.getType());
+		res_map.put("source_id", response.getId());
+		res_map.put("version", response.getVersion());
+		res_map.put("success", response.isCreated());
+		return res_map;
+	}
+
+	/**
+	 * 修改
+	 * 
+	 * @param param
+	 *            数据
+	 * @param index
+	 *            索引
+	 * @param type
+	 *            类型
+	 * @param id
+	 *            指定唯一标识
+	 * @return index 索引 type 类型 source_id 修改数据唯一标识 version 当前数据版本号 success
+	 *         成功失败标识
+	 * @throws ExecutionException
+	 * @throws InterruptedException
+	 */
+	public Map<String, Object> updateSource(XContentBuilder xcb, String index, String type, String id)
+			throws InterruptedException, ExecutionException {
+
+		Map<String, Object> res_map = new HashMap<String, Object>();
+		UpdateResponse response = client.update(new UpdateRequest(index, type, id).doc(xcb)).get();
+		// 存json入索引中
+		res_map.put("index", response.getIndex());
+		res_map.put("type", response.getType());
+		res_map.put("source_id", response.getId());
+		res_map.put("version", response.getVersion());
+		res_map.put("success", response.isCreated());
+		return res_map;
+	}
+
+	/**
+	 * 
+	 * @param term
+	 *            聚合查询条件
+	 * @param index
+	 *            索引
+	 * @param type
+	 *            类型
+	 * @param pageNum
+	 *            偏移量
+	 * @param pageSize
+	 *            返回数目
+	 * @return
+	 */
+	public List<Map<String, Object>> findDocument(TermsBuilder term, String index, String type, int pageNum,
+			int pageSize) {
+		SearchRequestBuilder requestBuilder = client.prepareSearch(index).setTypes(type);
+		requestBuilder.addAggregation(term);
+		SearchResponse response = requestBuilder.setFrom(pageNum).setSize(pageSize).execute().actionGet();
+		SearchHits hits = response.getHits();
+		List<Map<String, Object>> res_list = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < hits.getHits().length; i++) {
+			SearchHit hit = hits.getHits()[i];
+			Map<String, Object> val = hit.getSource();
+			res_list.add(val);
+		}
+		return res_list;
+	}
+
+	/**
+	 * 根据唯一标识删除
+	 * 
+	 * @param index
+	 *            索引
+	 * @param type
+	 *            类型
+	 * @param id
+	 *            唯一标识
+	 * @return index 索引 type 类型 source_id 修改数据唯一标识 version 当前数据版本号 success
+	 *         成功失败标识
+	 */
+	public static Map<String, Object> deleteDocumentEntity(String index, String type, String id) {
+		DeleteResponse response = client.prepareDelete(index, type, id).get();
+		Map<String, Object> res_map = new HashMap<String, Object>();
+		res_map.put("index", response.getIndex());
+		res_map.put("type", response.getType());
+		res_map.put("source_id", response.getId());
+		res_map.put("version", response.getVersion());
+		res_map.put("success", response.isFound());
+		return res_map;
+	}
+
+	/**
+	 * 根据账户查询用户信息
+	 * 
+	 * @param user_name
+	 * @return sex性别,last_login_time最后登录时间,nick_name昵称,user_name账户,
+	 *         date_create注册时间,user_imges用户头像
+	 */
+	public static Map<String, Object> findYTUserEntity(String user_name) {
+		SearchRequestBuilder requestBuilder = client.prepareSearch("fk_caibo").setTypes("yt_user");
+		// 声明where 条件
+		QueryBuilder qb1 = QueryBuilders.termsQuery("USER_NAME", user_name);
+		BoolQueryBuilder qbs1 = QueryBuilders.boolQuery().must(qb1);
+		requestBuilder.setQuery(qbs1);
+		SearchResponse response = requestBuilder.execute().actionGet();
+		SearchHits hits = response.getHits();
+		if (hits.getHits().length > 0) {
+			SearchHit hit = hits.getHits()[0];
+			Map<String, Object> val = hit.getSource();
+			Map<String, Object> res_map = new HashMap<String, Object>();
+			res_map.put("sex", val.get("SEX"));
+			res_map.put("last_login_time", val.get("LAST_LOGIN_TIME"));
+			res_map.put("nick_name", StringUtil.nullBlank(val.get("NICK_NAME")));
+			res_map.put("user_name", StringUtil.nullBlank(val.get("USER_NAME")));
+			res_map.put("date_create", StringUtil.nullBlank(val.get("DATE_CREATED")));
+			res_map.put("user_imges", PortraitImgUtil.getPortraitImgUtil(StringUtil.nullBlank(val.get("SMA_IMAGE")),
+					StringUtil.nullBlank(val.get("TYPE"))));
+			res_map.put("user_id", hit.getId());
+			return res_map;
+		}
+		return null;
+	}
+
+	public static void main(String[] args) {
+		// System.out.println(findYTUserEntity("86-17756943218@yuban"));
+		for (int i = -60; i < 0; i++) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			Date date = new Date();
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(date);
+			calendar.add(Calendar.DAY_OF_MONTH, i);
+			date = calendar.getTime();
+
+			// NHTUtil.getNowDateShort()
+			String start_date = sdf.format(date) + " 00:00:00";
+			String end_date = sdf.format(date) + " 23:59:59";
+			System.out.println(start_date);
+			System.out.println(end_date);
+		}
+
+	}
+
+}

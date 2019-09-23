@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<table id="tb1" class="easyui-datagrid" title="" width="100%"
+		height="100%" fit="true" border="0"
+		data-options="rownumbers:true,pagination:true,url:'/financial/yubanWithDrawList.do?order_status=0',singleSelect:true,method:'get',toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc'">
+		<thead>
+			<tr>
+			    <th data-options="field:'ID',width:200,align:'center'">订单号</th>
+				<th data-options="field:'COUNTRYCODE',width:200,align:'center'">countryCode</th>
+				<th data-options="field:'TRUE_NAME',width:200,align:'center'">payee</th>
+				<th data-options="field:'SOURCECURRENCY',width:200,align:'center'">sourceCurrency</th>
+				<th data-options="field:'AMOUNT',width:200,align:'center'">sourceAmount</th>
+				<th data-options="field:'PAYMENT_CURRENCIES',width:200,align:'center'">targetCurrency</th>
+				<th data-options="field:'TARGETAMOUNT',width:200,align:'center'">targetAmount</th>
+				<th data-options="field:'SOURCEORTARGET',width:200,align:'center'">sourceOrTarget</th>
+				<th
+					data-options="field:'STATUS',width:200,align:'center',
+            	     formatter:function(value,row){
+            	     			 if(value == 1){
+            	     			 	return '成功';
+            	     			 }else if(value == 2){
+            	     			 	return '失败';
+            	     			 }else{
+            	     			    return '待处理';
+            	     			 }
+            					 
+	                		  }">状态</th>
+				<th data-options="field:'AB',width:200,align:'center'">merchantReference</th>
+				<th data-options="field:'AB',width:200,align:'center'">paymentReference</th>
+				<th data-options="field:'BANK_NO',width:200,align:'center'">accountNumber</th>
+				<th data-options="field:'OGT_BANK_NO',width:200,align:'center'">iban</th>
+				<th data-options="field:'INTERNATIONL_BANK_NO',width:200,align:'center'">swift</th>
+				<th data-options="field:'BANK_NAME',width:200,align:'center'">bankName</th>
+				<th data-options="field:'BANK_DAIMA',width:200,align:'center'">bankCode/BSB code</th>
+				<th data-options="field:'AB',width:200,align:'center'">accountType</th>
+				<th data-options="field:'ADDRESS',width:200,align:'center'">B_AddressLine1</th>
+				<th data-options="field:'CITY',width:200,align:'center'">B_City</th>
+				<th data-options="field:'AREA',width:200,align:'center'">B_State</th>
+				<th data-options="field:'COUNTRYCODE',width:200,align:'center'">B_CountryCode</th>
+				<th data-options="field:'POST_NO',width:200,align:'center'">B_Postcode</th>
+				<th data-options="field:'CREATE_TIME',width:200,align:'center'">提交时间</th>
+				<th 
+					data-options="field:'check',width:200,align:'center',sortable:'true',
+            	           formatter:function(value,row){
+            							 return '<img onclick=updateTxStatus(this,1) src=/easy_ui/js/jquery-easyui/themes/icons/pencil.png />'
+	                		  }">设为成功</th>
+				<th 
+					data-options="field:'check1',width:200,align:'center',sortable:'true',
+            	           formatter:function(value,row){
+            							 return '<img onclick=updateTxStatus(this,2) src=/easy_ui/js/jquery-easyui/themes/icons/pencil.png />'
+	                		  }">设为失败</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar1" class="easyui-layout"
+		style="height: 85px; margin: 3px;">
+		<div data-options="region:'center',border:false">
+			<a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+				th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+				th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+		</div>
+		<div data-options="region:'north',border:true" style="height: 140px;">
+			<form id="fm" method="post" novalidate>
+				<table cellpadding="5">
+					<tr>
+						<td>申请时间:</td>
+						<td><input class="easyui-datebox" id="start_time"
+							data-options="formatter:myformatter,parser:myparser"></td>
+						<td>到 <input class="easyui-datebox" id="end_time"
+							data-options="formatter:myformatter,parser:myparser"></td>
+						<td>订单状态:</td>
+						<td><select id="order_status" class="easyui-combobox"
+							style="width: 130px" name="order_status">
+								<option value="">全部</option>
+								<option value="0">待处理</option>
+								<option value="1">成功</option>
+								<option value="2">失败</option>
+						</select></td>
+						<td><a href="javascript:search()" class="easyui-linkbutton"
+							iconCls="icon-search">查找</a></td>
+							
+						<td><a href="javascript:exportOrder()" class="easyui-linkbutton"
+							iconCls="icon-search">导出</a></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+
+<!--   发虚拟货提交块   -->
+		<form name="form_send_not_real" action="/financial/exportOrderWithDrawList.do" method="get">
+				<input type="hidden" name="start_time"/>
+				<input type="hidden" name="end_time" />
+				<input type="hidden" name="order_status"/>
+		</form>
+	</div>
+	<script th:inline="javascript">
+		function search() {
+			var start_time = $('#start_time').datebox('getValue');
+			var end_time = $('#end_time').datebox('getValue');
+			var order_status = $('#order_status').combobox('getValue');
+			$('#tb1').datagrid({
+				url : "/financial/yubanWithDrawList.do",
+				queryParams : {
+					start_time : start_time,
+					end_time : end_time,
+					order_status : order_status
+				}
+			});
+		}
+		function updateTxStatus(obj,status){
+		var id;
+		  if(status==1){
+		      id=$(obj).parent().parent().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().text();
+		  }else{
+		      id=$(obj).parent().parent().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().text();
+		  }
+		
+		 $.ajax( {
+    				url : '/financial/updateTxStatus.do?id='+id+'&status='+status,
+    				dataType:'text',
+    				type: 'delete',
+    				success : function(result) {
+    					if ("success"==result){
+    						Common.showMsg('提示',"更新成功");
+        				    search();
+    					}else{
+    						Common.showMsg('提示',"更新失败");
+    					}
+    					
+    				}
+    			});
+		}
+		
+		function exportOrder(){
+		
+		    var start_time = $('#start_time').datebox('getValue');
+			var end_time = $('#end_time').datebox('getValue');
+			var order_status = $('#order_status').combobox('getValue');
+			/* $('#tb1').datagrid({
+				url : "/financial/exportOrderWithDrawList.do",
+				queryParams : {
+					start_time : start_time,
+					end_time : end_time,
+					order_status : order_status
+				}
+			}); */
+			/* $.ajax( {
+    				url : '/financial/exportOrderWithDrawList.do?start_time='+start_time+'&end_time='+end_time+'&order_status='+order_status,
+    				dataType:'text',
+    				success : function(result) {
+    					
+    					
+    				}
+    			}); */
+    			$("[name='start_time']").val(start_time);
+			$("[name='end_time']").val(end_time);
+			$("[name='order_status']").val(order_status);
+			$("[name='form_send_not_real']").submit();
+		}
+	</script>
+</body>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+</head>
+<body class="easyui-layout">
+<div data-options="region:'center'" style="background: #eee;">
+    <table id="tb1" class="easyui-datagrid" title="" width="100%"
+           height="100%" fit="true" border="0"
+           data-options="rownumbers:true,pagination:true,url:'/flFamily/findFamilyOneToOneDetailList.do',singleSelect:false,method:'get',toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc',onLoadSuccess:function(data){
+				if(data!=null){
+					var data=$('#tb1').datagrid('getData');
+					$('#registerCount').val(data.total);
+				}
+			}">
+        <thead>
+        <tr>
+            <th data-options="field:'ck',checkbox:true"></th>
+            <th data-options="field:'nick_name',width:100,align:'center'">发起者昵称</th>
+            <th data-options="field:'create_time',width:150,align:'center'">发起时间</th>
+            <th data-options="field:'type',width:100,align:'center',sortable:'true',
+            	     formatter:function(value,row){
+            							if (value == 1) return '视频';
+            							if (value == 2) return '语音';
+	                		  }
+            	">类型
+            </th>
+            <th data-options="field:'answer_create_time',width:150,align:'center'">接听时间</th>
+            <th data-options="field:'status',width:100,align:'center',sortable:'true',
+            	     formatter:function(value,row){
+            							if (value == 1){
+            							    return '是';
+            							} else {
+            							    return '否';
+            							}
+	                		  }
+            	">是否接通
+            </th>
+            <th data-options="field:'status2',width:100,align:'center',sortable:'true',
+            	     formatter:function(value,row){
+            							if (value == -1){
+            							    return '是';
+            							} else {
+            							    return '否';
+            							}
+	                		  }
+            	">是否拒绝
+            </th>
+            <th data-options="field:'anchor_nick_name',width:150,align:'center'">接听者昵称</th>
+            <th data-options="field:'time',width:150,align:'center'">通话时长</th>
+            <th data-options="field:'fqtime',width:150,align:'center'">发起时长</th>
+            <th data-options="field:'price',width:150,align:'center'">接听者价格</th>
+            <th data-options="field:'goal_amount',width:150,align:'center'">消耗金币</th>
+            <th data-options="field:'statusr',width:100,align:'center',sortable:'true',
+            	     formatter:function(value,row){
+            							if (value == 1){
+            							    return '设备异常挂断';
+            							} else if (value == 2){
+            							    return '用户发起中挂断';
+            							} else if (value == 3){
+            							    return '主播接听中挂断';
+            							} else if (value == 4){
+            							    return '主播发起中拒接';
+            							} else if (value == 5){
+            							    return '用户心跳断开';
+            							} else if (value == 6){
+            							    return '主播心跳断开';
+            							} else if (value == 7){
+            							    return '用户扣款失败';
+            							} else if (value == 8){
+            							    return '用户调用接口异常';
+            							} else if (value == 9){
+            							    return '主播调用接口异常';
+            							} else if (value == 10){
+            							    return '通话中用户挂断';
+            							} else if (value == 11){
+            							    return '主播发起中未接听';
+            							} else if (value == 12){
+            							    return '用户余额不足';
+            							} else if (value == 99){
+            							    return '未知异常';
+            							}
+	                		  }
+            	">备注
+            </th>
+        </tr>
+        </thead>
+    </table>
+    <div id="toolbar1" class="easyui-layout"
+         style="height: 65px; margin: 3px;">
+        <div data-options="region:'center',border:false">
+            <a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+               th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+               th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+        </div>
+        <div data-options="region:'north',border:true" style="height: 40px;">
+            <form id="fm" method="post" novalidate>
+                <table cellpadding="5">
+                    <tr>
+                        <td>开始时间:</td>
+                        <td><input class="easyui-datebox" id="start_time"
+                                   data-options="formatter:myformatter,parser:myparser"></td>
+                        <td>到 <input class="easyui-datebox" id="end_time"
+                                     data-options="formatter:myformatter,parser:myparser"></td>
+                        <td>接听:</td>
+                        <td>
+                            <select id="by_status" style="width: 100px" class="easyui-combobox" name="by_status">
+                                <option value="">全部</option>
+                                <option value="1">是</option>
+                                <option value="2">否</option>
+                            </select>
+                        </td>
+                        <td>拒接:</td>
+                        <td>
+                            <select id="noby_status" style="width: 100px" class="easyui-combobox" name="noby_status">
+                                <option value="">全部</option>
+                                <option value="1">是</option>
+                                <option value="2">否</option>
+                            </select>
+                        </td>
+                        <td>接听者:</td>
+                        <td><input class="easyui-validatebox textbox" type="text"
+                                   name="nick_name" id="nick_name"></input></td>
+                        <td>&nbsp;&nbsp;</td>
+                        <td><a href="javascript:search()" class="easyui-linkbutton"
+                               iconCls="icon-search">查找</a></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    var menuName = [[${menuName}]]
+
+    function search() {
+        var nick_name = $("#nick_name").val();
+        var start_time = $('#start_time').datebox('getValue');
+        var end_time = $('#end_time').datebox('getValue');
+        var by_status = $('#by_status').combobox('getValue');
+        var noby_status = $('#noby_status').combobox('getValue');
+        $('#tb1').datagrid({
+            url: "/flFamily/findFamilyOneToOneDetailList.do",
+            queryParams: {
+                nick_name: nick_name,
+                start_time: start_time,
+                end_time: end_time,
+                by_status: by_status,
+                noby_status: noby_status
+            }
+        })
+        ;
+    }
+</script>
+</body>
+</html>

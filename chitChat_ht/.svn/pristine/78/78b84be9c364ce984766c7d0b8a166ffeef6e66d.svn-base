@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+</head>
+<body class="easyui-layout">
+	<div data-options="region:'west',split:true" title="菜单"
+		style="width: 160px; overflow: hidden;">
+		<ul id="jsontree" class="easyui-tree" />
+	</div>
+	<div data-options="region:'center'" style="background: #eee;">
+		<table id="tb1" class="easyui-datagrid" title="" width="100%"
+			height="100%" fit="true" border="0"
+			data-options="rownumbers:true,pagination:true,singleSelect:false,method:'get',toolbar:'#toolbar1'">
+			<thead>
+				<tr>
+					<th data-options="field:'ck',checkbox:true"></th>
+					<th
+						data-options="field:'id',width:100,align:'center',sortable:'true'">id</th>
+					<th
+						data-options="field:'parentName',width:200,align:'center',sortable:'true'">菜单名称</th>
+					<th
+						data-options="field:'name',width:100,align:'center',sortable:'true'">按钮名称</th>
+					<th
+						data-options="field:'resurl',width:200,align:'center',sortable:'true'">按钮url</th>
+					<th
+						data-options="field:'iconCls',width:100,align:'center',sortable:'true'">图标</th>
+					<th
+						data-options="field:'butFun',width:200,align:'center',sortable:'true'">按钮函数</th>
+					<th
+						data-options="field:'type',width:200,align:'center',sortable:'true',
+            	     formatter:function(value,row){
+            							if (value == 2) return '按钮';
+	                                    return '未定义';
+	                		  }
+            	">资源类型</th>
+					<th
+						data-options="field:'sort',width:200,align:'center',sortable:'true'">排序</th>
+
+				</tr>
+			</thead>
+		</table>
+		<div id="toolbar1" class="easyui-layout"
+			style="height: 70px; margin: 3px;">
+			<div data-options="region:'center',border:false">
+				<a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+					th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+					th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+			</div>
+			<div data-options="region:'north',border:true" style="height: 40px;">
+				<form id="fm" method="get" novalidate>
+					<table cellpadding="5">
+						<tr>
+							<td>按钮名称:</td>
+							<td><input class="easyui-validatebox textbox" type="text"
+								name="name" id="name"></input></td>
+							<td><a href="javascript:search()" class="easyui-linkbutton"
+								iconCls="icon-search">查找</a></td>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script th:inline="javascript">
+	var menuName=[[${menuName}]]
+	var menuId=1;
+	$(function(){
+		$("#jsontree").tree({
+            url: '/resources/getDataTree.do',
+            method: 'get',
+            parentField:"parentid",
+            textFiled:"name",
+            idFiled:"id",
+            onLoadSuccess: function (node, data) {
+            	var node = $('#jsontree').tree('getRoot');
+                if (node != undefined && node != null){
+                	$('#jsontree').tree('select', node.target);
+                	var children = node.children;
+                	  if (children == null){
+                		 $('#jsontree').tree('select', node.target);
+                	 }else{
+                		 var children = $('#jsontree').tree('getChildren',node.target);
+                    	 if (children != null){
+                    		 var child = children[0];
+                    		 $('#jsontree').tree('select', child.target);
+                    	 } 
+                	 } 
+                }
+            },
+            onSelect: function (node) {
+            		menuId=node.id;
+            		search();
+            }
+        });
+	})
+	function add(){
+		top.framework.openTab('新增按钮', '/buttons/add?menuName=新增按钮&parentMenuName='+menuName+'&parentid='+menuId);
+	}
+	function edit(){
+		var selecteds = $('#tb1').datagrid('getSelections');
+        if (selecteds == null || selecteds.length == 0) { 
+        	Common.showMsg('修改按钮','请选择操作项！');
+        	return;
+        }
+        if (selecteds.length>1) {
+        	Common.showMsg('修改按钮','不支持多个操作！');
+        	return; 
+        }
+		top.framework.openTab('修改按钮', '/buttons/add.do?menuName=修改按钮&parentMenuName='+menuName+'&id='+selecteds[0].id+'&parentid='+menuId);
+	}
+	 function remove(){
+			var selecteds = $('#tb1').datagrid('getSelections');
+	        if (selecteds == null || selecteds.length == 0) { 
+	        	Common.showMsg('提示','请选择操作项！');
+	        	return;
+	        }
+	        $.messager.confirm('提示','确定删除吗?', 
+	        function(r){
+	            if (r){
+	            	var ids = '';
+	                $(selecteds).each(function (index) {
+	                    ids = ids + selecteds[index].id + ",";
+	                });
+	                ids = ids.substring(0, ids.length - 1);
+	        		$.ajax( {
+	    				url : '/resources/delete.do?ids='+ids,
+	    				dataType:'text',
+	    				type: 'delete',
+	    				success : function(result) {
+	    					if ("success"==result){
+	    						Common.showMsg('提示',"删除成功");
+	        				    search();
+	    					}else{
+	    						Common.showMsg('提示',"删除失败");
+	    					}
+	    					
+	    				}
+	    			});
+	            }
+	        });
+	        
+		}
+	function search(){
+		var names = $("#name").val();
+		$('#tb1').datagrid({
+            url:"/resources/getMenu.do",
+            queryParams:{
+            	name:names,
+            	parentid:menuId,
+            	type:'2'
+            }
+        });
+	}
+	</script>
+</body>
+</html>

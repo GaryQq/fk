@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.mapper.management.GainRatioMapper">
+
+
+    <select id="findGainRatioList" parameterType="java.util.Map"
+            resultType="java.util.Map">
+        select r.id,
+        r.gain_id,
+        r.live,
+        r.gold_medal,
+        r.silver_medal,
+        r.copper_medal,
+        r.name,
+        g.type giftType,r.levels,r.levela,r.levelb,r.levelc,r.common
+        from yt_live_gain_ratio r
+        left join YT_LIVEGIFTDETAIL g
+        on r.gain_id = g.id
+        where 1 = 1
+        <if test="typeCode != null and typeCode!='' ">
+            and type_one= #{typeCode}
+        </if>
+
+        <if test="name != null and name!='' ">
+            and name= #{name}
+        </if>
+
+        <if test="giftType != null and giftType!='' ">
+            and g.type= #{giftType}
+        </if>
+        order by r.create_time desc
+
+    </select>
+
+    <select id="findGainRatioEntity" parameterType="int" resultType="java.util.Map">
+       select id,
+                    type_one,
+                    gain_id,
+                    name,
+                    live,
+                    levels,
+                    levela,
+                    levelb,
+                    levelc,
+                    common
+               from yt_live_gain_ratio
+              where id = #{id}
+
+	</select>
+
+    <update id="updateGainRatio" parameterType="java.util.Map">
+
+        update yt_live_gain_ratio
+        set
+        <if test="levels!=null and levels!=''">
+            levels      = #{levels},
+        </if>
+
+        <if test="levela!=null and levela!=''">
+            levela      = #{levela},
+        </if>
+
+        <if test="levelb!=null and levelb!=''">
+            levelb      = #{levelb},
+        </if>
+
+        <if test="levelc!=null and levelc!=''">
+            levelc      = #{levelc},
+        </if>
+
+        <if test="common!=null and common!=''">
+            common      = #{common},
+        </if>
+
+        <if test="gold_medal!=null and gold_medal!=''">
+            gold_medal      = #{gold_medal},
+        </if>
+
+        <if test="silver_medal!=null and silver_medal!=''">
+            silver_medal      = #{silver_medal},
+        </if>
+
+        <if test="copper_medal!=null and copper_medal!=''">
+            copper_medal      = #{copper_medal},
+        </if>
+
+        modify_time = sysdate
+        where id = #{id}
+    </update>
+
+</mapper>

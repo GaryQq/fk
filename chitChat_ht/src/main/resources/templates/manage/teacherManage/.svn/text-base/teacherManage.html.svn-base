@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<table id="tb1" class="easyui-datagrid" title="" width="100%"
+		height="80px" fit="true" border="0"
+		data-options="rownumbers:true,pagination:true,url:'/userManage/getTeacherList.do?status=2&anchorStatus=1&sortNum=1',singleSelect:true,method:'get',toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc'">
+		<thead>
+			<tr>
+				<th data-options="field:'ck',checkbox:true"></th>
+				<th data-options="field:'ID',width:50,align:'center',hidden:true">id</th>
+				<th
+					data-options="field:'USER_ID',width:50,align:'center',hidden:true">userId</th>
+				<th
+					data-options="field:'USER_NAME',width:50,align:'center',hidden:true">userName</th>
+				<th data-options="field:'NICK_NAME',width:100,align:'center'">昵称</th>
+				<th
+					data-options="field:'SEX',width:50,align:'center',sortable:'true',
+            	     formatter:function(value,row){
+            							if (value == 1) return '男';
+            							if (value == 2) return '女';
+            							if (value == 0) return '保密';
+	                		  }
+            	">性别
+				</th>
+				<th data-options="field:'REGION',width:100,align:'center'">国家/地区</th>
+				<th data-options="field:'LANGUAGE',width:100,align:'center'">母语</th>
+				<th data-options="field:'MASTERLANGUAGE',width:100,align:'center'">精通语言</th>
+				<th
+					data-options="field:'AGENTNAME',width:100,align:'center',sortable:'true',
+            	     formatter:function(value,row){
+            							if (value != null) return value;
+            							if (value == null) return '--';
+	                		  }
+            	">代理
+				</th>
+				<th data-options="field:'DATE_CREATED',width:100,align:'center'">注册时间</th>
+
+				<th
+					data-options="field:'MOBILE',width:100,align:'center',sortable:'false',
+            	     formatter:function(value,row){
+            	                     if (value == null) return '无';
+            							else return common(value,row,this);
+	                		  }
+            	">手机号
+				</th>
+				<th data-options="field:'LAST_LOGIN_TIME',width:150,align:'center'">最后登录时间</th>
+				<th data-options="field:'SCORE',width:100,align:'center'">个人主页点击次数</th>
+
+				<th data-options="field:'CON_VIDEO_TIMES',width:150,align:'center'">视频接通次数</th>
+				<th data-options="field:'REC_VIDEO_TIMES',width:150,align:'center'">视频接收次数</th>
+				<th data-options="field:'VIDEO_ODDS',width:150,align:'center'">视频接通率</th>
+
+				<th data-options="field:'CON_VOICE_TIMES',width:150,align:'center'">语音接通次数</th>
+				<th data-options="field:'REC_VOICE_TIMES',width:150,align:'center'">语音接收次数</th>
+				<th data-options="field:'VOICE_ODDS',width:150,align:'center'">语音接通率</th>
+
+				<th data-options="field:'CON_TIMES',width:150,align:'center'">视频语音总接通次数</th>
+				<th data-options="field:'REC_TIMES',width:150,align:'center'">视频语音总接收次数</th>
+				<th data-options="field:'ODDS',width:150,align:'center'">总接通率</th>
+
+
+				<th data-options="field:'AVERAGE_SCORE',width:50,align:'center'">评分</th>
+				<th data-options="field:'TIPOFFTIMES',width:50,align:'center'">举报</th>
+				<th
+					data-options="field:'RATIO_LEVEL',width:50,align:'center',sortable:'false',
+            	     formatter:function(value,row){
+            	                     if (value == 's') return 'S';
+            						   if (value == 'a') return 'A';
+            						   if (value == 'b') return 'B';
+            						   if (value == 'c') return 'C';
+            						   if (value == 'common') return '普通用户';
+	                		  }
+            	">评级
+				</th>
+
+				<th data-options="field:'WEIGHT',width:150,align:'center'">排序初始积分</th>
+				<th
+					data-options="field:'ANCHOR_STATUS',width:50,align:'center',sortable:'false',
+            	     formatter:function(value,row){
+            	                     if (value == 1) return '已显示';
+            						   if (value == 2) return '已屏蔽';
+            						   if (value == 0) return '不是老师';
+	                		  }
+            	">首页状态
+				</th>
+				<th data-options="field:'OPERATOR',width:100,align:'center'">操作人</th>
+				<th data-options="field:'UPDATE_TIME',width:100,align:'center'">操作时间</th>
+				<th
+					data-options="field:'ANCHOR_STATUS1',width:100,align:'center',sortable:'false',
+            	     formatter:function(value,row){
+            							return operate(value,row);
+	                		  }
+            	">操作
+				</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar1" class="easyui-layout"
+		style="height: 125px; margin: 3px;">
+		<div data-options="region:'center',border:false">
+			<a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+				th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+				th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+		</div>
+		<div data-options="region:'north',border:true" style="height: 100px;">
+			<form id="fm" method="post" novalidate>
+				<table cellpadding="5">
+					<tr>
+						<td>申请时间:</td>
+						<td><input class="easyui-datebox" id="startTime"
+							data-options="formatter:myformatter,parser:myparser">到 <input
+							class="easyui-datebox" id="endTime"
+							data-options="formatter:myformatter,parser:myparser"></td>
+
+						<td>昵称:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="nickName" id="nickName" /></td>
+
+						<td>代理:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="agentName" id="agentName" /></td>
+
+						<td>首页状态:</td>
+						<td><select id="anchorStatus" class="easyui-combobox"
+							name="anchorStatus">
+								<option value="1">已显示</option>
+								<option value="2">已屏蔽</option>
+								<option value="">全部</option>
+						</select></td>
+					</tr>
+				</table>
+				<table>
+					<tr>
+						<td>母语:</td>
+						<td><select id="language" class="easyui-combobox"
+							name="language">
+								<option value="">全部</option>
+								<option value="汉语">汉语</option>
+								<option value="英语">英语</option>
+								<option value="俄语">俄语</option>
+								<option value="法语">法语</option>
+								<option value="德语">德语</option>
+								<option value="日语">日语</option>
+								<option value="西班牙语">西班牙语</option>
+								<option value="阿拉伯语">阿拉伯语</option>
+								<option value="韩语">韩语</option>
+								<option value="乌克兰语">乌克兰语</option>
+
+
+						</select></td>
+
+						<td>排序:</td>
+						<td><select id="sortNum" class="easyui-combobox"
+							name="sortNum">
+								<option value="1">视频接通率倒序</option>
+								<option value="2">视频接通率正序</option>
+								<option value="3">语音接通率倒序</option>
+								<option value="4">语音接通率正序</option>
+								<option value="5">收到视频次数倒序</option>
+								<option value="6">收到视频次数正序</option>
+								<option value="7">收到语音次数倒序</option>
+								<option value="8">收到语音次数正序</option>
+								<option value="101">视频接通次数正序</option>
+								<option value="102">视频接通次数倒序</option>
+								<option value="103">语音接通次数正序</option>
+								<option value="104">语音接通次数倒序</option>
+								<option value="105">总接通率正序</option>
+								<option value="106">总接通率倒序</option>
+								<option value="107">个人主页点击次数倒叙</option>
+								<option value="9">评分倒序</option>
+								<option value="10">评分正序</option>
+								<option value="11">注册时间倒序</option>
+								<option value="12">排序初始积分倒序</option>
+						</select></td>
+
+						<td>评级:</td>
+						<td><select id="ratioLevel" class="easyui-combobox"
+							name="ratioLevel">
+								<option value="">全部</option>
+								<option value="s">S</option>
+								<option value="a">A</option>
+								<option value="b">B</option>
+								<option value="c">C</option>
+								<option value="common">普通用户</option>
+						</select></td>
+						
+						<td>国家/地区:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="region" id="region" /></td>
+
+						<td>用户范围:</td>
+						<td><select id="range" class="easyui-combobox" name="range">
+								<option value="">全部</option>
+								<option value="1">去除白名单</option>
+						</select></td>
+
+						<!--<td>用户发起时长:</td>-->
+						<!--<td>-->
+						<!--<select id="bbb" class="easyui-combobox" name="bbbb">-->
+						<!---->
+						<!--</select>-->
+						<!--</td>-->
+
+						<td><a href="javascript:search()" class="easyui-linkbutton"
+							iconCls="icon-search">查找</a></td>
+
+					</tr>
+
+				</table>
+			</form>
+		</div>
+
+	</div>
+	<script th:inline="javascript">
+    var menuName = [[${menuName}]]
+    function add() {
+        top.framework.openTab('新增teacher', '/userView/addTeacher.do?menuName=新增teacher&parentMenuName=' + menuName);
+    }
+
+    function edit(){
+        var selecteds = $('#tb1').datagrid('getSelections');
+        if (selecteds == null || selecteds.length == 0) {
+            Common.showMsg('修改按钮','请选择操作项！');
+            return;
+        }
+        if (selecteds.length>1) {
+            Common.showMsg('修改按钮','不支持多个操作！');
+            return;
+        }
+        top.framework.openTab('修改teacher', '/userView/getTeacherDetail.do?menuName=修改teacher&parentMenuName='+menuName+'&id='+selecteds[0].ID + "&flag=update");
+
+    }
+
+    function edit_level(){
+        var selecteds = $('#tb1').datagrid('getSelections');
+        if (selecteds == null || selecteds.length == 0) {
+            Common.showMsg('修改按钮','请选择操作项！');
+            return;
+        }
+        if (selecteds.length>1) {
+            Common.showMsg('修改按钮','不支持多个操作！');
+            return;
+        }
+        top.framework.openTab('修改teacher', '/userView/editTeacherLevel.do?menuName=修改teacher&parentMenuName='+menuName+'&userName='+selecteds[0].USER_NAME + '&id='+selecteds[0].ID);
+
+    }
+
+    function edit_score(){
+        var selecteds = $('#tb1').datagrid('getSelections');
+        if (selecteds == null || selecteds.length == 0) {
+            Common.showMsg('修改按钮','请选择操作项！');
+            return;
+        }
+        if (selecteds.length>1) {
+            Common.showMsg('修改按钮','不支持多个操作！');
+            return;
+        }
+        top.framework.openTab('修改teacher', '/userView/editTeacherScore.do?menuName=修改teacher&parentMenuName='+menuName+'&userName='+selecteds[0].USER_NAME + '&id='+selecteds[0].ID);
+
+    }
+
+    function search() {
+        var startTime = $("#startTime").datebox('getValue');
+        var endTime = $("#endTime").datebox('getValue');
+        var nickName = $("#nickName").val();
+        var agentName = $("#agentName").val();
+		var region = $("#region").val();
+        var anchorStatus = $('#anchorStatus').combobox('getValue');
+        var language = $('#language').combobox('getValue');
+        var sortNum = $('#sortNum').combobox('getValue');
+        var ratioLevel = $('#ratioLevel').combobox('getValue');
+
+        $('#tb1').datagrid({
+            url: "/userManage/getTeacherList.do",
+            queryParams: {
+                startTime: startTime,
+                endTime: endTime,
+                nickName: nickName,
+                agentName: agentName,
+                anchorStatus: anchorStatus,
+                language: language,
+                sortNum: sortNum,
+                ratioLevel: ratioLevel,
+                status:"2",
+                region:region
+            }
+        });
+    }
+
+
+    function common(value,row,event) {
+        return '<a href="javascript:queryMobile(\''+value+'\','+row.ID+')">查看</a>';
+    }
+
+    function queryMobile(mobile,id){
+        alert(mobile);
+    }
+
+    function operate(value,row) {
+        var id = row.ID;
+        if(value==1){
+            return '<a href="javascript:operateTeacher(2,'+id+',\''+row.USER_NAME+'\')">屏蔽</a>';
+        }else if(value==2){
+            return '<a href="javascript:operateTeacher(1,'+id+',\''+row.USER_NAME+'\')">显示</a>';
+        }
+    }
+
+    //操作显示隐藏
+    function operateTeacher(status,id,user_name){
+        if(1 == status){//显示
+            if(!confirm("确定解除屏蔽吗?")){
+                return;
+            }
+        }
+        if(2 == status){
+            if(!confirm("确定屏蔽吗?")){
+                return;
+            }
+        }
+
+        $.ajax({
+            url: "/userManage/operateTeacher.do",
+            type: "POST",
+            data: {
+                "anchorStatus": status,
+                "id": id,
+                "userName": user_name
+            },
+            dataType: "text",
+            success: function (data) {
+                if ("success" == data) {
+                    Common.showMsg('提示', "修改成功");
+                    search();
+                } else {
+                    Common.showMsg('提示', "修改失败");
+                }
+            }
+        });
+    }
+
+    function entitySearch(){
+        var selecteds = $('#tb1').datagrid('getSelections');
+        if (selecteds == null || selecteds.length == 0) {
+            Common.showMsg('查看详情按钮','请选择操作项！');
+            return;
+        }
+        if (selecteds.length>1) {
+            Common.showMsg('查看详情按钮','不支持多个操作！');
+            return;
+        }
+        top.framework.openTab('查看详情', '/userView/getTeacherDetail.do?menuName=查看userManage&parentMenuName='+menuName+'&id='+selecteds[0].ID + "&flag=teacherQuery");
+
+    }
+</script>
+</body>

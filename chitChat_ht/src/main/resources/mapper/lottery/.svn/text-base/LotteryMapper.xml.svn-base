@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.mapper.lottery.LotteryMapper">
+
+	<select id="findLotteryUsers" parameterType="java.util.Map"
+		resultType="java.util.Map">
+
+		select
+		user_name,nick_name,user_real_name,user_mobile,user_status from
+		lottery_users
+		where user_name = #{user_name}
+
+	</select>
+
+	<update id="updateLotteryUsers" parameterType="java.util.Map">
+		update
+		lottery_users set user_status = 0 where user_name = #{user_name}
+	</update>
+
+</mapper>

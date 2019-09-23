@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.mapper.management.PushJMSMapper">
+
+	<select id="findPushJmsView" parameterType="java.util.Map"
+		resultType="java.util.Map">
+
+		select id,title,jms_type,to_char(jms_date,'yyyy-mm-dd hh24:mi:ss')
+		jms_date,
+		operator,to_char(update_date,'yyyy-mm-dd hh24:mi:ss')
+		update_date,status
+		from yt_live_jms where jms_code = 6
+		and jms_date <![CDATA[ >= to_date(#{start_time},'yyyy-mm-dd') ]]>
+		and jms_date <![CDATA[ <= to_date(#{end_time},'yyyy-mm-dd') ]]>
+		<if test="id != null and id!='' ">
+			and id=#{id}
+		</if>
+		<if test="title != null and title!='' ">
+			and title=#{title}
+		</if>
+		<if test="jms_type != null and jms_type!='' ">
+			and jms_type=#{jms_type}
+		</if>
+		order by jms_date desc
+	</select>
+
+
+	<select id="findPushJMSEntity" parameterType="int" resultType="java.util.Map">
+
+		select id,title,content,jms_type,app_type,user_type,sex_type,type,
+		to_char(jms_date,'yyyy-mm-dd hh24:mi:ss')
+		jms_date,jms_type_url,user_type_name
+		from yt_live_jms where id = #{id}
+
+	</select>
+
+	<select id="findNickNameUserEntity" parameterType="string"
+		resultType="int">
+		select count(1) from yt_user yu where yu.nick_name =
+		#{nick_name}
+	</select>
+
+	<insert id="insertPushJMSEntity" parameterType="java.util.Map">
+		insert into yt_live_jms
+		(
+		id,create_date,update_date,status,jms_code
+		<if test="title!=null and title!=''">
+			,title
+		</if>
+		<if test="content!=null and content!=''">
+			,content
+		</if>
+		<if test="jms_type!=null and jms_type!=''">
+			,jms_type
+		</if>
+		<if test="app_type!=null and app_type!=''">
+			,app_type
+		</if>
+		<if test="user_type!=null and user_type!=''">
+			,user_type
+		</if>
+		<if test="sex_type!=null and sex_type!=''">
+			,sex_type
+		</if>
+		<if test="type!=null and type!=''">
+			,type
+		</if>
+		<if test="jms_date!=null and jms_date!=''">
+			,jms_date
+		</if>
+		<if test="operator!=null and operator!=''">
+			,operator
+		</if>
+		<if test="jms_type_url!=null and jms_type_url!=''">
+			,jms_type_url
+		</if>
+		<if test="user_type_name!=null and user_type_name!=''">
+			,user_type_name
+		</if>
+		)
+		VALUES(
+		seq_yt_live_jms.nextval,sysdate,sysdate,1,6
+		<if test="title!=null and title!=''">
+			,#{title}
+		</if>
+		<if test="content!=null and content!=''">
+			,#{content}
+		</if>
+		<if test="jms_type!=null and jms_type!=''">
+			,#{jms_type}
+		</if>
+		<if test="app_type!=null and app_type!=''">
+			,#{app_type}
+		</if>
+		<if test="user_type!=null and user_type!=''">
+			,#{user_type}
+		</if>
+		<if test="sex_type!=null and sex_type!=''">
+			,#{sex_type}
+		</if>
+		<if test="type!=null and type!=''">
+			,#{type}
+		</if>
+		<if test="jms_date!=null and jms_date!=''">
+			,to_date(#{jms_date},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="operator!=null and operator!=''">
+			,#{operator}
+		</if>
+		<if test="jms_type_url!=null and jms_type_url!=''">
+			,#{jms_type_url}
+		</if>
+		<if test="user_type_name!=null and user_type_name!=''">
+			,#{user_type_name}
+		</if>
+		)
+	</insert>
+	
+	<update id="enablePushJMSEntity" parameterType="java.util.Map">
+		update
+		yt_live_jms set update_date = sysdate,operator = #{operator},status = #{enable}
+		where id = #{id}
+	</update>
+	
+
+
+</mapper>

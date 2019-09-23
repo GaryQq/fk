@@ -1,0 +1,28 @@
+package com.study.util.permissions;
+
+import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.util.ByteSource;
+
+import com.study.model.permissions.User;
+
+public class PasswordHelper {
+	private static String algorithmName = "md5";
+	private static int hashIterations = 2;
+	private static PasswordHelper passwordHelper;
+
+	public static void encryptPassword(User user) {
+		String newPassword = new SimpleHash(algorithmName, user.getPassword(),
+				ByteSource.Util.bytes(user.getUsername()), hashIterations).toHex();
+		user.setPassword(newPassword);
+
+	}
+
+	public static void main(String[] args) {
+		 passwordHelper = new PasswordHelper();
+		 User user = new User();
+		 user.setUsername("weiguilei");
+		 user.setPassword("guilei789");
+		 passwordHelper.encryptPassword(user);
+		 System.out.println(user);
+	}
+}

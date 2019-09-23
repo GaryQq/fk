@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文章详情</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1"/>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="http://www.fengkuang.cn/css/reset.css">
+    <link rel="stylesheet" href="http://www.fengkuang.cn/fbht/css/articleDetails.css">
+</head>
+<body>
+<div class="header">
+    <div class="tab layout">
+        <div class="logo">
+            <h3>疯狂号</h3>
+            <span>全球体育作者联盟</span>
+        </div>
+        <div class="info">
+            <img src="http://download.yuecai365.com/cp365/face/temp/ycDftHead.png" alt="">
+            <span>疯狂小树懒</span>
+            <em></em>
+        </div>
+    </div>
+</div>
+<div class="content layout">
+    <div class="left">
+        <ul>
+            <li>
+                <em class="one"></em>
+                <span>我的主页</span>
+            </li>
+            <li>
+                <em class="two"></em>
+                <span>我的收入</span>
+            </li>
+            <li class="on">
+                <em class="three"></em>
+                <span>已发文章</span>
+            </li>
+            <li>
+                <em class="four"></em>
+                <span>已存草稿</span>
+            </li>
+            <li>
+                <em class="five"></em>
+                <span>官方公告</span>
+            </li>
+        </ul>
+    </div>
+    <div class="right">
+        <div class="publish">
+            <h3>
+                文章详情
+            </h3>
+            <div>
+                <em>
+                    <img src="http://www.fengkuang.cn/fbht/images/bianji.png" alt="">
+                    <i>编辑</i>
+                </em>
+                <span>
+                    <img src="http://www.fengkuang.cn/fbht/images/shanchu.png" alt="">
+                    <i>删除</i>
+                </span>
+            </div>
+        </div>
+
+        <ul class="wzxq">
+            <li>
+                <h4>疯狂号平台持续打击违规帐号的公告｜2018年11月30日18年11月30日18年11月30日</h4>
+            </li>
+            <li>
+                <div>
+                    <span>疯狂号管理员 2018-11-30 16:21:15</span>
+                    <b>收费文章</b>
+                    <i>英超</i>
+                </div>
+            </li>
+            <li>
+                <p>
+                    对于任何一名球员来说，他们职业生涯中都存在值得记忆一辈子的时刻，而thesefootballtimes的“经典时刻”专题就是讲述知名球员那些值得我们铭记的时刻。今天，我们要回顾的是，2009年4月29日阿森纳客场4-4战平利物浦的英超比赛，在这场比赛中阿尔沙文上演大四喜。
+                </p>
+                <p>
+                    本特纳在阿森纳的职业生涯真的让人有些难以理解。他曾在北伦敦德比战中为阿森纳建功，并展现出了能够成为阿森纳领军人物的潜质。然而，在那次引人注目的亮相之后，丹麦人开始在一系列奇怪的情况下开始自己的本色演出。所以在这样的情况下，他在一场比赛中看着队友上演大四喜，而自己却无所作为，并非是没有可能的事情。
+                </p>
+                <p>
+                    2008/2009赛季，本特纳已然是球队锋线上的第三选择，阿德巴约和范佩西均在他之前。然而，在范佩西受伤，阿德巴约也缺席的情况下，那场2009年4月29日在安菲尔德球场进行的比赛，本特纳扮演了一个他认为自己其实早已经做好了准备的角色：阿森纳的领军人物。
+                </p>
+                <p>
+                    只可惜本特纳并没有在那场比赛中证明自己的实力，他并没有为球队破门得分，反而是阿尔沙文星光四射。这位俄罗斯攻击手在加盟阿森纳之前，本特纳曾如是评价：“我从来没有看过他踢球，我不知道他是怎样的球员，我没有看2008年欧洲杯。”
+                </p>
+                <p>
+                    阿尔沙文在2009年2月加盟阿森纳，转会费为1500万英镑。在2008年对于阿尔沙文来说，是丰收的一年，他不仅仅跟随国家队出征了欧洲杯的比赛，还帮助泽尼特拿到了欧联杯的冠军，并在摩纳哥进行的欧洲超级杯中帮助球队2-1击败曼联。
+                </p>
+                <p>
+                    对阵利物浦，阿森纳希望能够通过一场胜利，进一步拉开自己与阿斯顿维拉之间的差距，确保自己的欧冠参赛资格——虽然最终球队没有取胜，但阿尔沙文还是帮助球队拿到了积分。
+                </p>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="foot layout">
+    关于疯狂体育 | 用户协议 | 官方微博 | 客户端下载 | 联系邮箱 | 联系电话：010-64797862
+</div>
+</body>
+</html>

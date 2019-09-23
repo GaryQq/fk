@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.mapper.management.FinancialMapper">
+ 
+	<select id="findFinancialData" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		
+		with operation_user as (
+			select
+				username
+			from
+				yt_live_operation
+			where
+				status = 1
+		),
+		 ytuser as (
+			select
+				username
+			from
+				yt_live_backstageblack
+		),
+		ytsource as (
+			select
+				source
+			from
+				yt_financial_source
+			where source_status = 1
+		)select
+			case
+		when lto.createtime is null then
+			aad.create_time
+		else
+			lto.createtime
+		end create_time,
+		 lto.money,
+		 aad.amount
+		from
+			(
+				select
+					to_char (
+						lto.creation_date,
+						'yyyy-mm-dd'
+					) createtime,
+					sum (lto.fee) money
+				from
+					lottery.lottery_transfer_order lto
+				where
+					lto.trade_status = 1
+				and lto.creation_date <![CDATA[ >= to_date(#{start_time},'yyyy-mm-dd') ]]>
+				and lto.creation_date <![CDATA[ <= to_date(#{end_time},'yyyy-mm-dd') ]]>
+				and substr (lto .product_id, 0, 11) in (select source from ytsource)
+				<if test="user_status != null and user_status != '' and user_status == -1 ">
+				and lto.pay_user not in (select username from ytuser)
+				</if>
+				<if test="user_status != null and user_status != '' and user_status == 2 ">
+				and lto.pay_user in (select username from ytuser)
+				</if>
+				<if test="user_status != null and user_status != '' and user_status == 1 ">
+				and lto.pay_user in (
+					select
+						username
+					from
+						operation_user
+				)
+				</if>
+				group by
+					to_char (
+						lto.creation_date,
+						'yyyy-mm-dd'
+					)
+			) lto
+		full join (
+			select
+				to_char (
+					aad.create_time,
+					'yyyy-mm-dd'
+				) create_time,
+				sum (aad.goal_amount) amount
+			from
+				yt_user yu
+			inner join ayoi_account_detail aad on yu.user_name = aad.user_name
+			where
+				aad.opt_type3 = 77
+			and yu.source in ('150','151')  
+			and aad.create_time <![CDATA[ >= to_date(#{start_time},'yyyy-mm-dd') ]]>
+			and aad.create_time <![CDATA[ <= to_date(#{end_time},'yyyy-mm-dd') ]]>
+			<if test="user_status != null and user_status != '' and user_status == -1 ">
+			and aad.user_name not in (select username from ytuser)
+			</if>
+			<if test="user_status != null and user_status != '' and user_status == 2 ">
+			and aad.user_name in (select username from ytuser)
+			</if>
+			<if test="user_status != null and user_status != '' and user_status == 1 ">
+			and aad.user_name in (
+				select
+					username
+				from
+					operation_user
+			)
+			</if>
+			group by
+				to_char (
+					aad.create_time,
+					'yyyy-mm-dd'
+				)
+		) aad on aad.create_time = lto.createtime
+		order by
+			create_time desc
+		
+	</select>
+	
+	<select id="findFinancialOnlineDetail" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		
+		with operation_user as (
+			select
+				username
+			from
+				yt_live_operation
+			where
+				status = 1
+		),
+		 ytuser as (
+			select
+				username
+			from
+				yt_live_backstageblack
+		),
+		ytsource as (
+			select
+				source
+			from
+				yt_financial_source
+			where source_status = 1
+		)
+		<if test="select_status != null and select_status != '' and select_status == 2">
+		select
+			nick_name,
+			sum (money) money,
+			product,
+			'-' product_name,
+			'-' trade_no,
+			'-' trade_status,
+			'-' create_time,
+			'-' lottery_user,
+			'-' pay_type,
+			'-' before_amount,
+			'-' after_amount,
+			'-' create_date
+		from (
+		</if>
+		select
+			yu.nick_name,
+			upi.pay_typename,
+			lto.fee money,
+			substr (lto.product_id, 0, 11) product,
+			case
+		when substr (lto.product_id, 0, 5) = '28009' then
+			'语伴ios'
+		else
+			'语伴安卓'
+		end product_name,
+		 lto.trade_no,
+		 lto.trade_status,
+		 to_char (
+			lto.creation_date,
+			'yyyy-mm-dd hh24:mi:ss'
+		) create_time,
+		 lto.lottery_user,
+		 lto.pay_type,
+		 aad.before_amount,
+		 aad.after_amount,
+		 to_char (
+			yu.date_created,
+			'yyyy-mm-dd hh24:mi:ss'
+		) create_date
+		from
+			lottery.lottery_transfer_order lto
+		left join lottery.uc_paytype_info upi on upi.pay_typeid = lto.pay_type
+		inner join yt_user yu on yu.user_name = lto.lottery_user
+		inner join ayoi_account_detail aad on lto.trade_no = aad.order_id
+		where
+			lto.trade_status = 1
+		and yu.source in ('150','151') 
+		and lto.creation_date <![CDATA[ >= to_date(#{start_time},'yyyy-mm-dd') ]]>
+		and lto.creation_date <![CDATA[ <= to_date(#{end_time},'yyyy-mm-dd') ]]>
+		<if test="user_status != null and user_status != '' and user_status == -1 ">
+		and lto.pay_user not in (select username from ytuser)
+		</if>
+		<if test="user_status != null and user_status != '' and user_status == 2 ">
+		and lto.pay_user in (select username from ytuser)
+		</if>
+		<if test="user_status != null and user_status != '' and user_status == 1 ">
+		and lto.pay_user in (
+			select
+				username
+			from
+				operation_user
+		)
+		</if>
+		<if test="pay_type != null and pay_type != '' ">
+		and lto.pay_type in (#{pay_type})
+		</if>
+		<if test="nick_name != null and nick_name != '' ">
+		and yu.nick_name = #{nick_name}
+		</if>
+		<if test="source != null and source != '' ">
+		and substr (lto .product_id, 0, 11) = #{source}
+		</if>
+		<if test="app_type != null and app_type != '' and app_type == 1">
+		and substr (lto.product_id, 0, 5) = '28009'
+		</if>
+		<if test="app_type != null and app_type != '' and app_type == 2">
+		and substr (lto.product_id, 0, 5) != '28009'
+		</if>
+		<if test="pay_status != null and pay_status != '' and pay_status == 1">
+		and lto.trade_status = 1
+		</if>
+		<if test="pay_status != null and pay_status != '' and pay_status == 2">
+		and lto.trade_status != 1
+		</if>
+		
+		and substr (lto .product_id, 0, 11) in (select source from ytsource)
+
+		order by create_time desc
+		<if test="select_status != null and select_status != '' and select_status == 2">
+		)
+		group by
+			nick_name,
+			product
+		</if>
+	</select>
+	
+	<select id="findFinancialOfflineDetail" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		with operation_user as (
+			select
+				username
+			from
+				yt_live_operation
+			where
+				status = 1
+		),
+		 ytuser as (
+			select
+				username
+			from
+				yt_live_backstageblack
+		)
+		<if test="select_status != null and select_status != '' and select_status == 2">
+		select
+			nick_name,
+			pay_type,
+			sum (goal_amount) goal_amount,
+			'-' id,
+			'-' create_time,
+			create_date,
+			pay_status,
+			'-' before_amount,
+			'-' after_amount
+		from (
+		</if>
+		select
+			yu.nick_name,
+			'线下充值' pay_type,
+			aad.goal_amount/10 goal_amount,
+			aad. id,
+			to_char (
+				aad.create_time,
+				'yyyy-mm-dd hh24:mi:ss'
+			) create_time,
+			to_char (
+				yu.date_created,
+				'yyyy-mm-dd hh24:mi:ss'
+			) create_date,
+			'成功' pay_status,
+			aad.before_amount,
+			aad.after_amount
+		from
+			ayoi_account_detail aad
+		inner join yt_user yu on aad.user_name = yu.user_name
+		where
+			aad.opt_type3 = 77
+		and yu.source in ('150','151')
+		and aad.create_time <![CDATA[ >= to_date(#{start_time},'yyyy-mm-dd') ]]>
+		and aad.create_time <![CDATA[ <= to_date(#{end_time},'yyyy-mm-dd') ]]>
+		<if test="user_status != null and user_status != '' and user_status == -1 ">
+		and aad.user_name not in (select username from ytuser)
+		</if>
+		<if test="user_status != null and user_status != '' and user_status == 2 ">
+		and aad.user_name in (select username from ytuser)
+		</if>
+		<if test="user_status != null and user_status != '' and user_status == 1 ">
+		and aad.user_name in (
+			select
+				username
+			from
+				operation_user
+		)
+		</if>
+		<if test="nick_name != null and nick_name != '' ">
+		and yu.nick_name = #{nick_name}
+		</if>
+		<if test="select_status != null and select_status != '' and select_status == 2">
+		)
+		group by
+			nick_name,
+			pay_type,
+			create_date,
+			pay_status
+		order by
+			goal_amount desc
+		</if>
+	</select>
+		 
+
+</mapper>

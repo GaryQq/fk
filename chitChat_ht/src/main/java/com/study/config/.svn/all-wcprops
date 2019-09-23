@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/cp/!svn/ver/158674/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/config
+END
+Swagger2Configuration.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/cp/!svn/ver/147077/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/config/Swagger2Configuration.java
+END
+ESTransportClient.java
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/cp/!svn/ver/158674/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/config/ESTransportClient.java
+END
+RedisClient.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/cp/!svn/ver/158674/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/config/RedisClient.java
+END
+MyBatisConfig.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/cp/!svn/ver/147864/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/config/MyBatisConfig.java
+END
+MgTemplate.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/cp/!svn/ver/147327/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/config/MgTemplate.java
+END
+DruidConfig.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/cp/!svn/ver/147077/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/config/DruidConfig.java
+END
+ShiroConfig.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/cp/!svn/ver/153589/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/config/ShiroConfig.java
+END
+LotteryAspect.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/cp/!svn/ver/148816/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/config/LotteryAspect.java
+END

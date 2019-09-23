@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<div data-options="region:'center'" border="false">
+		<div id="dlg" style="padding: 10px 20px">
+			<div class="myftitle">基本信息</div>
+			<form id="myfm" method="post" novalidate>
+
+				<table cellpadding="7">
+					<tr>
+						<td>消息标题:</td>
+						<td><input class="easyui-validatebox textbox" name="title"
+							style="width: 200px; height: 20px" id="title"
+							data-options="required:true,missingMessage:'请输入消息标题'"></td>
+					</tr>
+					<tr>
+						<td>消息内容:</td>
+						<td><input class="easyui-validatebox textbox" name="content"
+							style="width: 200px; height: 20px" id="content"
+							data-options="multiline:true,required:true,missingMessage:'请输入消息内容'"></td>
+					</tr>
+					<tr>
+						<td>跳转类型:</td>
+						<td><input type="radio" checked onclick="redioClick('1')"
+							name="jms_type" value="1">唤醒应用 <input type="radio"
+							onclick="redioClick('3')" name="jms_type" value="3">跳转H5地址
+							<input type="radio" onclick="redioClick('4')" name="jms_type"
+							value="4">跳转个人主页</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><div id="h5urldiv">
+								<input id="h5url" class="easyui-validatebox textbox" value=""
+									style="width: 200px; height: 20px"></span>
+							</div>
+							<div id="homepagediv">
+								<input id="homepage" class="easyui-validatebox textbox" value=""
+									style="width: 200px; height: 20px"><span
+									id="homepage_username"></span>
+							</div></td>
+					</tr>
+					<tr>
+						<td>推送app:</td>
+						<td><input type="checkbox" name="app_type"
+							value="yuban_android">安卓语伴推送&nbsp&nbsp <input
+							type="checkbox" name="app_type" value="yuban_ios">苹果语伴推送&nbsp&nbsp
+						</td>
+					</tr>
+					<tr>
+						<td>推送用户范围:</td>
+						<td><input type="radio" name="user_type" checked value="1">全部用户&nbsp&nbsp
+							<input type="radio" name="user_type" value="2">全部老师&nbsp&nbsp
+							<input type="radio" name="user_type" value="3">非老师用户&nbsp&nbsp
+							<input type="radio" name="user_type" value="6">指定用户&nbsp<input
+							id="user_type_name" class="easyui-validatebox textbox"
+							readonly="true" data-options="multiline:true"
+							style="width: 200px; height: 20px">&nbsp&nbsp查询：<input
+							id="nick_name" class="easyui-validatebox textbox"
+							style="width: 100px; height: 20px"><a
+							href="javascript:search()" class="easyui-linkbutton"
+							iconCls="icon-search">查找</a></td>
+					</tr>
+					<tr>
+						<td>推送用户性别:</td>
+						<td><input type="radio" name="sex_type" checked value="1">男&nbsp&nbsp<input
+							type="radio" name="sex_type" value="2">女&nbsp&nbsp<input
+							type="radio" name="sex_type" value="3">全部</td>
+					</tr>
+					<tr>
+						<td>推送用户:</td>
+						<td><input type="radio" name="type" checked value="1">三天内未登录&nbsp&nbsp<input
+							type="radio" name="type" value="2">七天内未登录&nbsp&nbsp<input
+							type="radio" name="type" value="3">全部</td>
+					</tr>
+					<tr>
+						<td>推送时间:</td>
+						<td><input class="easyui-datetimebox" id="jms_date"
+							data-options="formatter:formatter,required:true"></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+	<div data-options="region:'south'" style="height: 40px;" border="false">
+		<hr>
+		<div style="text-align: center;">
+			<a href="javascript:void(0)" class="easyui-linkbutton"
+				onclick="submitForm()">保存</a> <a href="javascript:void(0)"
+				class="easyui-linkbutton"
+				th:onclick="|top.framework.closeTab('${menu.menuName}')|">关闭</a>
+		</div>
+	</div>
+	<script th:inline="javascript">
+		var parentMenuName=[[${menu.parentMenuName}]]
+		var menuName=[[${menu.menuName}]]
+		
+		$(function() {
+			document.getElementById("h5urldiv").style.display = "none";
+			document.getElementById("homepagediv").style.display = "none";
+		})
+		
+		function redioClick(type) {
+			if (type == 1) {
+				/* 	document.getElementById("liveroomdiv").style.display = "none"; */
+				document.getElementById("h5urldiv").style.display = "none";
+				document.getElementById("homepagediv").style.display = "none";
+			} else if (type == 2) {
+				/* document.getElementById("liveroomdiv").style.display = "block"; */
+				document.getElementById("h5urldiv").style.display = "none";
+				document.getElementById("homepagediv").style.display = "none";
+			} else if (type == 3) {
+				/* 	document.getElementById("liveroomdiv").style.display = "none"; */
+				document.getElementById("h5urldiv").style.display = "block";
+				document.getElementById("homepagediv").style.display = "none";
+			} else if (type == 4) {
+				/* document.getElementById("liveroomdiv").style.display = "none"; */
+				document.getElementById("h5urldiv").style.display = "none";
+				document.getElementById("homepagediv").style.display = "block";
+			}
+		}
+		
+		function submitForm() {
+			var title = $("#title").val();
+			var content = $("#content").val();
+			var jms_type = $('input[name="jms_type"]:checked').val();
+			var jms_type_url = "";
+			if (jms_type == 2) {
+				/* jms_type_url = $("#liveroom").textbox('getValue'); */
+			} else if (jms_type == 3) {
+				jms_type_url = $("#h5url").val();
+			} else if (jms_type == 4) {
+				jms_type_url = $("#homepage").val();
+			}
+			var app_type = "";
+			$('input[name="app_type"]:checked').each(function() {
+				var t = $(this).val();
+				app_type += t + ";";
+			});
+			if (app_type == "") {
+				alert("推送app类型不能为空");
+				return false;
+			}
+			var user_type = $('input[name="user_type"]:checked').val();
+			var user_type_name = $("#user_type_name").val();
+			user_type_name = user_type_name.substring(0, user_type_name.length - 1);
+			var sex_type = $('input[name="sex_type"]:checked').val();
+			var type = $('input[name="type"]:checked').val();
+			var jms_date = $("#jms_date").datetimebox("getValue");
+			
+			$.ajax({
+				url : "/pushJMS/add.do",
+				type : "POST",
+				data : {
+					"title" : title,
+					"content" : content,
+					"jms_type" : jms_type,
+					"jms_type_url" : jms_type_url,
+					"app_type" : app_type,
+					"user_type" : user_type,
+					"sex_type" : sex_type,
+					"type" : type,
+					"jms_date" : jms_date,
+					"user_type_name" : user_type_name
+				},
+				dataType : "text",
+				success : function(data) {
+					if ("success" == data){
+	                	Common.showMsg('提示',"添加成功");
+	                	top.framework.closeAndReloadTab(menuName, parentMenuName);
+	                } else {
+	                	Common.showMsg('提示',"添加失败");
+	                }	
+				}
+			});
+		}
+		
+		function search(){
+			var nick_name = $("#nick_name").val();
+			$.ajax({
+				url : "/pushJMS/searchNickName.do",
+				type : "POST",
+				data : {
+					"nick_name" : nick_name
+				},
+				dataType : "text",
+				success : function(data) {
+					if("success" == data){
+						var user_type_name = $("#user_type_name").val();
+						user_type_name += "'"+nick_name+"',";
+						$("#user_type_name").val(user_type_name);
+						$("#nick_name").val('');
+						Common.showMsg('提示',"用户添加成功");
+					} else {
+						Common.showMsg('提示',"昵称不存在");
+					}
+				}
+			});
+		}
+		
+	</script>
+</body>

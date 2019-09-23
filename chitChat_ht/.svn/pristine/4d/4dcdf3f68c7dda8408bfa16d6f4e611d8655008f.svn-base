@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/head :: header">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body class="easyui-layout">
+	<table id="tb1" class="easyui-datagrid" title="" width="100%"
+		height="100%" fit="true" border="0"
+		data-options="rownumbers:true,pagination:true,url:'/banner/getData.do',singleSelect:false,method:'get',toolbar:'#toolbar1',sortName:'sequence',sortOrder:'asc'">
+		<thead>
+			<tr>
+				<th data-options="field:'ck',checkbox:true"></th>
+				<th data-options="field:'ID',width:100,align:'center'">id</th>
+				<th data-options="field:'TITLE',width:200,align:'center'">名称</th>
+				<th
+					data-options="field:'TIME',width:200,align:'center',
+            	     formatter:function(value,row){
+            	     	if(value.indexOf(';') != -1){
+	            	     	var array = value.split(';');
+	            	     	var str = array[0] + '</br>' + array[1];
+	            	     	return str;
+            	     	}
+            	     	return value;
+            	     	
+               		 }">活动时间</th>
+				<th
+					data-options="field:'PIC_URL',width:200,height:30,align:'center',
+            	     formatter:function(value,row){
+            	     	var str = 'http://file.fengkuangtiyu.cn' + value;
+            	     	var style = 'width:30px;height:30px';
+            	     	return '<img src='+str+' style='+style+' />'; 
+               		 }">图片</th>
+				<th
+					data-options="field:'TYPE',width:200,align:'center',
+            	     formatter:function(value,row){
+            	     	var name = '';
+            	     	if(value.indexOf(';') != -1){
+							var array = value.split(';');
+	            	     	for(var i = 0; i<array.length;i++){
+	            	     		if(array[i] == '101'){
+	            	     			name += '语伴首页;';
+	            	     		}else if(array[i] == '102'){
+	            	     			name += '语伴充值;';
+	            	     		}
+	            	     	}
+						}else {
+							if(value == '101'){
+            	     			name += '语伴首页;';
+            	     		}else if(value == '102'){
+            	     			name += '语伴充值;';
+            	     		}
+						}
+            	     	return name;
+                	 }">频道</th>
+				<th data-options="field:'WEIGHT',width:200,align:'center'">权重</th>
+				<th
+					data-options="field:'STATUS',width:200,align:'center',
+            	     formatter:function(value,row){
+            	     			 if(value == 0){
+            	     			 	return '已上线';
+            	     			 }else if(value == 1){
+            	     			 	return '已下线';
+            	     			 }
+            					 
+	                		  }">活动状态</th>
+				<th data-options="field:'OPEN_SID',width:200,align:'center'">展示渠道</th>
+				<th data-options="field:'CLOSE_SID',width:200,align:'center'">隐藏渠道</th>
+				<th data-options="field:'OPERATOR',width:200,align:'center'">操作人</th>
+
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar1" class="easyui-layout"
+		style="height: 65px; margin: 3px;">
+		<div data-options="region:'center',border:false">
+			<a th:each="but : ${buttons}" th:shiro:hasPermission="${but.resurl}"
+				th: class="easyui-linkbutton" th:icon="${but.iconCls}" plain="true"
+				th:href="|javascript:${but.butFun};|" th:text="${but.name}"></a>
+		</div>
+		<div data-options="region:'north',border:true" style="height: 40px;">
+			<form id="fm" method="post" novalidate>
+				<table cellpadding="5">
+					<tr>
+						<td>活动ID:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="id" id="id"></input></td>
+						<td>title:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="title" id="title"></input></td>
+						<td>操作人:</td>
+						<td><input class="easyui-validatebox textbox" type="text"
+							name="operator" id="operator"></input></td>
+						<td>banner状态:</td>
+						<td><select id="status" class="easyui-combobox" name="dept">
+								<option value="">全部</option>
+								<option value="0">上线</option>
+								<option value="1">下线</option>
+								<option value="2">带上线</option>
+						</select></td>
+						<td><a href="javascript:search()" class="easyui-linkbutton"
+							iconCls="icon-search">查找</a></td>
+
+					</tr>
+				</table>
+			</form>
+		</div>
+
+	</div>
+	<script th:inline="javascript">
+		var menuName=[[${menuName}]]
+	    function add(){
+			top.framework.openTab('新增banner', '/bannerView/add.do?menuName=新增banner&parentMenuName='+menuName);
+		}
+		
+		function search() {
+			var id = $("#id").val();
+			var title = $("#title").val();
+			var operator = $("#operator").val();
+			var status = $('#status').combobox('getValue');
+			$('#tb1').datagrid({
+				url : "/banner/getData.do",
+				queryParams : {
+					id : id,
+					title : title,
+					operator : operator,
+					status : status
+				}
+			});
+		}
+		
+		function remove(){
+			var selecteds = $('#tb1').datagrid('getSelections');
+	        if (selecteds == null || selecteds.length == 0) { 
+	        	Common.showMsg('提示','请选择操作项！');
+	        	return;
+	        }
+	        $.messager.confirm('提示','确定删除吗?', 
+	        function(r){
+	            if (r){
+	            	var ids = '';
+	                $(selecteds).each(function (index) {
+	                    ids = ids + selecteds[index].ID + ",";
+	                });
+	                ids = ids.substring(0, ids.length - 1);
+	        		$.ajax( {
+	    				url : '/banner/delete.do?ids='+ids,
+	    				dataType:'text',
+	    				type: 'delete',
+	    				success : function(result) {
+	    					if ("success"==result){
+	    						Common.showMsg('提示',"删除成功");
+	        				    search();
+	    					}else{
+	    						Common.showMsg('提示',"删除失败");
+	    					}
+	    					
+	    				}
+	    			});
+	            }
+	        });
+		}
+		
+		function edit(){
+			var selecteds = $('#tb1').datagrid('getSelections');
+	        if (selecteds == null || selecteds.length == 0) { 
+	        	Common.showMsg('修改按钮','请选择操作项！');
+	        	return;
+	        }
+	        if (selecteds.length>1) {
+	        	Common.showMsg('修改按钮','不支持多个操作！');
+	        	return; 
+	        }
+			top.framework.openTab('修改banner', '/bannerView/add.do?menuName=修改banner&parentMenuName='+menuName+'&id='+selecteds[0].ID);
+			
+		}
+		
+		function on(){
+			enable(0);
+		}
+		
+		function off(){
+			enable(1);
+		}
+		
+		function enable(types){
+			var selecteds = $('#tb1').datagrid('getSelections');
+	        if (selecteds == null || selecteds.length == 0) { 
+	        	Common.showMsg('请选择操作项！');
+	        	return;
+	        }
+	        var str = "";
+	        if(types == 0){
+	        	str = "确定上线吗?";
+	        }else if(types == 1){
+	        	str = "确定下线吗?";
+	        }
+	        $.messager.confirm('提示',str, 
+	    	        function(r){
+	    	            if (r){
+	    	            	var ids = '';
+	    	                $(selecteds).each(function (index) {
+	    	                    ids = ids + selecteds[index].ID + ",";
+	    	                });
+	    	                ids = ids.substring(0, ids.length - 1);
+	    	        		$.ajax( {
+	    	    				url : '/banner/enable.do?ids='+ids+'&enable='+types,
+	    	    				dataType:'text',
+	    	    				type: 'get',
+	    	    				success : function(result) {
+	    	    					if ("success"==result){
+	    	    						Common.showMsg('提示',"修改成功");
+	    	        				    search();
+	    	    					}else{
+	    	    						Common.showMsg('提示',"修改失败");
+	    	    					}
+	    	    					
+	    	    				}
+	    	    			});
+	    	            }
+	    	        });
+		} 
+	</script>
+</body>

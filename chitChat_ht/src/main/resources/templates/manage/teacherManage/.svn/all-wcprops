@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/cp/!svn/ver/152518/LotteryDev4/Server/chitChat_ht/src/main/resources/templates/manage/teacherManage
+END
+teacherManageDetail.html
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/cp/!svn/ver/149812/LotteryDev4/Server/chitChat_ht/src/main/resources/templates/manage/teacherManage/teacherManageDetail.html
+END
+teacher_edit.html
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/cp/!svn/ver/149812/LotteryDev4/Server/chitChat_ht/src/main/resources/templates/manage/teacherManage/teacher_edit.html
+END
+teacherManage.html
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/svn/cp/!svn/ver/152518/LotteryDev4/Server/chitChat_ht/src/main/resources/templates/manage/teacherManage/teacherManage.html
+END
+teacher_add.html
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/cp/!svn/ver/149812/LotteryDev4/Server/chitChat_ht/src/main/resources/templates/manage/teacherManage/teacher_add.html
+END
+edit_level.html
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/svn/cp/!svn/ver/149812/LotteryDev4/Server/chitChat_ht/src/main/resources/templates/manage/teacherManage/edit_level.html
+END
+edit_score.html
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/svn/cp/!svn/ver/149812/LotteryDev4/Server/chitChat_ht/src/main/resources/templates/manage/teacherManage/edit_score.html
+END

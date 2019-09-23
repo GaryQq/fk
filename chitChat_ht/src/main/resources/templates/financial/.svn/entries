@@ -1,0 +1,40 @@
+10
+
+dir
+167392
+http://svn.yuecai365.com/svn/cp/LotteryDev4/Server/chitChat_ht/src/main/resources/templates/financial
+http://svn.yuecai365.com/svn/cp
+
+
+
+2018-12-06T02:44:51.558977Z
+156277
+niehongtao
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+a014eba1-2fae-834b-8157-1c48fd466da1
+
+financial
+dir
+
+financialOfflineDetail
+dir
+
+financialOnlineDetail
+dir
+
+ybWithDraws
+dir
+

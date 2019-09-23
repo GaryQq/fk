@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/cp/!svn/ver/149316/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/service/permissions/impl
+END
+DeptServiceImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/cp/!svn/ver/149287/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/service/permissions/impl/DeptServiceImpl.java
+END
+ResourcesServiceImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/cp/!svn/ver/149287/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/service/permissions/impl/ResourcesServiceImpl.java
+END
+RoleServiceImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/cp/!svn/ver/149287/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/service/permissions/impl/RoleServiceImpl.java
+END
+UserServiceImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/cp/!svn/ver/149316/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/service/permissions/impl/UserServiceImpl.java
+END
+RoleResourcesServiceImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/cp/!svn/ver/147251/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/service/permissions/impl/RoleResourcesServiceImpl.java
+END
+UserRoleServiceImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/cp/!svn/ver/149062/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/service/permissions/impl/UserRoleServiceImpl.java
+END
+BaseService.java
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/svn/cp/!svn/ver/147864/LotteryDev4/Server/chitChat_ht/src/main/java/com/study/service/permissions/impl/BaseService.java
+END

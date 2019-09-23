@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link rel="stylesheet" type="text/css" th:href="@{/easy_ui/js/jquery-easyui/themes/metro-blue/easyui.css}" id="skin">
+<link rel="stylesheet" type="text/css" th:href="@{/easy_ui/js/jquery-easyui/themes/icon.css}">
+<link rel="stylesheet" type="text/css" th:href="@{/easy_ui/css/style.css}">
+<script type="text/javascript" th:src="@{/easy_ui/js/jquery-1.9.1.js}"></script>
+<script type="text/javascript" th:src="@{/easy_ui/js/jquery.cookie.js}"></script>
+<script type="text/javascript" th:src="@{/easy_ui/js/jquery.easyui.min.js}"></script>
+<script type="text/javascript" th:src="@{/easy_ui/js/easyui-lang-zh_CN.js}"></script>
+<script type="text/javascript" th:src="@{/easy_ui/js/common.js}"></script>
+<link rel="stylesheet" type="text/css" th:href="@{/easy_ui/css/index.css}">
+<script type="text/javascript" th:src="@{/easy_ui/js/index.js}"></script>
+<title>首页</title>
+</head>
+<body class="easyui-layout">
+	<div data-options="region:'north',split:true" border="false"
+		class="l-topmenu">
+		<div class="l-topmenu-l">
+			<!-- <img class="logo" th:src="@{/easy_ui/css/img/layout/logo.png}" alt="系统管理平台" /> -->
+		</div>
+		<div class="l-topmenu-r">
+			<span>您好, <a href="javascript:void(0);" th:text="${userName}"></a>!
+			</span>| <a href="javascript:void(0);">设置</a>|
+			<a href="javascript:void(0);">密码修改</a>|
+			<a href="javascript:void(0);" onclick="Common.switchTheme()"
+				class="l-skin">皮肤</a>| <a href="/loginOut.do" class="l-exit">注销</a>
+		</div>
+	</div>
+	<div data-options="region:'west',split:true"    title="导航菜单"
+		style="width: 160px;height: 800px;">
+		<div class="easyui-accordion"   data-options="fit:true,border:false">
+		<span th:each="res : ${resources}" th:remove="tag">
+		   <span th:if="${res.parentid==0}"  th:remove="tag">
+		      <div th:title="${res.name}"  >
+		      <span th:each="reschil : ${resources}" th:remove="tag">
+		          <span th:if="${res.id==reschil.parentid}" th:remove="tag">
+		             <ul class="menu-ul">
+					<li class="menu-ul-li"><a class="menu-ul-li-a"
+						th:href="|javascript:addTab('${reschil.name}','${reschil.resurl}/${reschil.name}/${reschil.id}')|"><span th:text="${reschil.name}"></span></a></li>
+					</ul>
+		          </span>
+		      </span>
+		      </div>
+		   </span>
+		</span>
+		</div>
+	</div>
+	<div data-options="region:'south',split:true" style="height: 30px;">
+		<!-- <div style="width: 100%; text-align: center; line-height: 25px;">
+			版权所有：<a>nht</a>
+		</div> -->
+	</div>
+	<div data-options="region:'center'" style="background: #eee;">
+		<div class="easyui-tabs" border="false" id="tabs" fit="true">
+			<div title="首页">
+				<iframe frameborder="0" name="mainFrame" id="mainFrame"
+					src="/403" scrolling="no"
+					style="width: 1070px; height: 470px;"></iframe>
+			</div>
+		</div>
+	</div>
+	<div id="tabsMenu" class="easyui-menu">
+		<div name="close">关闭</div>
+		<div name="Other">关闭其他</div>
+		<div name="All">关闭所有</div>
+	</div>
+	 
+</body>
+</html>
